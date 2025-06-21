@@ -6,7 +6,11 @@ const productSchema = new mongoose.Schema({
   description: String,
   image: String,
   inStock: { type: Boolean, default: true },
-  status: { type: Boolean, default: true },
+// status: {
+//   type: String,
+//   enum: ['Pending', 'Confirmed', 'In Progress', 'Completed'],
+//   default: 'Pending'
+// },
   rating: { type: Boolean, default: true },
   createdAt: { type: Date, default: Date.now }
 });

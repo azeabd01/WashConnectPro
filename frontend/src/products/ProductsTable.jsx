@@ -1,121 +1,212 @@
+import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
+import { Trash2, Eye, Edit, Star, Package, AlertCircle } from 'lucide-react';
 
-import { 
-  BarChart3, 
-  Package, 
-  Users, 
-  TrendingUp, 
-  Settings, 
-  Bell, 
-  Search,
-  Plus,
-  Filter,
-  MoreHorizontal,
-  Eye,
-  Edit,
-  Trash2,
-  ShoppingCart,
-  DollarSign,
-  Star,
-  Menu,
-  X
-} from 'lucide-react';
-import { useEffect, useState } from 'react';
 export default function ProductsTable() {
-   const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
   useEffect(() => {
-    fetch('http://localhost:3000/api/products')
+    setLoading(true);
+    setError(null);
+    
+    fetch(`http://localhost:3000/api/products?page=${page}&limit=5`)
       .then(res => {
-        if (!res.ok) throw new Error("Failed to fetch products");
+        if (!res.ok) throw new Error('Failed to fetch products');
         return res.json();
       })
       .then(data => {
-        setProducts(data);
+        setProducts(data.products);
+        setTotalPages(data.totalPages);
         setLoading(false);
       })
       .catch(err => {
-        console.error('Error fetching products:', err);
+        console.error('Fetch error:', err);
+        setError('Failed to load products');
         setLoading(false);
       });
-  }, []);
-    if (loading) return <p>Loading products...</p>;
+  }, [page]);
+
+  const confirmDelete = async () => {
+    const toastId = toast.loading('Deleting...');
+    try {
+      const res = await fetch(`http://localhost:3000/api/products/${deleteId}`, {
+        method: 'DELETE',
+      });
+      
+      if (!res.ok) throw new Error('Delete failed');
+      
+      setProducts(prev => prev.filter(p => p._id !== deleteId));
+      toast.success('Deleted successfully!', { id: toastId });
+    } catch (err) {
+      toast.error('Error deleting product', { id: toastId });
+    } finally {
+      setDeleteId(null);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <span className="ml-2">Loading products...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center py-12 text-red-600">
+        <AlertCircle className="w-5 h-5 mr-2" />
+        <span>{error}</span>
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-      <div className="px-6 py-4 border-b border-gray-200">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-medium text-gray-900">Products</h3>
-          <div className="flex items-center space-x-3">
-            <button className="flex items-center px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50">
-              <Filter className="w-4 h-4 mr-2" />
-              Filter
-            </button>
-            <button className="flex items-center px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700">
-              <Plus className="w-4 h-4 mr-2" />
-              Add Product
-            </button>
+    <div className="relative">
+      {/* Delete Confirmation Modal */}
+      {deleteId && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-gray-10 bg-opacity-50"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-title"
+        >
+          <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm text-center">
+            <h2 id="delete-title" className="text-lg font-semibold mb-2">Delete Product</h2>
+            <p className="text-sm text-gray-600 mb-4">
+              Are you sure you want to delete this product? This action cannot be undone.
+            </p>
+            <div className="flex justify-center gap-4">
+              <button
+                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                onClick={() => setDeleteId(null)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                onClick={confirmDelete}
+              >
+                Yes, Delete
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-      
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rating</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {products.map((product) => (
-              <tr key={product.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center mr-3">
-                      <Package className="w-5 h-5 text-gray-500" />
-                    </div>
-                    <div className="text-sm font-medium text-gray-900">{product.name}</div>
-                  </div>
-                </td>
-                {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.category}</td> */}
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{product.price}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.inStock}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                    product.status === 'Active' 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-red-100 text-red-800'
-                  }`}>
-                    {product.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <div className="flex items-center">
-                    <Star className="w-4 h-4 text-yellow-400 fill-current mr-1" />
-                    {product.rating}
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <div className="flex items-center space-x-2">
-                    <button className="p-1 text-gray-400 hover:text-blue-600">
-                      <Eye className="w-4 h-4" />
-                    </button>
-                    <button className="p-1 text-gray-400 hover:text-green-600">
-                      <Edit className="w-4 h-4" />
-                    </button>
-                    <button className="p-1 text-gray-400 hover:text-red-600">
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </td>
+      )}
+
+      {/* Products Table */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="px-6 py-4 border-b border-gray-200">
+          <div className="flex items-center">
+            <Package className="w-5 h-5 text-gray-400 mr-2" />
+            <h2 className="text-lg font-semibold">Products</h2>
+          </div>
+        </div>
+        
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50 text-left">
+              <tr>
+                <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
+                <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
+                <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Rating</th>
+                <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {Array.isArray(products) && products.map(product => (
+                <tr key={product._id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    {product.name}
+                  </td>
+                  <td className="px-6 py-4 text-gray-700">{product.price}</td>
+                  <td className="px-6 py-4 text-gray-600 max-w-xs truncate" title={product.description}>
+                    {product.description}
+                  </td>
+                  <td className="px-6 py-4">
+                    <img 
+                      className="w-16 h-16 object-cover rounded-lg" 
+                      src={product.image} 
+                      alt={product.name}
+                      loading="lazy"
+                    />
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                      product.inStock 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-red-100 text-red-800'
+                    }`}>
+                      {product.inStock ? 'In Stock' : 'Out of Stock'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center">
+                      <Star className="w-4 h-4 text-yellow-400 mr-1" />
+                      <span className="text-gray-700">{product.rating}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex space-x-2">
+                      <button 
+                        className="text-gray-400 hover:text-blue-600 p-1 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        title="View product"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                      <button 
+                        className="text-gray-400 hover:text-green-600 p-1 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
+                        title="Edit product"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button
+                        className="text-gray-400 hover:text-red-600 p-1 rounded focus:outline-none focus:ring-2 focus:ring-red-400"
+                        onClick={() => setDeleteId(product._id)}
+                        title="Delete product"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Pagination */}
+      <div className="flex justify-center items-center py-4 space-x-2">
+        <button
+          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+          disabled={page === 1}
+          className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-gray-400"
+        >
+          Previous
+        </button>
+
+        <span className="px-4 py-2 text-sm font-medium bg-blue-50 text-blue-700 rounded">
+          Page {page} of {totalPages}
+        </span>
+
+        <button
+          onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+          disabled={page === totalPages}
+          className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-gray-400"
+        >
+          Next
+        </button>
       </div>
     </div>
-  )
+  );
 }

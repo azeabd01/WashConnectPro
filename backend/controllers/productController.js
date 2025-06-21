@@ -1,12 +1,31 @@
 const Product = require('../models/productModel');
 
 // GET all
+// const getProducts = async (req, res) => {
+//   try {
+//     const products = await Product.find();
+//     res.json(products);
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// };
+// controllers/productController.js
 const getProducts = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 5;
+  const skip = (page - 1) * limit;
+
   try {
-    const products = await Product.find();
-    res.json(products);
+    const total = await Product.countDocuments();
+    const products = await Product.find().skip(skip).limit(limit);
+    res.json({
+      products,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      totalItems: total
+    });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: 'Error fetching products' });
   }
 };
 
