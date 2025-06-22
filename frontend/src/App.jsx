@@ -1,23 +1,23 @@
-import ProductDashboard from "./products/ProductDashboard"
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Layout from './products/Layout';
+import AddProduct from './products/AddProduct';
+import ProductsTable from './products/ProductsTable';
+import StatsGrid from './products/StatsGrid';
 
-function App() {
-
+export default function App() {
   return (
     <>
-      <Toaster position="buttom-right" />
+      <Toaster position="bottom-right" />
       <Router>
-   
         <Routes>
-          <Route path="/product" element={ <ProductDashboard/> } />
-        
+          <Route path="/" element={<Layout />}>
+            <Route path="/" element={<StatsGrid />} />
+            <Route path="product" element={<ProductsTable />} />
+            <Route path="addproduct" element={<AddProduct />} />
+          </Route>
         </Routes>
-    
-    </Router>
-     
+      </Router>
     </>
-  )
+  );
 }
-
-export default App

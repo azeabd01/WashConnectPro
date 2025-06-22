@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { Trash2, Eye, Edit, Star, Package, AlertCircle } from 'lucide-react';
+import { Trash2, Eye, Edit, Star, Package, AlertCircle, Filter, Plus } from 'lucide-react';
+import { Link } from 'react-router-dom';
+
 
 export default function ProductsTable() {
   const [products, setProducts] = useState([]);
@@ -13,7 +15,7 @@ export default function ProductsTable() {
   useEffect(() => {
     setLoading(true);
     setError(null);
-    
+
     fetch(`http://localhost:3000/api/products?page=${page}&limit=5`)
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch products');
@@ -37,9 +39,9 @@ export default function ProductsTable() {
       const res = await fetch(`http://localhost:3000/api/products/${deleteId}`, {
         method: 'DELETE',
       });
-      
+
       if (!res.ok) throw new Error('Delete failed');
-      
+
       setProducts(prev => prev.filter(p => p._id !== deleteId));
       toast.success('Deleted successfully!', { id: toastId });
     } catch (err) {
@@ -71,7 +73,7 @@ export default function ProductsTable() {
     <div className="relative">
       {/* Delete Confirmation Modal */}
       {deleteId && (
-        <div 
+        <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-gray-10 bg-opacity-50"
           role="dialog"
           aria-modal="true"
@@ -103,12 +105,23 @@ export default function ProductsTable() {
       {/* Products Table */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="px-6 py-4 border-b border-gray-200">
-          <div className="flex items-center">
-            <Package className="w-5 h-5 text-gray-400 mr-2" />
-            <h2 className="text-lg font-semibold">Products</h2>
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-medium text-gray-900">Products</h3>
+            <div className="flex items-center space-x-3">
+              <button className="flex items-center px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50">
+                <Filter className="w-4 h-4 mr-2" />
+                Filter
+              </button>
+              <button  className="flex items-center px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700">
+                <Plus className="w-4 h-4 mr-2" />
+                <Link to="/addproduct" >
+                  Add Product</Link>
+              
+              </button>
+            </div>
           </div>
         </div>
-        
+
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 text-left">
@@ -118,6 +131,7 @@ export default function ProductsTable() {
                 <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
                 <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
                 <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
+                <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider"> In Stock</th>
                 <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Rating</th>
                 <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
@@ -133,19 +147,20 @@ export default function ProductsTable() {
                     {product.description}
                   </td>
                   <td className="px-6 py-4">
-                    <img 
-                      className="w-16 h-16 object-cover rounded-lg" 
-                      src={product.image} 
+                    <img
+                      className="w-16 h-16 object-cover rounded-lg"
+                      src={product.image}
                       alt={product.name}
                       loading="lazy"
                     />
                   </td>
+                  <td className="px-6 py-4 text-gray-700">{product.stock}</td>
+
                   <td className="px-6 py-4">
-                    <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                      product.inStock 
-                        ? 'bg-green-100 text-green-800' 
+                    <span className={`px-2 py-1 text-xs font-semibold rounded-full ${product.inStock
+                        ? 'bg-green-100 text-green-800'
                         : 'bg-red-100 text-red-800'
-                    }`}>
+                      }`}>
                       {product.inStock ? 'In Stock' : 'Out of Stock'}
                     </span>
                   </td>
@@ -157,13 +172,13 @@ export default function ProductsTable() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex space-x-2">
-                      <button 
+                      <button
                         className="text-gray-400 hover:text-blue-600 p-1 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
                         title="View product"
                       >
                         <Eye className="w-4 h-4" />
                       </button>
-                      <button 
+                      <button
                         className="text-gray-400 hover:text-green-600 p-1 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
                         title="Edit product"
                       >
