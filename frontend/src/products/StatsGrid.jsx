@@ -1,22 +1,9 @@
 import { 
-  BarChart3, 
   Package, 
   Users, 
-  TrendingUp, 
-  Settings, 
-  Bell, 
-  Search,
-  Plus,
-  Filter,
-  MoreHorizontal,
-  Eye,
-  Edit,
-  Trash2,
   ShoppingCart,
   DollarSign,
-  Star,
-  Menu,
-  X
+  
 } from 'lucide-react';
 
 export default function StatsGrid() {

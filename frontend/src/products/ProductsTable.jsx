@@ -12,6 +12,10 @@ export default function ProductsTable() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
+  const [searchTerm, setSearchTerm] = useState('');
+  const [stockFilter, setStockFilter] = useState('all'); // all, inStock, outOfStock
+
+
   useEffect(() => {
     setLoading(true);
     setError(null);
@@ -69,6 +73,18 @@ export default function ProductsTable() {
     );
   }
 
+  const filteredProducts = products.filter(product => {
+    const matchName = product.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchStock =
+      stockFilter === 'all'
+        ? true
+        : stockFilter === 'inStock'
+          ? product.inStock === true
+          : product.inStock === false;
+
+    return matchName && matchStock;
+  });
+
   return (
     <div className="relative">
       {/* Delete Confirmation Modal */}
@@ -108,15 +124,31 @@ export default function ProductsTable() {
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-medium text-gray-900">Products</h3>
             <div className="flex items-center space-x-3">
-              <button className="flex items-center px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50">
-                <Filter className="w-4 h-4 mr-2" />
-                Filter
-              </button>
-              <button  className="flex items-center px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700">
+              {/* <div className="flex flex-wrap gap-4 mb-4 items-center"> */}
+                <input
+                  type="text"
+                  placeholder="Search by name"
+                  className="border px-3 py-1 rounded w-60"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <select
+                  className="flex items-center px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
+                  value={stockFilter}
+                  onChange={(e) => setStockFilter(e.target.value)}
+                >
+                  <option  value="all">All Stock</option>
+                  <option value="inStock">In Stock</option>
+                  <option value="outOfStock">Out of Stock</option>
+                </select>
+              {/* </div> */}
+
+            
+              <button className="flex items-center px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700">
                 <Plus className="w-4 h-4 mr-2" />
                 <Link to="/addproduct" >
                   Add Product</Link>
-              
+
               </button>
             </div>
           </div>
@@ -128,8 +160,6 @@ export default function ProductsTable() {
               <tr>
                 <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
                 <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
                 <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
                 <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider"> In Stock</th>
                 <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Rating</th>
@@ -137,29 +167,20 @@ export default function ProductsTable() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {Array.isArray(products) && products.map(product => (
+              {filteredProducts.map(product => (
                 <tr key={product._id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 font-medium text-gray-900">
                     {product.name}
                   </td>
                   <td className="px-6 py-4 text-gray-700">{product.price}</td>
-                  <td className="px-6 py-4 text-gray-600 max-w-xs truncate" title={product.description}>
-                    {product.description}
-                  </td>
-                  <td className="px-6 py-4">
-                    <img
-                      className="w-16 h-16 object-cover rounded-lg"
-                      src={product.image}
-                      alt={product.name}
-                      loading="lazy"
-                    />
-                  </td>
+                 
+                 
                   <td className="px-6 py-4 text-gray-700">{product.stock}</td>
 
                   <td className="px-6 py-4">
                     <span className={`px-2 py-1 text-xs font-semibold rounded-full ${product.inStock
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-red-100 text-red-800'
                       }`}>
                       {product.inStock ? 'In Stock' : 'Out of Stock'}
                     </span>
@@ -176,13 +197,17 @@ export default function ProductsTable() {
                         className="text-gray-400 hover:text-blue-600 p-1 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
                         title="View product"
                       >
-                        <Eye className="w-4 h-4" />
+                        <Link to={`/product/${product._id}`} className="text-gray-400 hover:text-blue-600 p-1">
+                          <Eye className="w-4 h-4" />
+                        </Link>
                       </button>
                       <button
                         className="text-gray-400 hover:text-green-600 p-1 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
                         title="Edit product"
                       >
-                        <Edit className="w-4 h-4" />
+                        <Link to={`/editproduct/${product._id}`}>
+                          <Edit className="w-4 h-4" />
+                        </Link>
                       </button>
                       <button
                         className="text-gray-400 hover:text-red-600 p-1 rounded focus:outline-none focus:ring-2 focus:ring-red-400"
@@ -197,6 +222,18 @@ export default function ProductsTable() {
               ))}
             </tbody>
           </table>
+         <div className="flex justify-end mb-4 mr-2">
+  <button
+    onClick={() => {
+      setSearchTerm('');
+      setStockFilter('all');
+    }}
+    className="flex items-center px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700"
+  >
+    Reset Filters
+  </button>
+</div>
+
         </div>
       </div>
 
