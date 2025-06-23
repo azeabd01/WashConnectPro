@@ -1,11 +1,11 @@
 
-import { 
-  BarChart3, 
-  Package, 
-  Users, 
-  TrendingUp, 
-  Settings, 
-  Bell, 
+import {
+  BarChart3,
+  Package,
+  Users,
+  TrendingUp,
+  Settings,
+  Bell,
   Search,
   Plus,
   Filter,
@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 export default function ProductsTable() {
-   const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     fetch('http://localhost:3000/api/products')
@@ -38,7 +38,7 @@ export default function ProductsTable() {
         setLoading(false);
       });
   }, []);
-    if (loading) return <p>Loading products...</p>;
+  if (loading) return <p>Loading products...</p>;
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200">
       <div className="px-6 py-4 border-b border-gray-200">
@@ -56,7 +56,7 @@ export default function ProductsTable() {
           </div>
         </div>
       </div>
-      
+
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead className="bg-gray-50">
@@ -84,11 +84,10 @@ export default function ProductsTable() {
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{product.price}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.inStock}</td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                    product.status === 'Active' 
-                      ? 'bg-green-100 text-green-800' 
+                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${product.status === 'Active'
+                      ? 'bg-green-100 text-green-800'
                       : 'bg-red-100 text-red-800'
-                  }`}>
+                    }`}>
                     {product.status}
                   </span>
                 </td>

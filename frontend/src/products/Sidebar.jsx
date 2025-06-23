@@ -1,35 +1,35 @@
-import  { useState } from 'react';
-import { 
-  BarChart3, 
-  Package, 
-  Users, 
-  TrendingUp, 
-  Settings, 
-  Bell, 
-  Search,
-  Plus,
-  Filter,
-  MoreHorizontal,
-  Eye,
-  Edit,
-  Trash2,
-  ShoppingCart,
-  DollarSign,
-  Star,
-  Menu,
-  X
+import { useState } from 'react';
+import {
+    BarChart3,
+    Package,
+    Users,
+    TrendingUp,
+    Settings,
+    Bell,
+    Search,
+    Plus,
+    Filter,
+    MoreHorizontal,
+    Eye,
+    Edit,
+    Trash2,
+    ShoppingCart,
+    DollarSign,
+    Star,
+    Menu,
+    X
 } from 'lucide-react';
 
 export default function Sidebar() {
-     const sidebarItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
-    { id: 'products', label: 'Products', icon: Package },
-    { id: 'customers', label: 'Customers', icon: Users },
-    { id: 'analytics', label: 'Analytics', icon: TrendingUp },
-    { id: 'settings', label: 'Settings', icon: Settings },
-  ];
-   const [sidebarOpen, setSidebarOpen] = useState(false);
-      const [activeTab, setActiveTab] = useState('products');
+    const sidebarItems = [
+        { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
+        { id: 'products', label: 'Products', icon: Package },
+        { id: 'customers', label: 'Customers', icon: Users },
+        { id: 'analytics', label: 'Analytics', icon: TrendingUp },
+        { id: 'settings', label: 'Settings', icon: Settings },
+    ];
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [activeTab, setActiveTab] = useState('products');
     return (
         <>
 

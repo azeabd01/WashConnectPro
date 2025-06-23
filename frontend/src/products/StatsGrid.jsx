@@ -1,10 +1,10 @@
-import { 
-  BarChart3, 
-  Package, 
-  Users, 
-  TrendingUp, 
-  Settings, 
-  Bell, 
+import {
+  BarChart3,
+  Package,
+  Users,
+  TrendingUp,
+  Settings,
+  Bell,
   Search,
   Plus,
   Filter,
@@ -20,14 +20,14 @@ import {
 } from 'lucide-react';
 
 export default function StatsGrid() {
-     const stats = [
+  const stats = [
     { label: 'Total Products', value: '1,234', change: '+12%', icon: Package, color: 'bg-blue-500' },
     { label: 'Total Revenue', value: '$45.2K', change: '+8%', icon: DollarSign, color: 'bg-green-500' },
     { label: 'Orders', value: '892', change: '+23%', icon: ShoppingCart, color: 'bg-purple-500' },
     { label: 'Customers', value: '2,341', change: '+5%', icon: Users, color: 'bg-orange-500' },
   ];
   return (
-     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
       {stats.map((stat, index) => {
         const Icon = stat.icon;
         return (
