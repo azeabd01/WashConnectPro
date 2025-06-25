@@ -13,14 +13,14 @@ export default function Sidebar() {
       const [sidebarOpen, setSidebarOpen] = useState(false);
     const [activeTab, setActiveTab] = useState('products');
 
-    const sidebarItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: BarChart3, path: '/' },
-    { id: 'products', label: 'Products', icon: Package, path: '/product' },
-    { id: 'addproduct', label: 'Add Product', icon: Plus, path: '/addproduct' },
-    { id: 'customers', label: 'Customers', icon: Users, path: '/customers' },
-    { id: 'analytics', label: 'Analytics', icon: TrendingUp, path: '/analytics' },
-    { id: 'settings', label: 'Settings', icon: Settings, path: '/settings' },
-  ];
+  const sidebarItems = [
+  { id: 'dashboard', label: 'Dashboard', icon: BarChart3, path: '/dashboard/product' },             // ✅ index route
+  { id: 'products', label: 'Products', icon: Package, path: '/dashboard/product/product' },         // ✅ sub route
+  { id: 'addproduct', label: 'Add Product', icon: Plus, path: '/dashboard/product/addproduct' },
+  { id: 'customers', label: 'Customers', icon: Users, path: '/dashboard/product/customers' },
+  { id: 'analytics', label: 'Analytics', icon: TrendingUp, path: '/dashboard/product/analytics' },
+  { id: 'settings', label: 'Settings', icon: Settings, path: '/dashboard/product/settings' },
+];
 
   const handleNavClick = (item) => {
     setActiveTab(item.id);

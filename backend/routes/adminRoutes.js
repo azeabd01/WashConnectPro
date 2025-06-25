@@ -1,17 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const adminController = require('../controllers/adminController');
+const { getAllUsers } = require('../controllers/adminController');
 
 // Route: GET all users
-router.get('/users', adminController.getAllUsers);
+router.get('/users', getAllUsers);
 
 // Route: GET all pending providers
-router.get('/providers/pending', adminController.getPendingProviders);
+// router.get('/providers/pending', adminController.getPendingProviders);
 
-// Route: PATCH approve provider
-router.patch('/providers/approve/:id', adminController.approveProvider);
+// // Route: PATCH approve provider
+// router.patch('/providers/approve/:id', adminController.approveProvider);
 
 // Route: GET dashboard stats
-router.get('/stats', adminController.getDashboardStats);
+// router.get('/stats', adminController.getDashboardStats);
 
 module.exports = router;

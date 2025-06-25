@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import toast from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import { Trash2, Eye, Edit, Star, Package, AlertCircle, Filter, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -87,6 +87,7 @@ export default function ProductsTable() {
 
   return (
     <div className="relative">
+       <Toaster position="bottom-right" />
       {/* Delete Confirmation Modal */}
       {deleteId && (
         <div

@@ -26,7 +26,7 @@
 import { useEffect, useState } from 'react';
 import { Check, Users, BarChart3 } from 'lucide-react';
 
-export default function Dashboard() {
+export default function DashboardAdmin() {
   const [users, setUsers] = useState([]);
   const [pendingProviders, setPendingProviders] = useState([]);
 

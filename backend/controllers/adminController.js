@@ -30,3 +30,4 @@ exports.approveProvider = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
+// module.exports = { getAllUsers };
