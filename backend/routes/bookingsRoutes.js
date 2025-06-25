@@ -1,17 +1,17 @@
 const express = require('express');
 const auth = require('../middlewares/authMiddleware');
 const {
-    createBooking,
     getBookings,
+    getBookingById,
     updateBookingStatus,
-    getBookingStats
+    createBooking
 } = require('../controllers/bookingController');
 
 const router = express.Router();
 
-router.post('/', createBooking);
-router.get('/', getBookings);
-router.patch('/:id/status', updateBookingStatus);
-router.get('/stats', getBookingStats);
+router.get('/', auth, getBookings);
+router.post('/', auth, createBooking);
+router.get('/:id', auth, getBookingById);
+router.patch('/:id/status', auth, updateBookingStatus);
 
 module.exports = router;

@@ -6,20 +6,47 @@ import BookingsTab from './pages/dashboard/BookingsTab';
 import AnalyticsTab from './pages/dashboard/AnalyticsTab';
 import SettingsTab from './pages/dashboard/SettingsTab';
 import CarWashHomePage from './pages/CarWashHomePage';
-import AuthPage from './pages/AuthPage';
 import AdminDashboard from './pages/AdminDashboard';
+import AuthPage from './pages/AuthPage';
+import LoginPage from './components/Auth/LoginPage';
+import RegisterPage from './components/Auth/RegisterPage';
+import ProfileSelection from './components/Auth/ChoseProfile';
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 function App() {
   return (
     <Router>
       <Routes>
+        {/* Page d'accueil */}
         <Route path="/" element={<CarWashHomePage />} />
-        <Route path="/auth" element={<AuthPage />} />
+
+        {/* ✅ Routes d'authentification principales */}
+        <Route path="/choose-profile" element={<ProfileSelection />} />
+        
+        {/* ✅ Routes de login spécifiques pour chaque profil */}
+        <Route path="/auth/login/prestataire" element={<LoginPage />} />
+        <Route path="/auth/login/client" element={<LoginPage />} />
+        <Route path="/auth/login/fournisseur" element={<LoginPage />} />
+        
+        {/* ✅ Route de login générale (peut rediriger vers le choix) */}
+        <Route path="/auth/login" element={<LoginPage />} />
+
+        {/* Authentification avec routes imbriquées */}
+        <Route path="/auth" element={<AuthPage />} >
+          <Route index element={<ProfileSelection />} />
+          <Route path="register/:profile" element={<RegisterPage />} />
+        </Route>
+
+        {/* ✅ Redirections propres */}
+        <Route path="/login" element={<Navigate to="/auth/login/prestataire" replace />} />
+        <Route path="/register/:profile" element={<Navigate to="/auth/register/:profile" replace />} />
+
+        {/* Dashboard Admin */}
         <Route path="/dashboard/admin" element={<AdminDashboard />} />
-        <Route path="/product" element={<ProductDashboard />} />
-        <Route path="/dashboard/lavage" element={<Dashboard />}>
+
+        {/* Dashboard Prestataire */}
+        <Route path="/dashboard/prestataire" element={<Dashboard />}>
           <Route index element={<OverviewTab />} />
           <Route path="overview" element={<OverviewTab />} />
           <Route path="services" element={<ServicesTab />} />
@@ -27,10 +54,21 @@ function App() {
           <Route path="analytics" element={<AnalyticsTab />} />
           <Route path="settings" element={<SettingsTab />} />
         </Route>
+
+        {/* ✅ Dashboard Client (à créer si nécessaire) */}
+        <Route path="/dashboard/client" element={<div>Dashboard Client - À créer</div>} />
+
+        {/* ✅ Dashboard Fournisseur */}
+        <Route path="/dashboard/fournisseur" element={<ProductDashboard />} />
+
+        {/* Produits (alias pour fournisseur) */}
+        <Route path="/dashboard/product" element={<ProductDashboard />} />
+
+        {/* ✅ Route 404 */}
+        <Route path="*" element={<div>Page non trouvée</div>} />
       </Routes>
     </Router>
   );
 }
 
 export default App;
-

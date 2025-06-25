@@ -1,38 +1,14 @@
 const mongoose = require('mongoose');
 
 const bookingSchema = new mongoose.Schema({
-    bookingNumber: {
-        type: String,
-        unique: true,
-        required: true
-    },
-    clientName: {
-        type: String,
-        required: true
-    },
-    clientPhone: {
-        type: String,
-        required: true
-    },
+    bookingNumber: { type: String, unique: true, required: true },
+    clientName: { type: String, required: true },
+    clientPhone: { type: String, required: true },
     clientEmail: String,
-    providerId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Provider',
-        required: true
-    },
-    serviceId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Service',
-        required: true
-    },
-    scheduledDate: {
-        type: Date,
-        required: true
-    },
-    scheduledTime: {
-        type: String,
-        required: true
-    },
+    providerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Provider', required: true },
+    serviceId: { type: mongoose.Schema.Types.ObjectId, ref: 'Service', required: true },
+    scheduledDate: { type: Date, required: true },
+    scheduledTime: { type: String, required: true },
     status: {
         type: String,
         enum: ['pending', 'confirmed', 'in-progress', 'completed', 'cancelled'],
@@ -45,10 +21,7 @@ const bookingSchema = new mongoose.Schema({
         color: String,
         licensePlate: String
     },
-    price: {
-        type: Number,
-        required: true
-    },
+    price: { type: Number, required: true },
     paymentStatus: {
         type: String,
         enum: ['pending', 'paid', 'failed', 'refunded'],
@@ -61,22 +34,15 @@ const bookingSchema = new mongoose.Schema({
     },
     notes: String,
     rating: {
-        score: {
-            type: Number,
-            min: 1,
-            max: 5
-        },
+        score: { type: Number, min: 1, max: 5 },
         comment: String,
         date: Date
     },
     completedAt: Date,
     cancelledAt: Date,
     cancellationReason: String
-}, {
-    timestamps: true
-});
+}, { timestamps: true });
 
-// Générer un numéro de réservation unique
 bookingSchema.pre('save', async function (next) {
     if (!this.bookingNumber) {
         const count = await mongoose.model('Booking').countDocuments();

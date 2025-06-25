@@ -20,7 +20,7 @@ const navigate = useNavigate();
                     <button
                         key={item.id}
                         // onClick={() => setActiveTab(item.id)}
-                        onClick={() => navigate(`/dashboard/lavage/${item.id}`)}
+                        onClick={() => navigate(`/dashboard/prestataire/${item.id}`)}
 
                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors ${activeTab === item.id
                             ? 'bg-blue-100 text-blue-700 font-medium'
@@ -37,5 +37,3 @@ const navigate = useNavigate();
 };
 
 export default Sidebar;
-
-

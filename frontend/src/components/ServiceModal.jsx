@@ -102,4 +102,3 @@ const ServiceModal = ({ service, onClose }) => {
 };
 
 export default ServiceModal;
-
