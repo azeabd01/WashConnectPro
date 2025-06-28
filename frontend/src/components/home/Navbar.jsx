@@ -43,14 +43,12 @@ export default function Navbar({ onAuthClick }) {
         let dashboardPath = '';
         
         switch (userRole) {
-            case 'provider':
-            case 'prestataire':  // Support des deux formats
-                dashboardPath = '/dashboard/prestataire';
+            case 'provider':  // Support des deux formats
+                dashboardPath = '/dashboard/provider';
                 break;
             case 'client':
                 dashboardPath = '/dashboard/client';
                 break;
-            case 'supplier':
             case 'product':  // Support des deux formats
                 dashboardPath = '/dashboard/product';
                 break;
@@ -80,11 +78,11 @@ export default function Navbar({ onAuthClick }) {
         if (isDashboard) {
             // Si on est dans un dashboard, retourner au login approprié
             const userRole = user?.role;
-            if (userRole === 'provider' || userRole === 'prestataire') {
-                navigate('/auth/login/prestataire');
+            if (userRole === 'provider' || userRole === 'provider') {
+                navigate('/auth/login/provider');
             } else if (userRole === 'client') {
                 navigate('/auth/login/client');
-            } else if (userRole === 'supplier' || userRole === 'product') {
+            } else if (userRole === 'product' || userRole === 'product') {
                 navigate('/auth/login/product');
             } else {
                 navigate('/auth/login');

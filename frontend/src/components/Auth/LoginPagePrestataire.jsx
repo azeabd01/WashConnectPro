@@ -68,13 +68,13 @@ const LoginPage = () => {
             let dashboardPath = '/dashboard';
 
             if (result.provider) {
-                userData = { ...result.provider, role: 'prestataire' };
-                dashboardPath = '/dashboard/prestataire';
+                userData = { ...result.provider, role: 'provider' };
+                dashboardPath = '/dashboard/provider';
             } else if (result.client) {
                 userData = { ...result.client, role: 'client' };
                 dashboardPath = '/dashboard/client';
-            } else if (result.supplier) {
-                userData = { ...result.supplier, role: 'fournisseur' };
+            } else if (result.product) {
+                userData = { ...result.product, role: 'product' };
                 dashboardPath = '/dashboard/product';
             } else {
                 // Par défaut (fail-safe)
@@ -112,13 +112,13 @@ const LoginPage = () => {
     };
 
     const handleRegisterRedirect = () => {
-        navigate('/auth/register/prestataire');
+        navigate('/auth/register/provider');
     };
 
     // Fonction pour tester la navigation directement
     const handleTestNavigation = () => {
         console.log('Test navigation');
-        navigate('/dashboard/prestataire');
+        navigate('/dashboard/provider');
     };
 
     return (
@@ -128,8 +128,8 @@ const LoginPage = () => {
                     <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
                         <LogIn className="w-10 h-10 text-white" />
                     </div>
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Connexion Prestataire</h1>
-                    <p className="text-gray-600">Accédez à votre espace prestataire</p>
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Connexion Provider</h1>
+                    <p className="text-gray-600">Accédez à votre espace provider</p>
                 </div>
 
                 <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
@@ -248,7 +248,7 @@ const LoginPage = () => {
                     {/* <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
                         <h4 className="text-sm font-medium text-gray-700 mb-2">🎯 Compte de démonstration :</h4>
                         <div className="text-xs text-gray-600 space-y-1">
-                            <p><strong>Email:</strong> prestataire@demo.com</p>
+                            <p><strong>Email:</strong> provider@demo.com</p>
                             <p><strong>Mot de passe:</strong> demo123</p>
                         </div>
                     </div> */}
@@ -261,7 +261,7 @@ const LoginPage = () => {
                             onClick={handleRegisterRedirect}
                             className="text-blue-600 hover:text-blue-700 font-semibold hover:underline"
                         >
-                            Créer un compte prestataire
+                            Créer un compte provider
                         </button>
                     </p>
                 </div>
@@ -270,7 +270,7 @@ const LoginPage = () => {
                 <div className="mt-8 text-center">
                     <div className="inline-flex items-center p-3 bg-green-50 rounded-lg border border-green-200">
                         <Car className="w-6 h-6 text-green-500 mr-2" />
-                        <span className="text-sm text-green-700 font-medium">Espace Prestataire</span>
+                        <span className="text-sm text-green-700 font-medium">Espace Provider</span>
                     </div>
                 </div>
             </div>

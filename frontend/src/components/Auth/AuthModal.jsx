@@ -28,18 +28,18 @@ const ProfileSelection = () => {
                         <span className="text-lg font-semibold">Client</span>
                     </button>
                     <button
-                        onClick={() => handleProfileSelect('prestataire')}
+                        onClick={() => handleProfileSelect('provider')}
                         className="flex items-center space-x-4 p-4 border rounded-lg hover:bg-green-50 transition"
                     >
                         <Wrench className="w-8 h-8 text-green-600" />
-                        <span className="text-lg font-semibold">Prestataire</span>
+                        <span className="text-lg font-semibold">Provider</span>
                     </button>
                     <button
                         onClick={() => handleProfileSelect('product')}
                         className="flex items-center space-x-4 p-4 border rounded-lg hover:bg-purple-50 transition"
                     >
                         <Package className="w-8 h-8 text-purple-600" />
-                        <span className="text-lg font-semibold">Fournisseur Produit</span>
+                        <span className="text-lg font-semibold">Product</span>
                     </button>
                 </div>
                 <div className="mt-8 text-center">

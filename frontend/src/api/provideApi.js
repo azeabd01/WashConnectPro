@@ -1,6 +1,6 @@
 // export const registerProvider = async (formData) => {
 //     try {
-//         const response = await fetch('http://localhost:3000/api/auth/register/prestataire', {
+//         const response = await fetch('http://localhost:3000/api/auth/register/provider', {
 //             method: 'POST',
 //             headers: {
 //                 'Content-Type': 'application/json',
@@ -27,7 +27,7 @@ const API_URL = "http://localhost:3000/api/auth";
 export const loginProvider = async (credentials) => {
     console.log("Tentative de connexion prestataire avec:", credentials);
 
-    const response = await fetch(`${API_URL}/login/prestataire`, {
+    const response = await fetch(`${API_URL}/login/provider`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -60,7 +60,7 @@ export const loginProvider = async (credentials) => {
 export const registerProvider = async (providerData) => {
     console.log("Tentative d'inscription prestataire avec:", providerData);
 
-    const response = await fetch(`${API_URL}/register/prestataire`, {
+    const response = await fetch(`${API_URL}/register/provider`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

@@ -73,9 +73,9 @@ const loginProductPage = () => {
             } else if (result.client) {
                 userData = { ...result.client, role: 'client' };
                 dashboardPath = '/dashboard/client';
-            } else if (result.supplier) {
-                userData = { ...result.supplier, role: 'product' };
-                dashboardPath = '/dashboard/product';
+            } else if (result.provider) {
+                userData = { ...result.provider, role: 'provider' };
+                dashboardPath = '/dashboard/provider';
             } else {
                 // Par défaut (fail-safe)
                 throw new Error('Type d\'utilisateur non reconnu');

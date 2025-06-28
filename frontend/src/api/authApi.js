@@ -52,11 +52,11 @@
 //     });
 // };
 
-// // Registration Fournisseur
-// export const registerFournisseur = async (fournisseurData) => {
-//     return await apiRequest('/auth/register/fournisseur', {
+// // Registration product
+// export const registerproduct = async (productData) => {
+//     return await apiRequest('/auth/register/product', {
 //         method: 'POST',
-//         body: JSON.stringify(fournisseurData),
+//         body: JSON.stringify(productData),
 //     });
 // };
 

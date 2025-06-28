@@ -25,8 +25,8 @@ const ProfileSelector = () => {
             borderColor: 'border-blue-200 hover:border-blue-400'
         },
         {
-            id: 'prestataire',
-            title: 'PRESTATAIRE',
+            id: 'provider',
+            title: 'Provider',
             subtitle: 'Service de Lavage',
             description: 'Proposez vos services de lavage et développez votre activité',
             icon: Car,
@@ -45,7 +45,7 @@ const ProfileSelector = () => {
             id: 'product',
             title: 'PRODUCT',
             subtitle: 'Produits & Équipements',
-            description: 'Vendez vos produits aux prestataires de lavage automobile',
+            description: 'Vendez vos produits aux provider de lavage automobile',
             icon: Package,
             features: [
                 'Catalogue de produits',

@@ -18,7 +18,7 @@ export default function HeroSection() {
 
                         <p className="text-xl text-gray-600 mb-8 leading-relaxed">
                             Réservez un lavage professionnel <strong> pour votre voiture</strong>.
-                            Notre plateforme 100% digitalisée connecte clients, centres de lavage et fournisseurs.
+                            Notre plateforme 100% digitalisée connecte clients, centres de lavage et product.
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 mb-12">

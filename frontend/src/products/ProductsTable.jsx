@@ -87,7 +87,7 @@ export default function ProductsTable() {
 
   return (
     <div className="relative">
-       <Toaster position="bottom-right" />
+      <Toaster position="bottom-right" />
       {/* Delete Confirmation Modal */}
       {deleteId && (
         <div
@@ -174,8 +174,8 @@ export default function ProductsTable() {
                     {product.name}
                   </td>
                   <td className="px-6 py-4 text-gray-700">{product.price}</td>
-                 
-                 
+                
+                
                   <td className="px-6 py-4 text-gray-700">{product.stock}</td>
 
                   <td className="px-6 py-4">
@@ -223,7 +223,7 @@ export default function ProductsTable() {
               ))}
             </tbody>
           </table>
-         <div className="flex justify-end mb-4 mr-2">
+        <div className="flex justify-end mb-4 mr-2">
   <button
     onClick={() => {
       setSearchTerm('');

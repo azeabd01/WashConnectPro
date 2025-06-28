@@ -5,8 +5,8 @@ const authMiddlewareProvider = require('../../middlewares/authMiddlewareProvider
 
 const router = express.Router();
 
-// ✅ Inscription prestataire
-router.post('/register/prestataire', [
+// ✅ Inscription provider
+router.post('/register/provider', [
     body('name').trim().isLength({ min: 2 }).withMessage('Le nom doit contenir au moins 2 caractères'),
     body('email').isEmail().withMessage('Email invalide'),
     body('password').isLength({ min: 6 }).withMessage('Le mot de passe doit contenir au moins 6 caractères'),
@@ -14,13 +14,13 @@ router.post('/register/prestataire', [
     body('phone').isMobilePhone().withMessage('Numéro de téléphone invalide')
 ], providerController.registerprovider);
 
-// ✅ Connexion prestataire (sans validation du rôle)
-router.post('/login/prestataire', [
+// ✅ Connexion provider (sans validation du rôle)
+router.post('/login/provider', [
     body('email').isEmail().withMessage('Email invalide'),
     body('password').exists().withMessage('Mot de passe requis')
 ], providerController.loginprovider);
 
-// ✅ Profil prestataire
+// ✅ Profil provider
 router.get('/me', authMiddlewareProvider, providerController.getMeprovider);
 
 module.exports = router;

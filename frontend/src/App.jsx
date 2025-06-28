@@ -44,12 +44,12 @@ function App() {
 
       
         {/* ✅ Redirections propres */}
-        <Route path="/login" element={<Navigate to="/auth/login/prestataire" replace />} />
+        <Route path="/login" element={<Navigate to="/auth/login/provider" replace />} />
         <Route path="/register/:profile" element={<Navigate to="/auth/register/:profile" replace />} />
 
 
         {/* ✅ Routes de login spécifiques pour chaque profil */}
-        <Route path="/auth/login/prestataire" element={<LoginPagePrestataire />} />
+        <Route path="/auth/login/provider" element={<LoginPagePrestataire />} />
         {/* <Route path="/auth/login/client" element={<LoginPage />} /> */}
         <Route path="/auth/login/product" element={<LoginPageProduct />} />
 
@@ -58,7 +58,7 @@ function App() {
 
 
           {/* Dashboard Prestataire */}
-        <Route path="/dashboard/prestataire" element={<Dashboard />}>
+        <Route path="/dashboard/provider" element={<Dashboard />}>
           <Route index element={<OverviewTab />} />
           <Route path="overview" element={<OverviewTab />} />
           <Route path="services" element={<ServicesTab />} />
