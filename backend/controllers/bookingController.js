@@ -7,7 +7,7 @@ const moment = require('moment');
 exports.getBookings = async (req, res) => {
     try {
         // Ici on prend les filtres depuis req.body (au lieu de req.query)
-        const { status, date, limit = 50 } = req.body;
+        const { status, date, limit = 50 } = req.body || {};
 
         let query = { providerId: req.provider.id };
 

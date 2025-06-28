@@ -54,23 +54,23 @@ export const registerProduct = async (supplierData) => {
     return response.json();
 };
 
-// // ✅ Récupération du profil product
-// export const getproductProfile = async (token) => {
-//     const response = await fetch(`${API_URL}/profile/product`, {
-//         method: "GET",
-//         headers: {
-//             "Content-Type": "application/json",
-//             "Authorization": `Bearer ${token}`
-//         },
-//     });
+// ✅ Récupération du profil product
+export const getproductProfile = async (token) => {
+    const response = await fetch(`${API_URL}/profile/product`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+    });
 
-//     if (!response.ok) {
-//         const error = await response.json();
-//         throw new Error(error.message || "Erreur lors de la récupération du profil");
-//     }
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Erreur lors de la récupération du profil");
+    }
 
-//     return response.json();
-// };
+    return response.json();
+};
 
 // // ✅ Mise à jour du profil product
 // export const updateproductProfile = async (token, profileData) => {

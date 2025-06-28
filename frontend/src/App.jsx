@@ -80,7 +80,7 @@ function App() {
         {/* ✅ Dashboard Client (à créer si nécessaire) */}
         <Route path="/dashboard/client" element={<div>Dashboard Client - À créer</div>} />
 
-        {/* Produits (alias pour fournisseur) */}
+        {/* Produits (alias pour product) */}
         <Route path="/dashboard/product" element={<Layout />}>
           <Route index element={<StatsGrid />} />                      {/* Default page */}
           <Route path="product" element={<ProductsTable />} />
@@ -89,7 +89,7 @@ function App() {
           <Route path="product/:id" element={<ShowProduct />} />
           {/* Add more nested routes here if needed */}
         </Route>
-
+        
         {/* ✅ Route 404 */}
         <Route path="*" element={<div>Page non trouvée</div>} />
       </Routes>
