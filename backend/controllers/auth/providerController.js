@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 const Provider = require('../../models/Provider');
 
-exports.register = async (req, res) => {
+exports.registerprovider = async (req, res) => {
     // Validation
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
@@ -14,6 +14,7 @@ exports.register = async (req, res) => {
         let provider = await Provider.findOne({ email });
         if (provider) return res.status(400).json({ message: 'Ce prestataire existe déjà' });
 
+        // Hachage du mot de passe
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -41,6 +42,8 @@ exports.register = async (req, res) => {
         await provider.save();
 
         const payload = { providerId: provider.id, role: 'provider' };
+
+        // Générer le token
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
 
         res.status(201).json({
@@ -63,7 +66,7 @@ exports.register = async (req, res) => {
 };
 
 // ✅ CORRECTION PRINCIPALE : Login spécifique aux providers
-exports.login = async (req, res) => {
+exports.loginprovider = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
@@ -78,6 +81,8 @@ exports.login = async (req, res) => {
         if (!isMatch) return res.status(400).json({ message: 'Identifiants incorrects' });
 
         const payload = { providerId: provider.id, role: 'provider' };
+
+        // Générer le token
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
 
         res.json({
@@ -98,7 +103,8 @@ exports.login = async (req, res) => {
     }
 };
 
-exports.getMe = async (req, res) => {
+// ✅ RÉCUPÉRER PROFIL Provider
+exports.getMeprovider = async (req, res) => {
     try {
         res.json({
             provider: {

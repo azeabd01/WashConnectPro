@@ -42,8 +42,8 @@ const ProfileSelector = () => {
             borderColor: 'border-green-200 hover:border-green-400'
         },
         {
-            id: 'fournisseur',
-            title: 'FOURNISSEUR',
+            id: 'product',
+            title: 'PRODUCT',
             subtitle: 'Produits & Équipements',
             description: 'Vendez vos produits aux prestataires de lavage automobile',
             icon: Package,
@@ -92,7 +92,7 @@ const ProfileSelector = () => {
                             >
                                 {/* Background gradient overlay */}
                                 <div className={`absolute inset-0 bg-gradient-to-br ${profile.color} opacity-0 
-                  group-hover:opacity-5 transition-opacity duration-300`}></div>
+                group-hover:opacity-5 transition-opacity duration-300`}></div>
 
                                 <div className="relative p-8">
                                     {/* Icon */}
@@ -132,27 +132,36 @@ const ProfileSelector = () => {
                                         S'inscrire comme {profile.title.toLowerCase()}
                                         <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                                     </button>
+                                    <br />
+                                    {/* <br /> */}
+                                    {/* Footer Info */}
+                                    <div className="text-center">
+                                        <p className="text-gray-500 mb-4">
+                                            Vous avez déjà un compte ?
+                                            <button
+                                                className="text-blue-600 hover:text-blue-700 font-semibold ml-2 underline"
+                                                // onClick={() => navigate('/auth/login')}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    navigate(`/auth/login/${profile.id}`);
+                                                }}
+                                            >
+                                                Se connecter
+                                            </button>
+                                        </p>
+                                        <p className="text-sm text-gray-400">
+                                            Inscription gratuite • Aucun engagement • Support 24/7
+                                        </p>
+                                    </div>
+
+
                                 </div>
                             </div>
                         );
                     })}
                 </div>
 
-                {/* Footer Info */}
-                <div className="text-center">
-                    <p className="text-gray-500 mb-4">
-                        Vous avez déjà un compte ?
-                        <button
-                            className="text-blue-600 hover:text-blue-700 font-semibold ml-2 underline"
-                            onClick={() => navigate('/auth/login')}
-                        >
-                            Se connecter
-                        </button>
-                    </p>
-                    <p className="text-sm text-gray-400">
-                        Inscription gratuite • Aucun engagement • Support 24/7
-                    </p>
-                </div>
+
             </div>
         </div>
     );

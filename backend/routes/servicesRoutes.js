@@ -1,5 +1,5 @@
 const express = require('express');
-const auth = require('../middlewares/authMiddleware');
+const auth = require('../middlewares/authMiddlewareProvider');
 const serviceValidation = require('../validations/service.validation');
 
 const {

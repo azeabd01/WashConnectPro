@@ -14,10 +14,10 @@ const bookingsRoutes = require('./routes/bookingsRoutes');
 const analyticsRoutes = require('./routes/analyticsRoutes');
 
 const providerRoutes = require('./routes/auth/providerRoutes');
-const clientRoutes = require('./routes/auth/clientRoutes');
+// const clientRoutes = require('./routes/auth/clientRoutes');
 const prodRout = require('./routes/auth/productRoutes');
 
-const productRoutes = require('./routes/productsRoutes');
+const productRoutes = require('./routes/auth/productRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
@@ -37,7 +37,7 @@ app.use('/api/bookings', bookingsRoutes);
 app.use('/api/analytics', analyticsRoutes);
 
 app.use('/api/auth', providerRoutes);
-app.use('/api/auth', clientRoutes);
+// app.use('/api/auth', clientRoutes);
 app.use('/api/auth', prodRout);
 
 app.use('/api/products', productRoutes);

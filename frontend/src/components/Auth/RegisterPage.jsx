@@ -3,7 +3,7 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ClientRegistrationForm from './ClientRegistrationForm.jsx';
 import ProviderRegistrationForm from './ProviderRegistrationForm.jsx';
-import SupplierRegistrationForm from './SupplierRegistrationForm.jsx';
+import ProductRegistrationForm from '../Auth/ProductRegistrationForm.jsx';
 
 const RegisterPage = () => {
     const { profile } = useParams();
@@ -19,8 +19,8 @@ const RegisterPage = () => {
                 return <ClientRegistrationForm onBack={handleBack} />;
             case 'prestataire':
                 return <ProviderRegistrationForm onBack={handleBack} />;
-            case 'fournisseur':
-                return <SupplierRegistrationForm onBack={handleBack} />;
+            case 'product':
+                return <ProductRegistrationForm onBack={handleBack} />;
             default:
                 return (
                     <div className="text-center mt-20">

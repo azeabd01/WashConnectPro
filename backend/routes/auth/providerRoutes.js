@@ -1,7 +1,7 @@
 const express = require('express');
 const { body } = require('express-validator');
 const providerController = require('../../controllers/auth/providerController');
-const auth = require('../../middlewares/authMiddleware');
+const authMiddlewareProvider = require('../../middlewares/authMiddlewareProvider');
 
 const router = express.Router();
 
@@ -12,15 +12,15 @@ router.post('/register/prestataire', [
     body('password').isLength({ min: 6 }).withMessage('Le mot de passe doit contenir au moins 6 caractères'),
     body('businessName').trim().isLength({ min: 2 }).withMessage('Le nom de l\'entreprise doit contenir au moins 2 caractères'),
     body('phone').isMobilePhone().withMessage('Numéro de téléphone invalide')
-], providerController.register);
+], providerController.registerprovider);
 
 // ✅ Connexion prestataire (sans validation du rôle)
 router.post('/login/prestataire', [
     body('email').isEmail().withMessage('Email invalide'),
     body('password').exists().withMessage('Mot de passe requis')
-], providerController.login);
+], providerController.loginprovider);
 
 // ✅ Profil prestataire
-router.get('/me', auth, providerController.getMe);
+router.get('/me', authMiddlewareProvider, providerController.getMeprovider);
 
 module.exports = router;

@@ -1,4 +1,4 @@
-import ProductDashboard from "./products/ProductDashboard";
+// import ProductDashboard from "./products/ProductDashboard";
 import Dashboard from './pages/Dashboard';
 import OverviewTab from './pages/dashboard/OverviewTab';
 import ServicesTab from './pages/dashboard/ServivesTab';
@@ -8,7 +8,8 @@ import SettingsTab from './pages/dashboard/SettingsTab';
 import CarWashHomePage from './pages/CarWashHomePage';
 import AuthPage from './pages/AuthPage';
 
-import LoginPage from './components/Auth/LoginPage';
+import LoginPagePrestataire from './components/Auth/LoginPagePrestataire';
+import LoginPageProduct from './components/Auth/LoginPageProduct';
 import RegisterPage from './components/Auth/RegisterPage';
 import ProfileSelection from './components/Auth/ChoseProfile';
 
@@ -35,33 +36,28 @@ function App() {
         {/* ✅ Routes d'authentification principales */}
         <Route path="/choose-profile" element={<ProfileSelection />} />
 
-        {/* ✅ Routes de login spécifiques pour chaque profil */}
-        <Route path="/auth/login/prestataire" element={<LoginPage />} />
-        <Route path="/auth/login/client" element={<LoginPage />} />
-        <Route path="/auth/login/fournisseur" element={<LoginPage />} />
-
-        {/* ✅ Route de login générale (peut rediriger vers le choix) */}
-        <Route path="/auth/login" element={<LoginPage />} />
-
-        {/* Authentification avec routes imbriquées */}
+          {/* Authentification avec routes imbriquées */}
         <Route path="/auth" element={<AuthPage />} >
           <Route index element={<ProfileSelection />} />
           <Route path="register/:profile" element={<RegisterPage />} />
         </Route>
 
+      
         {/* ✅ Redirections propres */}
         <Route path="/login" element={<Navigate to="/auth/login/prestataire" replace />} />
         <Route path="/register/:profile" element={<Navigate to="/auth/register/:profile" replace />} />
 
-        {/* Dashboard Admin */}
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<DashboardAdmin />} />
-          <Route path="users" element={<AllUsers />} />
-          {/* <Route path="providers" element={<Providers />} />
-          <Route path="products" element={<Products />} /> */}
-        </Route>
 
-        {/* Dashboard Prestataire */}
+        {/* ✅ Routes de login spécifiques pour chaque profil */}
+        <Route path="/auth/login/prestataire" element={<LoginPagePrestataire />} />
+        {/* <Route path="/auth/login/client" element={<LoginPage />} /> */}
+        <Route path="/auth/login/product" element={<LoginPageProduct />} />
+
+        {/* ✅ Route de login générale (peut rediriger vers le choix) */}
+        <Route path="/auth/login" element={<LoginPagePrestataire />} />
+
+
+          {/* Dashboard Prestataire */}
         <Route path="/dashboard/prestataire" element={<Dashboard />}>
           <Route index element={<OverviewTab />} />
           <Route path="overview" element={<OverviewTab />} />
@@ -71,11 +67,18 @@ function App() {
           <Route path="settings" element={<SettingsTab />} />
         </Route>
 
+
+        {/* Dashboard Admin */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<DashboardAdmin />} />
+          <Route path="users" element={<AllUsers />} />
+          {/* <Route path="providers" element={<Providers />} />
+          <Route path="products" element={<Products />} /> */}
+        </Route>
+
+      
         {/* ✅ Dashboard Client (à créer si nécessaire) */}
         <Route path="/dashboard/client" element={<div>Dashboard Client - À créer</div>} />
-
-        {/* ✅ Dashboard Fournisseur */}
-        <Route path="/dashboard/fournisseur" element={<ProductDashboard />} />
 
         {/* Produits (alias pour fournisseur) */}
         <Route path="/dashboard/product" element={<Layout />}>

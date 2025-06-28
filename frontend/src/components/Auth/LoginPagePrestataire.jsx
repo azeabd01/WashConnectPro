@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, User, Car, Package, AlertCircle, CheckCircle, LogIn } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, Car, AlertCircle, CheckCircle, LogIn } from 'lucide-react';
 import { loginProvider } from '../../api/provideApi';
 
 const LoginPage = () => {
@@ -49,42 +49,62 @@ const LoginPage = () => {
         console.log('Form submitted'); // Debug
 
         if (!validateForm()) {
-            console.log('Validation failed:', errors);
+            // console.log('Validation failed:', errors);
             return;
         }
 
         setIsLoading(true);
         setLoginStatus(null);
-            
         try {
             const result = await loginProvider(formData);
-            console.log('Login response:', result);
+            // console.log('Login response:', result);
 
             setLoginStatus('success');
-            
             // ✅ Stockage du token et des données utilisateur
             localStorage.setItem('token', result.token);
-            
-            // ✅ Structure simplifiée pour les prestataires
-            const userData = {
-                ...result.provider,
-                role: 'provider'
-            };
-            
+
+            // Détection automatique du type d'utilisateur
+            let userData = {};
+            let dashboardPath = '/dashboard';
+
+            if (result.provider) {
+                userData = { ...result.provider, role: 'prestataire' };
+                dashboardPath = '/dashboard/prestataire';
+            } else if (result.client) {
+                userData = { ...result.client, role: 'client' };
+                dashboardPath = '/dashboard/client';
+            } else if (result.supplier) {
+                userData = { ...result.supplier, role: 'fournisseur' };
+                dashboardPath = '/dashboard/product';
+            } else {
+                // Par défaut (fail-safe)
+            throw new Error('Type d\'utilisateur non reconnu');
+            }
+
             localStorage.setItem('user', JSON.stringify(userData));
 
-            // ✅ Navigation avec React Router
+            // Redirection intelligente
             setTimeout(() => {
-                navigate('/dashboard/prestataire');
+                navigate(dashboardPath);
             }, 1000);
-            
+
         } catch (error) {
             console.error('Login error:', error);
             setLoginStatus('error');
-            setErrors({ general: error.message || 'Erreur lors de la connexion' });
+            // Gestion d'erreurs plus spécifique
+        let errorMessage = 'Erreur lors de la connexion';
+        if (error.response?.status === 401) {
+            errorMessage = 'Email ou mot de passe incorrect';
+        } else if (error.response?.status === 404) {
+            errorMessage = 'Aucun compte trouvé avec cet email';
+        } else if (error.message) {
+            errorMessage = error.message;
+        }
+            setErrors({ general: errorMessage});
         } finally {
             setIsLoading(false);
         }
+
     };
 
     const handleForgotPassword = () => {
@@ -138,9 +158,8 @@ const LoginPage = () => {
                                 type="email"
                                 value={formData.email}
                                 onChange={(e) => handleInputChange('email', e.target.value)}
-                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                                    errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                                }`}
+                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                    }`}
                                 placeholder="votre@email.com"
                                 disabled={isLoading}
                             />
@@ -162,9 +181,8 @@ const LoginPage = () => {
                                     type={showPassword ? 'text' : 'password'}
                                     value={formData.password}
                                     onChange={(e) => handleInputChange('password', e.target.value)}
-                                    className={`w-full px-4 py-3 pr-12 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                                        errors.password ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                                    }`}
+                                    className={`w-full px-4 py-3 pr-12 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${errors.password ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                        }`}
                                     placeholder="Votre mot de passe"
                                     disabled={isLoading}
                                 />
@@ -199,11 +217,10 @@ const LoginPage = () => {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className={`w-full py-3 px-4 rounded-lg font-semibold text-white transition-all duration-200 flex items-center justify-center ${
-                                isLoading
-                                    ? 'bg-gray-400 cursor-not-allowed'
-                                    : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 hover:shadow-lg transform hover:scale-105'
-                            }`}
+                            className={`w-full py-3 px-4 rounded-lg font-semibold text-white transition-all duration-200 flex items-center justify-center ${isLoading
+                                ? 'bg-gray-400 cursor-not-allowed'
+                                : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 hover:shadow-lg transform hover:scale-105'
+                                }`}
                         >
                             {isLoading ? (
                                 <>
@@ -219,22 +236,22 @@ const LoginPage = () => {
                         </button>
 
                         {/* ✅ Bouton de test pour debug */}
-                        <button
+                        {/* <button
                             type="button"
                             onClick={handleTestNavigation}
                             className="w-full py-2 px-4 rounded-lg font-medium text-blue-600 border border-blue-600 hover:bg-blue-50 transition-colors"
                         >
                             🧪 Test Navigation (Debug)
-                        </button>
+                        </button> */}
                     </form>
 
-                    <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    {/* <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
                         <h4 className="text-sm font-medium text-gray-700 mb-2">🎯 Compte de démonstration :</h4>
                         <div className="text-xs text-gray-600 space-y-1">
                             <p><strong>Email:</strong> prestataire@demo.com</p>
                             <p><strong>Mot de passe:</strong> demo123</p>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
 
                 <div className="text-center mt-8">
@@ -248,6 +265,7 @@ const LoginPage = () => {
                         </button>
                     </p>
                 </div>
+
 
                 <div className="mt-8 text-center">
                     <div className="inline-flex items-center p-3 bg-green-50 rounded-lg border border-green-200">

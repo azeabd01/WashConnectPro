@@ -97,6 +97,7 @@ const ProviderRegistrationForm = ({ onBack }) => {
         console.log('Données envoyées au backend:', formData);
 
         try {
+            // Appel à l'API pour enregistrer le fournisseur
             const response = await registerProvider(formData);
             console.log('Register response:', response);
 
