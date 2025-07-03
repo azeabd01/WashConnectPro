@@ -17,7 +17,7 @@ const RegisterPage = () => {
         switch (profile) {
             case 'client':
                 return <ClientRegistrationForm onBack={handleBack} />;
-            case 'prestataire':
+            case 'provider':
                 return <ProviderRegistrationForm onBack={handleBack} />;
             case 'product':
                 return <ProductRegistrationForm onBack={handleBack} />;

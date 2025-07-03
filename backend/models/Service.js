@@ -11,7 +11,7 @@ const serviceSchema = new mongoose.Schema({
         enum: ['exterieur', 'interieur', 'complet', 'premium', 'express'],
         required: true
     },
-    isActive: { type: Boolean, default: true },
+    isActive: { type: Boolean, default: false },
     images: [String],
     features: [String],
     bookingCount: { type: Number, default: 0 }

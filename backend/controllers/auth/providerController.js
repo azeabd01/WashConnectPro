@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 const Provider = require('../../models/Provider');
 
-exports.registerprovider = async (req, res) => {
+const registerprovider = async (req, res) => {
     // Validation
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
@@ -66,7 +66,7 @@ exports.registerprovider = async (req, res) => {
 };
 
 // ✅ CORRECTION PRINCIPALE : Login spécifique aux providers
-exports.loginprovider = async (req, res) => {
+const loginprovider = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
@@ -104,7 +104,7 @@ exports.loginprovider = async (req, res) => {
 };
 
 // ✅ RÉCUPÉRER PROFIL Provider
-exports.getMeprovider = async (req, res) => {
+const getMeprovider = async (req, res) => {
     try {
         res.json({
             provider: {
@@ -125,4 +125,43 @@ exports.getMeprovider = async (req, res) => {
         console.error(err);
         res.status(500).json({ message: 'Erreur serveur', error: err.message });
     }
+};
+
+
+const updateProvider = async (req, res) => {
+    try {
+        const providerId = req.provider._id;
+        const updateData = req.body;
+
+        const updated = await Provider.findByIdAndUpdate(providerId, updateData, {
+            new: true,
+            runValidators: true
+        }).select('-password');
+
+        res.status(200).json(updated);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Erreur serveur' });
+    }
+};
+
+const deleteProvider = async (req, res) => {
+    try {
+        const providerId = req.provider._id;
+
+        await Provider.findByIdAndUpdate(providerId, { status: 'inactive' });
+
+        res.status(200).json({ message: 'Compte désactivé avec succès' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Erreur serveur' });
+    }
+};
+
+module.exports = {
+    registerprovider,
+    loginprovider,
+    getMeprovider,
+    updateProvider,
+    deleteProvider
 };

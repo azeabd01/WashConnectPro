@@ -72,57 +72,57 @@ export const getproductProfile = async (token) => {
     return response.json();
 };
 
-// // ✅ Mise à jour du profil product
-// export const updateproductProfile = async (token, profileData) => {
-//     const response = await fetch(`${API_URL}/profile/product`, {
-//         method: "PUT",
-//         headers: {
-//             "Content-Type": "application/json",
-//             "Authorization": `Bearer ${token}`
-//         },
-//         body: JSON.stringify(profileData),
-//     });
+// ✅ Mise à jour du profil product
+export const updateproductProfile = async (token, profileData) => {
+    const response = await fetch(`${API_URL}/profile/product`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(profileData),
+    });
 
-//     if (!response.ok) {
-//         const error = await response.json();
-//         throw new Error(error.message || "Erreur lors de la mise à jour du profil");
-//     }
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Erreur lors de la mise à jour du profil");
+    }
 
-//     return response.json();
-// };
+    return response.json();
+};
 
-// // ✅ Gestion des produits/services du product
-// export const getproductProducts = async (token) => {
-//     const response = await fetch(`${API_URL}/supplier/products`, {
-//         method: "GET",
-//         headers: {
-//             "Content-Type": "application/json",
-//             "Authorization": `Bearer ${token}`
-//         },
-//     });
+// ✅ Gestion des produits/services du product
+export const getproductProducts = async (token) => {
+    const response = await fetch(`${API_URL}/supplier/products`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+    });
 
-//     if (!response.ok) {
-//         const error = await response.json();
-//         throw new Error(error.message || "Erreur lors de la récupération des produits");
-//     }
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Erreur lors de la récupération des produits");
+    }
 
-//     return response.json();
-// };
+    return response.json();
+};
 
-// export const addproductProduct = async (token, productData) => {
-//     const response = await fetch(`${API_URL}/supplier/products`, {
-//         method: "POST",
-//         headers: {
-//             "Content-Type": "application/json",
-//             "Authorization": `Bearer ${token}`
-//         },
-//         body: JSON.stringify(productData),
-//     });
+export const addproductProduct = async (token, productData) => {
+    const response = await fetch(`${API_URL}/supplier/products`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(productData),
+    });
 
-//     if (!response.ok) {
-//         const error = await response.json();
-//         throw new Error(error.message || "Erreur lors de l'ajout du produit");
-//     }
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Erreur lors de l'ajout du produit");
+    }
 
-//     return response.json();
-// };
+    return response.json();
+};

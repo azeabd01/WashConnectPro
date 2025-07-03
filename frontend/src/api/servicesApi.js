@@ -9,17 +9,32 @@ const getAuthHeaders = () => {
     };
 };
 
+export const toggleServiceStatus = async (id) => {
+    const res = await fetch(`${API_URL}/${id}/toggle-status`, {
+        method: 'PATCH',
+        headers: getAuthHeaders(),
+    });
+
+    if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || 'Erreur lors du changement de statut');
+    }
+
+    return res.json();
+};
+
 // 🔁 Lire tous les services du prestataire
 export const fetchServices = async () => {
     const res = await fetch(API_URL, {
         headers: getAuthHeaders(),
     });
     if (!res.ok) throw new Error('Erreur lors du chargement des services');
-    return res.json(); // ⬅️ retourne { services: [...] }
+    return res.json();
 };
 
 // ➕ Créer un service
 export const createService = async (service) => {
+    console.log('Service envoyé:', service);  // debug
     const res = await fetch(API_URL, {
         method: 'POST',
         headers: getAuthHeaders(),
@@ -27,6 +42,7 @@ export const createService = async (service) => {
     });
     if (!res.ok) {
         const error = await res.json();
+        console.error('Erreur backend createService:', JSON.stringify(error, null, 2));
         throw new Error(error.message || 'Erreur lors de la création du service');
     }
     return res.json();
@@ -58,7 +74,6 @@ export const deleteService = async (id) => {
     }
     return res.json();
 };
-
 
 
 

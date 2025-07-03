@@ -1,10 +1,10 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
-const Product = require('../../models/productModel'); // Modèle Product (product)
+const ProvProduct = require('../../models/ProviderProduct'); // Modèle Product (product)
 
 // ✅ INSCRIPTION PRODUCT
-exports.registerproduct = async (req, res) => {
+const registerProviderproduct = async (req, res) => {
     // Validation des erreurs
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -15,7 +15,7 @@ exports.registerproduct = async (req, res) => {
         const { name, email, password, phone } = req.body;
 
         // Vérifier si le product existe déjà
-        let product = await Product.findOne({ email });
+        let product = await ProvProduct.findOne({ email });
         if (product) {
             return res.status(400).json({ message: 'Ce product existe déjà' });
         }
@@ -25,16 +25,16 @@ exports.registerproduct = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         // Créer nouveau product
-        product = new Product({
+        product = new ProvProduct({
             name,
             email: email.toLowerCase().trim(),
             password: hashedPassword,
             phone,
             // Valeurs par défaut pour un product
-            price: 0, // Prix par défaut
-            description: `Product ${name}`,
-            category: 'product', // Catégorie spéciale pour identifier les products
-            inStock: true,
+            // price: 0, // Prix par défaut
+            // description: `Product ${name}`,
+            // category: 'product', // Catégorie spéciale pour identifier les products
+            // inStock: true,
             status: 'active'
         });
 
@@ -69,7 +69,7 @@ exports.registerproduct = async (req, res) => {
 };
 
 // ✅ CONNEXION PRODUCT
-exports.loginproduct = async (req, res) => {
+const loginProviderproduct = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -79,9 +79,10 @@ exports.loginproduct = async (req, res) => {
         const { email, password } = req.body;
 
         // Chercher le product dans la collection Product
-        const product = await Product.findOne({ 
+        const product = await ProvProduct.findOne({
             email: email.toLowerCase().trim(),
-            category: 'product' // Filtre pour ne récupérer que les products
+
+
         }).select('+password');
 
         if (!product) {
@@ -95,9 +96,9 @@ exports.loginproduct = async (req, res) => {
         }
 
         // Vérifier si le compte est actif
-        if (product.status !== 'active') {
-            return res.status(400).json({ message: 'Compte désactivé' });
-        }
+        // if (product.status !== 'active') {
+        //     return res.status(400).json({ message: 'Compte désactivé' });
+        // }
 
         // Créer le payload JWT
         const payload = {
@@ -117,8 +118,8 @@ exports.loginproduct = async (req, res) => {
                 email: product.email,
                 phone: product.phone,
                 status: product.status,
-                rating: product.rating,
-                image: product.image,
+                // rating: product.rating,
+                // image: product.image,
                 role: 'product'
             }
         });
@@ -130,11 +131,11 @@ exports.loginproduct = async (req, res) => {
 };
 
 // ✅ RÉCUPÉRER PROFIL PRODUCT
-exports.getMeproduct = async (req, res) => {
+const getMeProviderproduct = async (req, res) => {
     try {
         // req.product vient du middleware d'authentification
-        const product = await Product.findById(req.product.id).select('-password');
-        
+        const product = await ProvProduct.findById(req.product.id).select('-password');
+
         if (!product) {
             return res.status(404).json({ message: 'Product non trouvé' });
         }
@@ -145,12 +146,12 @@ exports.getMeproduct = async (req, res) => {
                 name: product.name,
                 email: product.email,
                 phone: product.phone,
-                description: product.description,
-                image: product.image,
+                // description: product.description,
+                // image: product.image,
                 status: product.status,
-                rating: product.rating,
-                inStock: product.inStock,
-                createdAt: product.createdAt,
+                // rating: product.rating,
+                // inStock: product.inStock,
+                // createdAt: product.createdAt,
                 role: 'product'
             }
         });
@@ -161,11 +162,12 @@ exports.getMeproduct = async (req, res) => {
     }
 };
 
+
 // // ✅ METTRE À JOUR PROFIL PRODUCT
-// exports.updateProfile = async (req, res) => {
+// const updateProfile = async (req, res) => {
 //     try {
 //         const { name, phone, description, image } = req.body;
-        
+
 //         const product = await Product.findById(req.product.id);
 //         if (!product) {
 //             return res.status(404).json({ message: 'Product non trouvé' });
@@ -201,10 +203,10 @@ exports.getMeproduct = async (req, res) => {
 // };
 
 // // ✅ CHANGER STATUT DU PRODUCT
-// exports.changeStatus = async (req, res) => {
+// const changeStatus = async (req, res) => {
 //     try {
 //         const { status } = req.body;
-        
+
 //         if (!['active', 'inactive'].includes(status)) {
 //             return res.status(400).json({ message: 'Statut invalide' });
 //         }
@@ -235,12 +237,12 @@ exports.getMeproduct = async (req, res) => {
 // };
 
 // // ✅ RÉCUPÉRER TOUS LES PRODUCTS (pour admin)
-// exports.getAllProducts = async (req, res) => {
+// const getAllProducts = async (req, res) => {
 //     try {
 //         const { page = 1, limit = 10, status, search } = req.query;
-        
+
 //         let query = { category: 'product' };
-        
+
 //         // Filtres
 //         if (status) query.status = status;
 //         if (search) {
@@ -272,7 +274,7 @@ exports.getMeproduct = async (req, res) => {
 // };
 
 // // ✅ SUPPRIMER COMPTE PRODUCT
-// exports.deleteAccount = async (req, res) => {
+// const deleteAccount = async (req, res) => {
 //     try {
 //         const product = await Product.findById(req.product.id);
 //         if (!product) {
@@ -288,3 +290,14 @@ exports.getMeproduct = async (req, res) => {
 //         res.status(500).json({ message: 'Erreur serveur lors de la suppression' });
 //     }
 // };
+
+
+module.exports = {
+    registerProviderproduct,
+    loginProviderproduct,
+    getMeProviderproduct
+    // updateProfile,
+    // changeStatus,
+    // getAllProducts,
+    // deleteAccount
+};

@@ -1,9 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, Package, AlertCircle, CheckCircle, LogIn } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft, Package, AlertCircle, CheckCircle, LogIn } from 'lucide-react';
 import { loginProduct } from '../../api/productApi';
 
-const loginProductPage = () => {
+const LoginProductPage = () => {
     const navigate = useNavigate();
 
     const [formData, setFormData] = React.useState({
@@ -46,24 +46,16 @@ const loginProductPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Form submitted'); // Debug
 
-        if (!validateForm()) {
-            console.log('Validation failed:', errors);
-            return;
-        }
+        if (!validateForm()) return;
 
         setIsLoading(true);
         setLoginStatus(null);
         try {
             const result = await loginProduct(formData);
-            // console.log('Login response:', result);
-
             setLoginStatus('success');
-            // ✅ Stockage du token et des données utilisateur
             localStorage.setItem('token', result.token);
 
-            // Détection automatique du type d'utilisateur
             let userData = {};
             let dashboardPath = '/dashboard';
 
@@ -77,21 +69,14 @@ const loginProductPage = () => {
                 userData = { ...result.provider, role: 'provider' };
                 dashboardPath = '/dashboard/provider';
             } else {
-                // Par défaut (fail-safe)
                 throw new Error('Type d\'utilisateur non reconnu');
             }
 
             localStorage.setItem('user', JSON.stringify(userData));
-
-            // Redirection intelligente
-            setTimeout(() => {
-                navigate(dashboardPath);
-            }, 1000);
-
+            setTimeout(() => navigate(dashboardPath), 1000);
         } catch (error) {
             console.error('Login error:', error);
             setLoginStatus('error');
-            // Gestion d'erreurs plus spécifique
             let errorMessage = 'Erreur lors de la connexion';
             if (error.response?.status === 401) {
                 errorMessage = 'Email ou mot de passe incorrect';
@@ -100,11 +85,10 @@ const loginProductPage = () => {
             } else if (error.message) {
                 errorMessage = error.message;
             }
-            setErrors({ general: errorMessage});
+            setErrors({ general: errorMessage });
         } finally {
             setIsLoading(false);
         }
-
     };
 
     const handleForgotPassword = () => {
@@ -115,20 +99,23 @@ const loginProductPage = () => {
         navigate('/auth/register/product');
     };
 
-    // Fonction pour tester la navigation directement
-    const handleTestNavigation = () => {
-        console.log('Test navigation');
-        navigate('/dashboard/product');
-    };
-
     return (
-        <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 flex items-center justify-center py-12 px-4">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4">
             <div className="max-w-md w-full">
+                {/* Bouton retour home */}
+                <button
+                    onClick={() => navigate('/auth')}
+                    className="flex items-center text-blue-600 hover:text-blue-700 font-semibold mb-8"
+                    type="button"
+                >
+                    <ArrowLeft className="w-5 h-5 mr-2" />
+                    Retour
+                </button>
                 <div className="text-center mb-8">
-                    <div className="w-20 h-20 bg-gradient-to-r from-green-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                    <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
                         <LogIn className="w-10 h-10 text-white" />
                     </div>
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Connexion product</h1>
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Connexion Product</h1>
                     <p className="text-gray-600">Accédez à votre espace product</p>
                 </div>
 
@@ -136,7 +123,7 @@ const loginProductPage = () => {
                     {loginStatus === 'success' && (
                         <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center">
                             <CheckCircle className="w-5 h-5 text-green-500 mr-3" />
-                            <span className="text-green-700">Connexion réussie ! Redirection vers le dashboard...</span>
+                            <span className="text-green-700">Connexion réussie ! Redirection...</span>
                         </div>
                     )}
 
@@ -147,7 +134,6 @@ const loginProductPage = () => {
                         </div>
                     )}
 
-                    {/* ✅ CORRECTION : form au lieu de div */}
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -158,8 +144,7 @@ const loginProductPage = () => {
                                 type="email"
                                 value={formData.email}
                                 onChange={(e) => handleInputChange('email', e.target.value)}
-                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors ${errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                                    }`}
+                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300'}`}
                                 placeholder="votre@email.com"
                                 disabled={isLoading}
                             />
@@ -181,8 +166,7 @@ const loginProductPage = () => {
                                     type={showPassword ? 'text' : 'password'}
                                     value={formData.password}
                                     onChange={(e) => handleInputChange('password', e.target.value)}
-                                    className={`w-full px-4 py-3 pr-12 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors ${errors.password ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                                        }`}
+                                    className={`w-full px-4 py-3 pr-12 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${errors.password ? 'border-red-500 bg-red-50' : 'border-gray-300'}`}
                                     placeholder="Votre mot de passe"
                                     disabled={isLoading}
                                 />
@@ -207,7 +191,7 @@ const loginProductPage = () => {
                             <button
                                 type="button"
                                 onClick={handleForgotPassword}
-                                className="text-sm text-green-600 hover:text-green-700 hover:underline"
+                                className="text-sm text-blue-600 hover:text-blue-700 hover:underline"
                                 disabled={isLoading}
                             >
                                 Mot de passe oublié ?
@@ -219,7 +203,7 @@ const loginProductPage = () => {
                             disabled={isLoading}
                             className={`w-full py-3 px-4 rounded-lg font-semibold text-white transition-all duration-200 flex items-center justify-center ${isLoading
                                 ? 'bg-gray-400 cursor-not-allowed'
-                                : 'bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 hover:shadow-lg transform hover:scale-105'
+                                : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 hover:shadow-lg transform hover:scale-105'
                                 }`}
                         >
                             {isLoading ? (
@@ -236,21 +220,23 @@ const loginProductPage = () => {
                         </button>
                     </form>
                 </div>
+
                 <div className="text-center mt-8">
                     <p className="text-gray-600">
                         Vous n'avez pas encore de compte ?{' '}
                         <button
                             onClick={handleRegisterRedirect}
-                            className="text-green-600 hover:text-green-700 font-semibold hover:underline"
+                            className="text-blue-600 hover:text-blue-700 font-semibold hover:underline"
                         >
                             Créer un compte product
                         </button>
                     </p>
                 </div>
+
                 <div className="mt-8 text-center">
-                    <div className="inline-flex items-center p-3 bg-green-50 rounded-lg border border-green-200">
-                        <Package className="w-6 h-6 text-green-500 mr-2" />
-                        <span className="text-sm text-green-700 font-medium">Espace product</span>
+                    <div className="inline-flex items-center p-3 bg-blue-50 rounded-lg border border-blue-200">
+                        <Package className="w-6 h-6 text-blue-500 mr-2" />
+                        <span className="text-sm text-blue-700 font-medium">Espace Product</span>
                     </div>
                 </div>
             </div>
@@ -258,4 +244,4 @@ const loginProductPage = () => {
     );
 };
 
-export default loginProductPage;
+export default LoginProductPage;

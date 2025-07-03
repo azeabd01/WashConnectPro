@@ -1,7 +1,7 @@
 // src/components/Auth/ChoseProfile.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Car, Package, CheckCircle, ArrowRight } from 'lucide-react';
+import { User, Car, Package, CheckCircle, ArrowRight, ArrowLeft } from 'lucide-react';
 
 const ProfileSelector = () => {
     const navigate = useNavigate();
@@ -26,7 +26,7 @@ const ProfileSelector = () => {
         },
         {
             id: 'provider',
-            title: 'Provider',
+            title: 'PROVIDER',
             subtitle: 'Service de Lavage',
             description: 'Proposez vos services de lavage et développez votre activité',
             icon: Car,
@@ -67,6 +67,17 @@ const ProfileSelector = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4">
             <div className="max-w-7xl mx-auto">
+
+                {/* Bouton retour home */}
+                <button
+                    onClick={() => navigate('/')}
+                    className="flex items-center text-blue-600 hover:text-blue-700 font-semibold mb-8"
+                    type="button"
+                >
+                    <ArrowLeft className="w-5 h-5 mr-2" />
+                    Retour à l'accueil
+                </button>
+
                 {/* Header */}
                 <div className="text-center mb-16">
                     <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
@@ -140,7 +151,6 @@ const ProfileSelector = () => {
                                             Vous avez déjà un compte ?
                                             <button
                                                 className="text-blue-600 hover:text-blue-700 font-semibold ml-2 underline"
-                                                // onClick={() => navigate('/auth/login')}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     navigate(`/auth/login/${profile.id}`);
@@ -154,13 +164,11 @@ const ProfileSelector = () => {
                                         </p>
                                     </div>
 
-
                                 </div>
                             </div>
                         );
                     })}
                 </div>
-
 
             </div>
         </div>

@@ -3,7 +3,7 @@ const {
     fetchWeeklyPerformance
 } = require('../services/analystics.services');
 
-exports.getAnalyticsOverview = async (req, res) => {
+const getAnalyticsOverview = async (req, res) => {
     try {
         const providerId = req.provider.id;  // <-- ici
 
@@ -15,7 +15,7 @@ exports.getAnalyticsOverview = async (req, res) => {
     }
 };
 
-exports.getWeeklyPerformance = async (req, res) => {
+const getWeeklyPerformance = async (req, res) => {
     try {
         const providerId = req.provider.id;  // <-- ici
 
@@ -26,7 +26,10 @@ exports.getWeeklyPerformance = async (req, res) => {
         res.status(500).json({ message: 'Erreur serveur' });
     }
 };
-
+module.exports = {
+    getAnalyticsOverview,
+    getWeeklyPerformance
+};
 
 
 

@@ -1,4 +1,3 @@
-// import ProductDashboard from "./products/ProductDashboard";
 import Dashboard from './pages/Dashboard';
 import OverviewTab from './pages/dashboard/OverviewTab';
 import ServicesTab from './pages/dashboard/ServivesTab';
@@ -7,9 +6,11 @@ import AnalyticsTab from './pages/dashboard/AnalyticsTab';
 import SettingsTab from './pages/dashboard/SettingsTab';
 import CarWashHomePage from './pages/CarWashHomePage';
 import AuthPage from './pages/AuthPage';
+import PublicServicesPage from './pages/PublicServicesPage'; // adapte le chemin
 
-import LoginPagePrestataire from './components/Auth/LoginPagePrestataire';
+import LoginPagePrestataire from './components/Auth/LoginPageProvider';
 import LoginPageProduct from './components/Auth/LoginPageProduct';
+// import LoginPageClient from './components/Auth/LoginPageClient';
 import RegisterPage from './components/Auth/RegisterPage';
 import ProfileSelection from './components/Auth/ChoseProfile';
 
@@ -25,39 +26,47 @@ import EditProduct from './products/Update';
 import ShowProduct from './products/ShowProduct';
 
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { Toaster } from 'sonner';
 
 function App() {
   return (
     <Router>
+      <Toaster position="top-center" richColors />
+      {/* le reste de ton app */}
+
       <Routes>
+
         {/* Page d'accueil */}
         <Route path="/" element={<CarWashHomePage />} />
 
         {/* ✅ Routes d'authentification principales */}
         <Route path="/choose-profile" element={<ProfileSelection />} />
 
-          {/* Authentification avec routes imbriquées */}
+        {/* Authentification avec routes imbriquées */}
         <Route path="/auth" element={<AuthPage />} >
           <Route index element={<ProfileSelection />} />
           <Route path="register/:profile" element={<RegisterPage />} />
         </Route>
 
-      
+        <Route path="/services" element={<PublicServicesPage />} />
+
+
         {/* ✅ Redirections propres */}
         <Route path="/login" element={<Navigate to="/auth/login/provider" replace />} />
-        <Route path="/register/:profile" element={<Navigate to="/auth/register/:profile" replace />} />
-
+        {/* <Route path="/register/:profile" element={<Navigate to="/auth/register/:profile" replace />} /> */}
 
         {/* ✅ Routes de login spécifiques pour chaque profil */}
         <Route path="/auth/login/provider" element={<LoginPagePrestataire />} />
         {/* <Route path="/auth/login/client" element={<LoginPage />} /> */}
         <Route path="/auth/login/product" element={<LoginPageProduct />} />
+        {/*<Route path="/auth/login/client" element={<LoginPageClient />} />  */}
+
 
         {/* ✅ Route de login générale (peut rediriger vers le choix) */}
         <Route path="/auth/login" element={<LoginPagePrestataire />} />
 
 
-          {/* Dashboard Prestataire */}
+        {/* Dashboard Prestataire */}
         <Route path="/dashboard/provider" element={<Dashboard />}>
           <Route index element={<OverviewTab />} />
           <Route path="overview" element={<OverviewTab />} />
@@ -76,7 +85,7 @@ function App() {
           <Route path="products" element={<Products />} /> */}
         </Route>
 
-      
+
         {/* ✅ Dashboard Client (à créer si nécessaire) */}
         <Route path="/dashboard/client" element={<div>Dashboard Client - À créer</div>} />
 
@@ -86,12 +95,13 @@ function App() {
           <Route path="product" element={<ProductsTable />} />
           <Route path="addproduct" element={<AddProduct />} />
           <Route path="editproduct/:id" element={<EditProduct />} />
-          <Route path="product/:id" element={<ShowProduct />} />
+          <Route path="Sproduct/:id" element={<ShowProduct />} />
           {/* Add more nested routes here if needed */}
         </Route>
-        
+
         {/* ✅ Route 404 */}
         <Route path="*" element={<div>Page non trouvée</div>} />
+
       </Routes>
     </Router>
   );

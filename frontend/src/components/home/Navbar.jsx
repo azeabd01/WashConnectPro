@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Car, Menu, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function Navbar({ onAuthClick }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -37,11 +38,11 @@ export default function Navbar({ onAuthClick }) {
             console.log('Aucun utilisateur connecté');
             return;
         }
-        
+
         console.log('Utilisateur:', user); // Debug
         const userRole = user.role;
         let dashboardPath = '';
-        
+
         switch (userRole) {
             case 'provider':  // Support des deux formats
                 dashboardPath = '/dashboard/provider';
@@ -56,12 +57,12 @@ export default function Navbar({ onAuthClick }) {
                 console.warn('Role utilisateur non reconnu:', userRole);
                 return;
         }
-        
+
         console.log('Navigation vers:', dashboardPath); // Debug
-        
+
         // Fermer le menu mobile si ouvert
         setIsMenuOpen(false);
-        
+
         // Naviguer vers le dashboard
         navigate(dashboardPath);
     };
@@ -116,7 +117,8 @@ export default function Navbar({ onAuthClick }) {
                         {/* Navigation links - seulement sur la page d'accueil */}
                         {isHomePage && (
                             <>
-                                <a href="#services" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Services</a>
+                                <Link to="/services" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Services</Link>
+                                {/* <a href="#services" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Services</a> */}
                                 <a href="#solutions" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Solutions</a>
                                 <a href="#tarifs" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Tarifs</a>
                                 <a href="#contact" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Contact</a>
@@ -188,7 +190,14 @@ export default function Navbar({ onAuthClick }) {
                         {/* Navigation mobile - seulement sur la page d'accueil */}
                         {isHomePage && (
                             <>
-                                <a href="#services" className="block text-gray-700 hover:text-blue-600 transition-colors font-medium">Services</a>
+                                <Link
+                                    to="/services"
+                                    className="block text-gray-700 hover:text-blue-600 transition-colors font-medium"
+                                    onClick={() => setIsMenuOpen(false)} // ferme le menu quand on clique
+                                >
+                                    Services
+                                </Link>
+                                {/* <a href="#services" className="block text-gray-700 hover:text-blue-600 transition-colors font-medium">Services</a> */}
                                 <a href="#solutions" className="block text-gray-700 hover:text-blue-600 transition-colors font-medium">Solutions</a>
                                 <a href="#tarifs" className="block text-gray-700 hover:text-blue-600 transition-colors font-medium">Tarifs</a>
                                 <a href="#contact" className="block text-gray-700 hover:text-blue-600 transition-colors font-medium">Contact</a>

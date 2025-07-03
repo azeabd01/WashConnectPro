@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const Product = require('../models/productModel'); // Ajustez le chemin selon votre structure
+const Product = require('../models/ProviderProduct'); // Ajustez le chemin selon votre structure
 
 // ✅ MIDDLEWARE D'AUTHENTIFICATION PRODUCT
 const authMiddlewareProduct = async (req, res, next) => {
@@ -58,7 +58,7 @@ const authMiddlewareProduct = async (req, res, next) => {
             name: product.name,
             email: product.email,
             phone: product.phone,
-            status: product.status,
+            // status: product.status,
             role: 'product'
         };
 
