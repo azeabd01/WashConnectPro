@@ -1,33 +1,28 @@
-// controllers/adminController.js
-const User = require('../models/User');
 const Product = require('../models/productModel');
+const Order   = require('../models/oderProduct');
+const User    = require('../models/User');
 
-exports.getAllUsers = async (req, res) => {
+exports.getAdminStats = async (req, res) => {
   try {
-    const users = await User.find();
-    res.json(users);
+    // Count total products
+    const totalProducts = await Product.countDocuments();
+
+    // Count total orders
+    const totalOrders = await Order.countDocuments();
+
+    // Count total users
+    const totalUsers = await User.countDocuments();
+
+    // Sum up all order totals
+    const revenueAgg = await Order.aggregate([
+      { $group: { _id: null, total: { $sum: '$totalPrice' } } }
+    ]);
+    const totalRevenue = revenueAgg[0]?.total || 0;
+
+    // Return as JSON
+    res.json({ totalProducts, totalOrders, totalUsers, totalRevenue });
   } catch (err) {
-    res.status(500).json({ error: 'Server error' });
+    console.error('Error in getAdminStats:', err);
+    res.status(500).json({ error: 'Failed to fetch dashboard stats' });
   }
 };
-
-
-exports.getPendingProviders = async (req, res) => {
-  try {
-    const providers = await Product.find({ approved: false });
-    res.json(providers);
-  } catch (err) {
-    res.status(500).json({ error: 'Server error' });
-  }
-};
-
-exports.approveProvider = async (req, res) => {
-  const { id } = req.params;
-  try {
-    const provider = await Product.findByIdAndUpdate(id, { approved: true }, { new: true });
-    res.json(provider);
-  } catch (err) {
-    res.status(500).json({ error: 'Server error' });
-  }
-};
-// module.exports = { getAllUsers };

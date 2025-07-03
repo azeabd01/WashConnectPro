@@ -6,7 +6,7 @@ export default function Sidebar() {
     { label: 'Dashboard', icon: BarChart3, path: '/admin' },
     { label: 'Users', icon: Users, path: '/admin/users' },
     { label: 'Providers', icon: ShieldCheck, path: '/admin/providers' },
-    { label: 'Products', icon: Package, path: '/admin/products' },
+    { label: 'Products', icon: Package, path: '/admin/UserProviderProducts' },
   ];
 
   return (

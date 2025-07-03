@@ -24,6 +24,9 @@ import EditProduct from './products/Update';
 import ShowProduct from './products/ShowProduct';
 
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import Customers from "./customers/Customers";
+import UserProviderProducts from "./admin/UserProviderProducts";
+import ProductAnalytics from "./products/ProductAnalytics";
 
 function App() {
   return (
@@ -57,8 +60,8 @@ function App() {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<DashboardAdmin />} />
           <Route path="users" element={<AllUsers />} />
-          {/* <Route path="providers" element={<Providers />} />
-          <Route path="products" element={<Products />} /> */}
+          {/* <Route path="providers" element={<Providers />} /> */}
+          <Route path="UserProviderProducts" element={<UserProviderProducts />} />
         </Route>
 
         {/* Dashboard Prestataire */}
@@ -84,6 +87,8 @@ function App() {
           <Route path="addproduct" element={<AddProduct />} />
           <Route path="editproduct/:id" element={<EditProduct />} />
           <Route path="product/:id" element={<ShowProduct />} />
+          <Route path="customers" element={<Customers />} />
+          <Route path="analytics" element={<ProductAnalytics />} />
           {/* Add more nested routes here if needed */}
         </Route>
 

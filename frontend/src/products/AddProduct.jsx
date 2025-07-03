@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import toast from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function AddProduct({ onSuccess }) {
   const [form, setForm] = useState({
@@ -42,6 +42,8 @@ export default function AddProduct({ onSuccess }) {
 
   return (
     <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md space-y-4 max-w-xl mx-auto">
+       <Toaster position="bottom-right" />
+
       <h2 className="text-xl font-semibold">Add New Product</h2>
 
       <input

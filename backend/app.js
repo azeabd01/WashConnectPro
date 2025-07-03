@@ -41,5 +41,7 @@ app.use('/api/auth', clientRoutes);
 app.use('/api/auth', prodRout);
 
 app.use('/api/products', productRoutes);
+app.use('/api/analytics', productRoutes);
+
 
 app.listen(port, () => console.log(`Server running on port ${port}}`));

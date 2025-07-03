@@ -147,7 +147,7 @@ export default function ProductsTable() {
             
               <button className="flex items-center px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700">
                 <Plus className="w-4 h-4 mr-2" />
-                <Link to="/addproduct" >
+                <Link to="/dashboard/product/addproduct" >
                   Add Product</Link>
 
               </button>

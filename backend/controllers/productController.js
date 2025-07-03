@@ -51,6 +51,9 @@ const createProduct = async (req, res) => {
   }
 };
 
+
+
+
 // PUT update
 const updateProduct = async (req, res) => {
   try {
@@ -71,7 +74,36 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+
+const getProductAnalytics = async (req, res) => {
+  try {
+    const totalProducts = await Product.countDocuments();
+    const averagePrice = await Product.aggregate([
+      { $group: { _id: null, avg: { $avg: "$price" } } }
+    ]);
+    const lowStock = await Product.countDocuments({ stock: { $lt: 5 } });
+    const inStock = await Product.countDocuments({ inStock: true });
+
+    const topRated = await Product.find().sort({ rating: -1 }).limit(5);
+
+    res.json({
+      totalProducts,
+      averagePrice: averagePrice[0]?.avg || 0,
+      lowStock,
+      inStock,
+      topRated
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to load analytics' });
+  }
+};
+
+
+
+
+
 module.exports = {
+  getProductAnalytics,
   getProducts,
   getProduct,
   createProduct,
