@@ -52,7 +52,7 @@ export default function EditProduct() {
       if (!res.ok) throw new Error("Update failed");
 
       toast.success("Product updated", { id: toastId });
-      navigate('/product');
+      navigate('/dashboard/product/product');
     } catch (err) {
       toast.error("Failed to update", { id: toastId });
     }

@@ -1,7 +1,7 @@
 // src/components/Auth/ChoseProfile.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Car, Package, CheckCircle, ArrowRight } from 'lucide-react';
+import { User, Car, Package, CheckCircle, ArrowRight, ArrowLeft } from 'lucide-react';
 
 const ProfileSelector = () => {
     const navigate = useNavigate();
@@ -25,8 +25,8 @@ const ProfileSelector = () => {
             borderColor: 'border-blue-200 hover:border-blue-400'
         },
         {
-            id: 'prestataire',
-            title: 'PRESTATAIRE',
+            id: 'provider',
+            title: 'PROVIDER',
             subtitle: 'Service de Lavage',
             description: 'Proposez vos services de lavage et développez votre activité',
             icon: Car,
@@ -42,10 +42,10 @@ const ProfileSelector = () => {
             borderColor: 'border-green-200 hover:border-green-400'
         },
         {
-            id: 'fournisseur',
-            title: 'FOURNISSEUR',
+            id: 'product',
+            title: 'PRODUCT',
             subtitle: 'Produits & Équipements',
-            description: 'Vendez vos produits aux prestataires de lavage automobile',
+            description: 'Vendez vos produits aux provider de lavage automobile',
             icon: Package,
             features: [
                 'Catalogue de produits',
@@ -67,6 +67,17 @@ const ProfileSelector = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4">
             <div className="max-w-7xl mx-auto">
+
+                {/* Bouton retour home */}
+                <button
+                    onClick={() => navigate('/')}
+                    className="flex items-center text-blue-600 hover:text-blue-700 font-semibold mb-8"
+                    type="button"
+                >
+                    <ArrowLeft className="w-5 h-5 mr-2" />
+                    Retour à l'accueil
+                </button>
+
                 {/* Header */}
                 <div className="text-center mb-16">
                     <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
@@ -92,7 +103,7 @@ const ProfileSelector = () => {
                             >
                                 {/* Background gradient overlay */}
                                 <div className={`absolute inset-0 bg-gradient-to-br ${profile.color} opacity-0 
-                  group-hover:opacity-5 transition-opacity duration-300`}></div>
+                group-hover:opacity-5 transition-opacity duration-300`}></div>
 
                                 <div className="relative p-8">
                                     {/* Icon */}
@@ -132,27 +143,33 @@ const ProfileSelector = () => {
                                         S'inscrire comme {profile.title.toLowerCase()}
                                         <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                                     </button>
+                                    <br />
+                                    {/* <br /> */}
+                                    {/* Footer Info */}
+                                    <div className="text-center">
+                                        <p className="text-gray-500 mb-4">
+                                            Vous avez déjà un compte ?
+                                            <button
+                                                className="text-blue-600 hover:text-blue-700 font-semibold ml-2 underline"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    navigate(`/auth/login/${profile.id}`);
+                                                }}
+                                            >
+                                                Se connecter
+                                            </button>
+                                        </p>
+                                        <p className="text-sm text-gray-400">
+                                            Inscription gratuite • Aucun engagement • Support 24/7
+                                        </p>
+                                    </div>
+
                                 </div>
                             </div>
                         );
                     })}
                 </div>
 
-                {/* Footer Info */}
-                <div className="text-center">
-                    <p className="text-gray-500 mb-4">
-                        Vous avez déjà un compte ?
-                        <button
-                            className="text-blue-600 hover:text-blue-700 font-semibold ml-2 underline"
-                            onClick={() => navigate('/auth/login')}
-                        >
-                            Se connecter
-                        </button>
-                    </p>
-                    <p className="text-sm text-gray-400">
-                        Inscription gratuite • Aucun engagement • Support 24/7
-                    </p>
-                </div>
             </div>
         </div>
     );

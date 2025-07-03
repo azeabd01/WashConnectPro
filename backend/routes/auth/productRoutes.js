@@ -1,24 +1,44 @@
 // routes/auth/productRoutes.js
 const express = require('express');
 const { body } = require('express-validator');
-const productController = require('../../controllers/auth/productController');
-const auth = require('../../middlewares/authMiddleware');
+const {
+    registerProviderproduct,
+    loginProviderproduct,
+    getMeProviderproduct
+} = require('../../controllers/auth/productController');
+const {
+    authMiddlewareProduct,
+    // optionalAuthProduct,
+    // checkProductOwnership 
+} = require('../../middlewares/authMiddlewareProduct');
 
 const router = express.Router();
 
 router.post('/register/product', [
-    body('name').notEmpty(),
-    body('email').isEmail(),
-    body('password').isLength({ min: 6 }),
-    body('businessName').notEmpty(),
-    body('phone').isMobilePhone()
-], productController.register);
+    body('name').trim().isLength({ min: 2 }).withMessage('Nom requis (min 2 caractères)'),
+    body('email').isEmail().normalizeEmail().withMessage('Email invalide'),
+    body('password').isLength({ min: 6 }).withMessage('Mot de passe min 6 caractères'),
+    body('phone').optional().isMobilePhone().withMessage('Format téléphone invalide')
+], registerProviderproduct);
 
-router.post('/login', [
+router.post('/login/product', [
     body('email').isEmail(),
     body('password').notEmpty()
-], productController.login);
+],     loginProviderproduct);
 
-router.get('/me', auth, productController.getMe);
+router.get('/me', authMiddlewareProduct, getMeProviderproduct);
+
+// // ✅ Mettre à jour son profil (privé)
+// router.put('/me/update', authMiddlewareProduct, updateProfile);
+
+// // ✅ Changer le statut (privé)
+// router.patch('/me/status', authMiddlewareProduct, changeStatus);
+
+// // ✅ Supprimer son compte (privé)
+// router.delete('/me/delete', authMiddlewareProduct, deleteAccount);
+
+// // ✅ Tous les products (admin)
+// router.get('/', getAllProducts);
 
 module.exports = router;
+

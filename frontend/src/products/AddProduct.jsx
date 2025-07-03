@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 
 export default function AddProduct({ onSuccess }) {
   const [form, setForm] = useState({
@@ -8,7 +8,6 @@ export default function AddProduct({ onSuccess }) {
     price: '',
     image: '',
     stock: '',
-    category: '',
     inStock: true
   });
 
@@ -22,12 +21,22 @@ export default function AddProduct({ onSuccess }) {
 
   const handleSubmit = async e => {
     e.preventDefault();
+    
+if (!form.name || !form.price) {
+        toast.error('Name and price are required');
+        return;
+    }
     const toastId = toast.loading('Adding product...');
     try {
+       const productData = {
+            ...form,
+            price: parseFloat(form.price),
+            stock: parseInt(form.stock) || 0
+        };
       const res = await fetch('http://localhost:3000/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
+        body: JSON.stringify(productData)
       });
 
       if (!res.ok) throw new Error('Failed to add');
@@ -42,8 +51,6 @@ export default function AddProduct({ onSuccess }) {
 
   return (
     <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md space-y-4 max-w-xl mx-auto">
-       <Toaster position="bottom-right" />
-
       <h2 className="text-xl font-semibold">Add New Product</h2>
 
       <input
@@ -81,13 +88,6 @@ export default function AddProduct({ onSuccess }) {
         className="w-full border border-gray-300 rounded px-3 py-2"
       />
 
-      <input
-        name="category"
-        placeholder="Category"
-        value={form.category}
-        onChange={handleChange}
-        className="w-full border border-gray-300 rounded px-3 py-2"
-      />
 
       <input
         name="stock"

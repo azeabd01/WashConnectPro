@@ -2,7 +2,7 @@
 const jwt = require('jsonwebtoken');
 const Provider = require('../models/Provider');
 
-const authMiddleware = async (req, res, next) => {
+const authMiddlewareProvider = async (req, res, next) => {
     try {
         const token = req.header('Authorization')?.replace('Bearer ', '');
 
@@ -24,4 +24,5 @@ const authMiddleware = async (req, res, next) => {
     }
 };
 
-module.exports = authMiddleware;
+module.exports = authMiddlewareProvider;
+

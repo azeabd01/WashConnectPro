@@ -1,20 +1,27 @@
 const express = require('express');
-const auth = require('../middlewares/authMiddleware');
-const serviceValidation = require('../validations/service.validation');
-
-const {
-    getServices, 
-    createService, 
-    updateService, 
-    deleteService
-} = require('../controllers/serviceController');
-
 const router = express.Router();
+const {
+    getServices,
+    createService,
+    updateService,
+    deleteService,
+    toggleServiceStatus
+} = require('../controllers/serviceController');
+const { createService: validateCreateService } = require('../Validations/service.validation');
+const authenticateProvider = require('../middlewares/authMiddlewareProvider'); // middleware d’authentification
 
-router.get('/', auth , getServices);
-router.post('/', auth, serviceValidation.createService, createService);
-router.put('/:id', auth, updateService);
-router.delete('/:id',auth, deleteService);
+
+router.use(authenticateProvider); // protéger toutes les routes services
+
+
+
+router.get('/', getServices);
+router.post('/', validateCreateService, createService);
+router.put('/:id', updateService);
+router.delete('/:id', deleteService);
+
+router.patch('/:id/toggle-status', toggleServiceStatus);
+
 
 module.exports = router;
 

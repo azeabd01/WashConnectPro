@@ -1,23 +1,15 @@
 const Product = require('../models/productModel');
 
-// GET all
-// const getProducts = async (req, res) => {
-//   try {
-//     const products = await Product.find();
-//     res.json(products);
-//   } catch (err) {
-//     res.status(500).json({ message: err.message });
-//   }
-// };
-// controllers/productController.js
+
 const getProducts = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 5;
   const skip = (page - 1) * limit;
+  const providerProductId = req.product.id; // venant du token
 
   try {
-    const total = await Product.countDocuments();
-    const products = await Product.find().skip(skip).limit(limit);
+    const total = await Product.countDocuments({ providerProductId });
+    const products = await Product.find({ providerProductId }).skip(skip).limit(limit);
     res.json({
       products,
       currentPage: page,
@@ -43,7 +35,9 @@ const getProduct = async (req, res) => {
 // POST create
 const createProduct = async (req, res) => {
   try {
-    const newProduct = new Product(req.body);
+    const providerProductId = req.product.id; // venant de ton middleware d’authentification
+
+    const newProduct = new Product(req.body, providerProductId);
     const saved = await newProduct.save();
     res.status(201).json(saved);
   } catch (err) {
@@ -54,9 +48,18 @@ const createProduct = async (req, res) => {
 
 
 
+
 // PUT update
 const updateProduct = async (req, res) => {
   try {
+    const providerProductId = req.product.id;
+    const product = await Product.findById(req.params.id);
+
+    if (!product) return res.status(404).json({ message: 'Produit non trouvé' });
+
+    if (product.providerProductId.toString() !== providerProductId) {
+      return res.status(403).json({ message: 'Accès refusé' });
+    }
     const updated = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(updated);
   } catch (err) {
@@ -67,6 +70,14 @@ const updateProduct = async (req, res) => {
 // DELETE
 const deleteProduct = async (req, res) => {
   try {
+     const providerProductId = req.product.id;
+    const product = await Product.findById(req.params.id);
+
+    // if (!product) return res.status(404).json({ message: 'Produit non trouvé' });
+
+    // if (product.providerProductId.toString() !== providerProductId) {
+    //   return res.status(403).json({ message: 'Accès refusé' });
+    // }
     const deleted = await Product.findByIdAndDelete(req.params.id);
     res.json({ message: 'Product deleted' });
   } catch (err) {

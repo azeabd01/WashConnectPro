@@ -1,7 +1,7 @@
 const Booking = require('../models/Booking');
 const mongoose = require('mongoose');
 
-exports.fetchAnalyticsOverview = async (providerId) => {
+const fetchAnalyticsOverview = async (providerId) => {
     const bookings = await Booking.find({ provider: providerId });
 
     const totalBookings = bookings.length;
@@ -15,7 +15,7 @@ exports.fetchAnalyticsOverview = async (providerId) => {
     };
 };
 
-exports.fetchWeeklyPerformance = async (providerId) => {
+const fetchWeeklyPerformance = async (providerId) => {
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 6);
 
@@ -56,4 +56,8 @@ exports.fetchWeeklyPerformance = async (providerId) => {
     });
 
     return performance;
+};
+module.exports = {
+    fetchWeeklyPerformance,
+    fetchAnalyticsOverview
 };

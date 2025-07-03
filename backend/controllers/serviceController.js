@@ -1,7 +1,7 @@
 const Service = require('../models/Service');
 const { validationResult } = require('express-validator');
 
-exports.getServices = async (req, res) => {
+const getServices = async (req, res) => {
     try {
         const services = await Service.find({ providerId: req.provider.id }).sort({ createdAt: -1 });
         res.json({ services });
@@ -11,12 +11,14 @@ exports.getServices = async (req, res) => {
     }
 };
 
-exports.createService = async (req, res) => {
+const createService = async (req, res) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-        const { name, description, price, duration, category, features, images } = req.body;
+        console.log('Body reçu createService:', req.body); // debug
+
+        const { name, description, price, duration, category, features, images, active } = req.body;
 
         const service = new Service({
             providerId: req.provider.id,
@@ -26,7 +28,8 @@ exports.createService = async (req, res) => {
             duration,
             category,
             features: features || [],
-            images: images || []
+            images: images || [],
+            isActive: typeof active === 'boolean' ? active : false
         });
 
         await service.save();
@@ -38,12 +41,12 @@ exports.createService = async (req, res) => {
     }
 };
 
-exports.updateService = async (req, res) => {
+const updateService = async (req, res) => {
     try {
         const service = await Service.findOne({ _id: req.params.id, providerId: req.provider.id });
         if (!service) return res.status(404).json({ message: 'Service non trouvé' });
 
-        const { name, description, price, duration, category, features, images, isActive } = req.body;
+        const { name, description, price, duration, category, features, images, active } = req.body;
 
         service.name = name || service.name;
         service.description = description || service.description;
@@ -52,7 +55,7 @@ exports.updateService = async (req, res) => {
         service.category = category || service.category;
         service.features = features || service.features;
         service.images = images || service.images;
-        service.isActive = isActive !== undefined ? isActive : service.isActive;
+        service.isActive = active !== undefined ? active : service.isActive;
 
         await service.save();
 
@@ -63,7 +66,7 @@ exports.updateService = async (req, res) => {
     }
 };
 
-exports.deleteService = async (req, res) => {
+const deleteService = async (req, res) => {
     try {
         const service = await Service.findOneAndDelete({ _id: req.params.id, providerId: req.provider.id });
         if (!service) return res.status(404).json({ message: 'Service non trouvé' });
@@ -76,59 +79,64 @@ exports.deleteService = async (req, res) => {
 };
 
 
-// const Service = require('../models/Service');
-// const { validationResult } = require('express-validator');
+const toggleServiceStatus = async (req, res) => {
+    try {
+        const service = await Service.findOne({ _id: req.params.id, providerId: req.provider.id });
+        if (!service) return res.status(404).json({ message: 'Service non trouvé' });
 
-// exports.getAllServices = async (req, res) => {
-//     try {
-//         const services = await Service.find({ providerId: req.provider.id });
-//         res.json(services);
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ message: 'Erreur serveur' });
-//     }
-// };
+        service.isActive = !service.isActive;
+        await service.save();
 
-// exports.createService = async (req, res) => {
-//     try {
-//         const { name, description, price, duration, category, features } = req.body;
-//         const service = new Service({
-//             providerId: req.user.id,
-//             name, description, price, duration, category, features
-//         });
-//         await service.save();
-//         res.status(201).json(service);
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ message: 'Erreur serveur' });
-//     }
-// };
+        res.json({ message: 'Statut du service mis à jour', service });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Erreur serveur' });
+    }
+};
 
-// exports.updateService = async (req, res) => {
-//     try {
-//         const updated = await Service.findOneAndUpdate(
-//             { _id: req.params.id, providerId: req.user.id },
-//             req.body,
-//             { new: true }
-//         );
-//         if (!updated) return res.status(404).json({ message: 'Service non trouvé' });
-//         res.json(updated);
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ message: 'Erreur serveur' });
-//     }
-// };
+const getActiveServices = async (req, res) => {
+    try {
+        const { category } = req.query;
 
-// exports.deleteService = async (req, res) => {
-//     try {
-//         const deleted = await Service.findOneAndDelete({
-//             _id: req.params.id,
-//             providerId: req.user.id
-//         });
-//         if (!deleted) return res.status(404).json({ message: 'Service non trouvé' });
-//         res.json({ message: 'Service supprimé avec succès' });
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ message: 'Erreur serveur' });
-//     }
-// };
+        const filter = { isActive: true };
+        if (category && category !== 'all') {
+            filter.category = category;
+        }
+
+        const services = await Service.find(filter)
+            .populate('providerId', 'businessName  email phone address')
+            .sort({ createdAt: -1 });
+
+        res.json({ services });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Erreur serveur' });
+    }
+};
+
+const getServicesByProvider = async (req, res) => {
+    try {
+        const services = await Service.find({
+            providerId: req.params.providerId,
+            isActive: true
+        })
+            .populate('providerId', 'businessName  email phone  address')
+            .sort({ createdAt: -1 });
+
+        res.json({ services });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Erreur serveur' });
+    }
+};
+
+module.exports = {
+    getServices,
+    createService,
+    updateService,
+    deleteService,
+    toggleServiceStatus,
+    getActiveServices,
+    getServicesByProvider
+
+};

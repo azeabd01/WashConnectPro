@@ -1,9 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, User, Car, Package, AlertCircle, CheckCircle, LogIn } from 'lucide-react';
-import { loginProvider } from '../../api/provideApi';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft, Package, AlertCircle, CheckCircle, LogIn } from 'lucide-react';
+import { loginProduct } from '../../api/productApi';
 
-const LoginPage = () => {
+const LoginProductPage = () => {
     const navigate = useNavigate();
 
     const [formData, setFormData] = React.useState({
@@ -46,42 +46,46 @@ const LoginPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Form submitted'); // Debug
 
-        if (!validateForm()) {
-            console.log('Validation failed:', errors);
-            return;
-        }
+        if (!validateForm()) return;
 
         setIsLoading(true);
         setLoginStatus(null);
-            
         try {
-            const result = await loginProvider(formData);
-            console.log('Login response:', result);
-
+            const result = await loginProduct(formData);
             setLoginStatus('success');
-            
-            // ✅ Stockage du token et des données utilisateur
             localStorage.setItem('token', result.token);
-            
-            // ✅ Structure simplifiée pour les prestataires
-            const userData = {
-                ...result.provider,
-                role: 'provider'
-            };
-            
-            localStorage.setItem('user', JSON.stringify(userData));
 
-            // ✅ Navigation avec React Router
-            setTimeout(() => {
-                navigate('/dashboard/prestataire');
-            }, 1000);
-            
+            let userData = {};
+            let dashboardPath = '/dashboard';
+
+            if (result.product) {
+                userData = { ...result.product, role: 'product' };
+                dashboardPath = '/dashboard/product';
+            } else if (result.client) {
+                userData = { ...result.client, role: 'client' };
+                dashboardPath = '/dashboard/client';
+            } else if (result.provider) {
+                userData = { ...result.provider, role: 'provider' };
+                dashboardPath = '/dashboard/provider';
+            } else {
+                throw new Error('Type d\'utilisateur non reconnu');
+            }
+
+            localStorage.setItem('user', JSON.stringify(userData));
+            setTimeout(() => navigate(dashboardPath), 1000);
         } catch (error) {
             console.error('Login error:', error);
             setLoginStatus('error');
-            setErrors({ general: error.message || 'Erreur lors de la connexion' });
+            let errorMessage = 'Erreur lors de la connexion';
+            if (error.response?.status === 401) {
+                errorMessage = 'Email ou mot de passe incorrect';
+            } else if (error.response?.status === 404) {
+                errorMessage = 'Aucun compte trouvé avec cet email';
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+            setErrors({ general: errorMessage });
         } finally {
             setIsLoading(false);
         }
@@ -92,31 +96,34 @@ const LoginPage = () => {
     };
 
     const handleRegisterRedirect = () => {
-        navigate('/auth/register/prestataire');
-    };
-
-    // Fonction pour tester la navigation directement
-    const handleTestNavigation = () => {
-        console.log('Test navigation');
-        navigate('/dashboard/prestataire');
+        navigate('/auth/register/product');
     };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4">
             <div className="max-w-md w-full">
+                {/* Bouton retour home */}
+                <button
+                    onClick={() => navigate('/auth')}
+                    className="flex items-center text-blue-600 hover:text-blue-700 font-semibold mb-8"
+                    type="button"
+                >
+                    <ArrowLeft className="w-5 h-5 mr-2" />
+                    Retour
+                </button>
                 <div className="text-center mb-8">
                     <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
                         <LogIn className="w-10 h-10 text-white" />
                     </div>
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Connexion Prestataire</h1>
-                    <p className="text-gray-600">Accédez à votre espace prestataire</p>
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Connexion Product</h1>
+                    <p className="text-gray-600">Accédez à votre espace product</p>
                 </div>
 
                 <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
                     {loginStatus === 'success' && (
                         <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center">
                             <CheckCircle className="w-5 h-5 text-green-500 mr-3" />
-                            <span className="text-green-700">Connexion réussie ! Redirection vers le dashboard...</span>
+                            <span className="text-green-700">Connexion réussie ! Redirection...</span>
                         </div>
                     )}
 
@@ -127,7 +134,6 @@ const LoginPage = () => {
                         </div>
                     )}
 
-                    {/* ✅ CORRECTION : form au lieu de div */}
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -138,9 +144,7 @@ const LoginPage = () => {
                                 type="email"
                                 value={formData.email}
                                 onChange={(e) => handleInputChange('email', e.target.value)}
-                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                                    errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                                }`}
+                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300'}`}
                                 placeholder="votre@email.com"
                                 disabled={isLoading}
                             />
@@ -162,9 +166,7 @@ const LoginPage = () => {
                                     type={showPassword ? 'text' : 'password'}
                                     value={formData.password}
                                     onChange={(e) => handleInputChange('password', e.target.value)}
-                                    className={`w-full px-4 py-3 pr-12 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                                        errors.password ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                                    }`}
+                                    className={`w-full px-4 py-3 pr-12 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${errors.password ? 'border-red-500 bg-red-50' : 'border-gray-300'}`}
                                     placeholder="Votre mot de passe"
                                     disabled={isLoading}
                                 />
@@ -199,11 +201,10 @@ const LoginPage = () => {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className={`w-full py-3 px-4 rounded-lg font-semibold text-white transition-all duration-200 flex items-center justify-center ${
-                                isLoading
-                                    ? 'bg-gray-400 cursor-not-allowed'
-                                    : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 hover:shadow-lg transform hover:scale-105'
-                            }`}
+                            className={`w-full py-3 px-4 rounded-lg font-semibold text-white transition-all duration-200 flex items-center justify-center ${isLoading
+                                ? 'bg-gray-400 cursor-not-allowed'
+                                : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 hover:shadow-lg transform hover:scale-105'
+                                }`}
                         >
                             {isLoading ? (
                                 <>
@@ -217,24 +218,7 @@ const LoginPage = () => {
                                 </>
                             )}
                         </button>
-
-                        {/* ✅ Bouton de test pour debug */}
-                        <button
-                            type="button"
-                            onClick={handleTestNavigation}
-                            className="w-full py-2 px-4 rounded-lg font-medium text-blue-600 border border-blue-600 hover:bg-blue-50 transition-colors"
-                        >
-                            🧪 Test Navigation (Debug)
-                        </button>
                     </form>
-
-                    <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                        <h4 className="text-sm font-medium text-gray-700 mb-2">🎯 Compte de démonstration :</h4>
-                        <div className="text-xs text-gray-600 space-y-1">
-                            <p><strong>Email:</strong> prestataire@demo.com</p>
-                            <p><strong>Mot de passe:</strong> demo123</p>
-                        </div>
-                    </div>
                 </div>
 
                 <div className="text-center mt-8">
@@ -244,15 +228,15 @@ const LoginPage = () => {
                             onClick={handleRegisterRedirect}
                             className="text-blue-600 hover:text-blue-700 font-semibold hover:underline"
                         >
-                            Créer un compte prestataire
+                            Créer un compte product
                         </button>
                     </p>
                 </div>
 
                 <div className="mt-8 text-center">
-                    <div className="inline-flex items-center p-3 bg-green-50 rounded-lg border border-green-200">
-                        <Car className="w-6 h-6 text-green-500 mr-2" />
-                        <span className="text-sm text-green-700 font-medium">Espace Prestataire</span>
+                    <div className="inline-flex items-center p-3 bg-blue-50 rounded-lg border border-blue-200">
+                        <Package className="w-6 h-6 text-blue-500 mr-2" />
+                        <span className="text-sm text-blue-700 font-medium">Espace Product</span>
                     </div>
                 </div>
             </div>
@@ -260,4 +244,4 @@ const LoginPage = () => {
     );
 };
 
-export default LoginPage;
+export default LoginProductPage;

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Car, Menu, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function Navbar({ onAuthClick }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -32,6 +33,40 @@ export default function Navbar({ onAuthClick }) {
         }
     }, [location.pathname]); // Re-check quand la route change
 
+    const handleDashboardNavigation = () => {
+        if (!user) {
+            console.log('Aucun utilisateur connecté');
+            return;
+        }
+
+        console.log('Utilisateur:', user); // Debug
+        const userRole = user.role;
+        let dashboardPath = '';
+
+        switch (userRole) {
+            case 'provider':  // Support des deux formats
+                dashboardPath = '/dashboard/provider';
+                break;
+            case 'client':
+                dashboardPath = '/dashboard/client';
+                break;
+            case 'product':  // Support des deux formats
+                dashboardPath = '/dashboard/product';
+                break;
+            default:
+                console.warn('Role utilisateur non reconnu:', userRole);
+                return;
+        }
+
+        console.log('Navigation vers:', dashboardPath); // Debug
+
+        // Fermer le menu mobile si ouvert
+        setIsMenuOpen(false);
+
+        // Naviguer vers le dashboard
+        navigate(dashboardPath);
+    };
+
     const handleLogout = () => {
         // Nettoyer le localStorage
         localStorage.removeItem('token');
@@ -44,12 +79,12 @@ export default function Navbar({ onAuthClick }) {
         if (isDashboard) {
             // Si on est dans un dashboard, retourner au login approprié
             const userRole = user?.role;
-            if (userRole === 'provider') {
-                navigate('/auth/login/prestataire');
+            if (userRole === 'provider' || userRole === 'provider') {
+                navigate('/auth/login/provider');
             } else if (userRole === 'client') {
                 navigate('/auth/login/client');
-            } else if (userRole === 'supplier') {
-                navigate('/auth/login/fournisseur');
+            } else if (userRole === 'product' || userRole === 'product') {
+                navigate('/auth/login/product');
             } else {
                 navigate('/auth/login');
             }
@@ -59,14 +94,13 @@ export default function Navbar({ onAuthClick }) {
         }
     };
 
-    // Ne pas afficher la navbar dans les dashboards (optionnel)
-    // Si vous voulez masquer complètement la navbar dans les dashboards
-    if (isDashboard) {
-        return null; // ou return <DashboardNavbar /> si vous voulez une navbar spécifique
-    }
+    // ✅ SUPPRIMÉ : Ne plus masquer la navbar dans les dashboards
+    // if (isDashboard) {
+    //     return null;
+    // }
 
     return (
-        <nav className={`fixed w-full z-50 transition-all duration-300 ${scrollY > 50 ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-transparent'}`}>
+        <nav className={`fixed w-full z-50 transition-all duration-300 ${scrollY > 50 || isDashboard ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-transparent'}`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center py-4">
                     <div className="flex items-center space-x-3">
@@ -83,11 +117,22 @@ export default function Navbar({ onAuthClick }) {
                         {/* Navigation links - seulement sur la page d'accueil */}
                         {isHomePage && (
                             <>
-                                <a href="#services" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Services</a>
+                                <Link to="/services" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Services</Link>
+                                {/* <a href="#services" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Services</a> */}
                                 <a href="#solutions" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Solutions</a>
                                 <a href="#tarifs" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Tarifs</a>
                                 <a href="#contact" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Contact</a>
                             </>
+                        )}
+
+                        {/* Bouton Accueil si on est dans un dashboard */}
+                        {isDashboard && (
+                            <button
+                                onClick={() => navigate('/')}
+                                className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
+                            >
+                                Accueil
+                            </button>
                         )}
 
                         {/* Actions utilisateur */}
@@ -100,16 +145,7 @@ export default function Navbar({ onAuthClick }) {
                                 {/* Bouton Dashboard - seulement si pas déjà dans un dashboard */}
                                 {!isDashboard && (
                                     <button
-                                        onClick={() => {
-                                            const userRole = user.role;
-                                            if (userRole === 'provider') {
-                                                navigate('/dashboard/prestataire');
-                                            } else if (userRole === 'client') {
-                                                navigate('/dashboard/client');
-                                            } else if (userRole === 'supplier') {
-                                                navigate('/dashboard/fournisseur');
-                                            }
-                                        }}
+                                        onClick={handleDashboardNavigation}
                                         className="bg-blue-500 text-white px-4 py-2 rounded-full font-semibold hover:shadow-lg transition-all"
                                     >
                                         Dashboard
@@ -154,11 +190,31 @@ export default function Navbar({ onAuthClick }) {
                         {/* Navigation mobile - seulement sur la page d'accueil */}
                         {isHomePage && (
                             <>
-                                <a href="#services" className="block text-gray-700 hover:text-blue-600 transition-colors font-medium">Services</a>
+                                <Link
+                                    to="/services"
+                                    className="block text-gray-700 hover:text-blue-600 transition-colors font-medium"
+                                    onClick={() => setIsMenuOpen(false)} // ferme le menu quand on clique
+                                >
+                                    Services
+                                </Link>
+                                {/* <a href="#services" className="block text-gray-700 hover:text-blue-600 transition-colors font-medium">Services</a> */}
                                 <a href="#solutions" className="block text-gray-700 hover:text-blue-600 transition-colors font-medium">Solutions</a>
                                 <a href="#tarifs" className="block text-gray-700 hover:text-blue-600 transition-colors font-medium">Tarifs</a>
                                 <a href="#contact" className="block text-gray-700 hover:text-blue-600 transition-colors font-medium">Contact</a>
                             </>
+                        )}
+
+                        {/* Bouton Accueil mobile si on est dans un dashboard */}
+                        {isDashboard && (
+                            <button
+                                onClick={() => {
+                                    navigate('/');
+                                    setIsMenuOpen(false);
+                                }}
+                                className="block text-gray-700 hover:text-blue-600 transition-colors font-medium"
+                            >
+                                Accueil
+                            </button>
                         )}
 
                         {user ? (
@@ -170,17 +226,7 @@ export default function Navbar({ onAuthClick }) {
                                 {/* Bouton Dashboard mobile - seulement si pas déjà dans un dashboard */}
                                 {!isDashboard && (
                                     <button
-                                        onClick={() => {
-                                            const userRole = user.role;
-                                            if (userRole === 'provider') {
-                                                navigate('/dashboard/prestataire');
-                                            } else if (userRole === 'client') {
-                                                navigate('/dashboard/client');
-                                            } else if (userRole === 'supplier') {
-                                                navigate('/dashboard/fournisseur');
-                                            }
-                                            setIsMenuOpen(false);
-                                        }}
+                                        onClick={handleDashboardNavigation}
                                         className="w-full bg-blue-500 text-white px-6 py-3 rounded-full font-semibold mb-2"
                                     >
                                         Dashboard

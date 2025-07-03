@@ -33,8 +33,8 @@ const userTypes = [
         ]
     },
     {
-        id: 'prestataires',
-        title: 'Prestataires de Lavage',
+        id: 'provider',
+        title: 'provider de Lavage',
         icon: <BarChart3 className="w-6 h-6" />,
         color: 'from-emerald-500 to-teal-500',
         description: 'Optimisez votre activité avec nos outils de gestion avancés. Augmentez votre visibilité et vos revenus.',
@@ -46,11 +46,11 @@ const userTypes = [
         ]
     },
     {
-        id: 'produits',
-        title: 'Produits',
+        id: 'products',
+        title: 'Products',
         icon: <Package className="w-6 h-6" />,
         color: 'from-purple-500 to-pink-500',
-        description: 'Vendez vos produits sur notre marketplace. Accédez à un réseau de centres et clients qualifiés.',
+        description: 'Vendez vos products sur notre marketplace. Accédez à un réseau de centres et clients qualifiés.',
         features: [
             { icon: <Package className="w-5 h-5" />, text: 'Marketplace intégrée' },
             { icon: <TrendingUp className="w-5 h-5" />, text: 'Gestion des stocks' },

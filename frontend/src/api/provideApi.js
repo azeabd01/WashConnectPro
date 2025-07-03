@@ -1,6 +1,6 @@
 // export const registerProvider = async (formData) => {
 //     try {
-//         const response = await fetch('http://localhost:3000/api/auth/register/prestataire', {
+//         const response = await fetch('http://localhost:3000/api/auth/register/provider', {
 //             method: 'POST',
 //             headers: {
 //                 'Content-Type': 'application/json',
@@ -21,13 +21,14 @@
 //     }
 // };
 // src/api/provideApi.js
-const API_URL = "http://localhost:3000/api/auth";
 
+
+const API_URL = "http://localhost:3000/api/auth";
 // ✅ Login spécifique aux prestataires
 export const loginProvider = async (credentials) => {
     console.log("Tentative de connexion prestataire avec:", credentials);
 
-    const response = await fetch(`${API_URL}/login/prestataire`, {
+    const response = await fetch(`${API_URL}/login/provider`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -60,7 +61,7 @@ export const loginProvider = async (credentials) => {
 export const registerProvider = async (providerData) => {
     console.log("Tentative d'inscription prestataire avec:", providerData);
 
-    const response = await fetch(`${API_URL}/register/prestataire`, {
+    const response = await fetch(`${API_URL}/register/provider`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -74,4 +75,44 @@ export const registerProvider = async (providerData) => {
     }
 
     return response.json();
+};
+
+// 👤 Récupérer profil connecté
+export const getMe = async () => {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API_URL}/me`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+    if (!res.ok) throw new Error('Erreur lors du chargement du profil');
+    return res.json();
+};
+
+// ✏️ Mettre à jour profil prestataire
+export const updateProviderProfile = async (updatedData) => {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API_URL}/update`, {
+        method: 'PUT',
+        headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedData),
+    });
+    if (!res.ok) throw new Error('Erreur lors de la mise à jour du profil');
+    return res.json();
+};
+
+// ❌ Désactiver le compte
+export const deleteProviderAccount = async () => {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API_URL}/delete`, {
+        method: 'DELETE',
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+    if (!res.ok) throw new Error('Erreur lors de la désactivation du compte');
+    return res.json();
 };

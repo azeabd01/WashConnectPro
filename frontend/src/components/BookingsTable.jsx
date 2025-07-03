@@ -2,7 +2,8 @@ import React from 'react';
 import { Users } from 'lucide-react';
 import StatusBadge from './StatusBadge';
 
-const BookingsTable = ({ bookings }) => {
+
+const BookingsTable = ({ bookings, onStatusChange }) => {
     return (
         <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
             <div className="overflow-x-auto">
@@ -34,8 +35,12 @@ const BookingsTable = ({ bookings }) => {
                                 <td className="px-6 py-4 text-sm font-medium">
                                     <div className="flex gap-2">
                                         <button className="text-blue-600 hover:text-blue-700">Voir</button>
-                                        <button className="text-green-600 hover:text-green-700">Confirmer</button>
-                                        <button className="text-red-600 hover:text-red-700">Annuler</button>
+                                        {onStatusChange && (
+                                            <>
+                                                <button onClick={() => onStatusChange(booking.id, 'confirmed')} className="text-green-600 hover:text-green-700">Confirmer</button>
+                                                <button onClick={() => onStatusChange(booking.id, 'cancelled')} className="text-red-600 hover:text-red-700">Annuler</button>
+                                            </>
+                                        )}
                                     </div>
                                 </td>
                             </tr>

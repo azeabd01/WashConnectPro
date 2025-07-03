@@ -19,8 +19,16 @@ export default function ProductsTable() {
   useEffect(() => {
     setLoading(true);
     setError(null);
+    const token = localStorage.getItem('token');  // récupère le token
 
-    fetch(`http://localhost:3000/api/products?page=${page}&limit=5`)
+    fetch(`http://localhost:3000/api/products?page=${page}&limit=5`, {
+      headers: {
+        "Authorization": `Bearer ${token}`,   // ajoute le token
+        "Content-Type": "application/json",
+      },
+    })
+
+
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch products');
         return res.json();
@@ -42,6 +50,10 @@ export default function ProductsTable() {
     try {
       const res = await fetch(`http://localhost:3000/api/products/${deleteId}`, {
         method: 'DELETE',
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       });
 
       if (!res.ok) throw new Error('Delete failed');
@@ -87,7 +99,7 @@ export default function ProductsTable() {
 
   return (
     <div className="relative">
-       <Toaster position="bottom-right" />
+      <Toaster position="bottom-right" />
       {/* Delete Confirmation Modal */}
       {deleteId && (
         <div
@@ -126,25 +138,25 @@ export default function ProductsTable() {
             <h3 className="text-lg font-medium text-gray-900">Products</h3>
             <div className="flex items-center space-x-3">
               {/* <div className="flex flex-wrap gap-4 mb-4 items-center"> */}
-                <input
-                  type="text"
-                  placeholder="Search by name"
-                  className="border px-3 py-1 rounded w-60"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                <select
-                  className="flex items-center px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
-                  value={stockFilter}
-                  onChange={(e) => setStockFilter(e.target.value)}
-                >
-                  <option  value="all">All Stock</option>
-                  <option value="inStock">In Stock</option>
-                  <option value="outOfStock">Out of Stock</option>
-                </select>
+              <input
+                type="text"
+                placeholder="Search by name"
+                className="border px-3 py-1 rounded w-60"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <select
+                className="flex items-center px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
+                value={stockFilter}
+                onChange={(e) => setStockFilter(e.target.value)}
+              >
+                <option value="all">All Stock</option>
+                <option value="inStock">In Stock</option>
+                <option value="outOfStock">Out of Stock</option>
+              </select>
               {/* </div> */}
 
-            
+
               <button className="flex items-center px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700">
                 <Plus className="w-4 h-4 mr-2" />
                 <Link to="/dashboard/product/addproduct" >
@@ -174,8 +186,8 @@ export default function ProductsTable() {
                     {product.name}
                   </td>
                   <td className="px-6 py-4 text-gray-700">{product.price}</td>
-                 
-                 
+
+
                   <td className="px-6 py-4 text-gray-700">{product.stock}</td>
 
                   <td className="px-6 py-4">
@@ -198,7 +210,7 @@ export default function ProductsTable() {
                         className="text-gray-400 hover:text-blue-600 p-1 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
                         title="View product"
                       >
-                        <Link to={`/product/${product._id}`} className="text-gray-400 hover:text-blue-600 p-1">
+                        <Link to={`/dashboard/product/product/${product._id}`} className="text-gray-400 hover:text-blue-600 p-1">
                           <Eye className="w-4 h-4" />
                         </Link>
                       </button>
@@ -206,7 +218,7 @@ export default function ProductsTable() {
                         className="text-gray-400 hover:text-green-600 p-1 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
                         title="Edit product"
                       >
-                        <Link to={`/editproduct/${product._id}`}>
+                        <Link to={`/dashboard/product/editproduct/${product._id}`}>
                           <Edit className="w-4 h-4" />
                         </Link>
                       </button>
@@ -223,17 +235,17 @@ export default function ProductsTable() {
               ))}
             </tbody>
           </table>
-         <div className="flex justify-end mb-4 mr-2">
-  <button
-    onClick={() => {
-      setSearchTerm('');
-      setStockFilter('all');
-    }}
-    className="flex items-center px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700"
-  >
-    Reset Filters
-  </button>
-</div>
+          <div className="flex justify-end mb-4 mr-2">
+            <button
+              onClick={() => {
+                setSearchTerm('');
+                setStockFilter('all');
+              }}
+              className="flex items-center px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700"
+            >
+              Reset Filters
+            </button>
+          </div>
 
         </div>
       </div>

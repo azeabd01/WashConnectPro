@@ -40,11 +40,11 @@ const Header = () => {
         // Redirection vers login selon le rôle
         const userRole = user?.role;
         if (userRole === 'provider') {
-            navigate('/auth/login/prestataire');
+            navigate('/auth/login/provider');
         } else if (userRole === 'client') {
             navigate('/auth/login/client');
-        } else if (userRole === 'supplier') {
-            navigate('/auth/login/fournisseur');
+        } else if (userRole === 'product') {
+            navigate('/auth/login/product');
         } else {
             navigate('/auth/login');
         }
@@ -63,9 +63,9 @@ const Header = () => {
         if (!user?.role) return 'Utilisateur';
 
         const roleMap = {
-            'provider': 'Prestataire',
+            'provider': 'Provider',
             'client': 'Client',
-            'supplier': 'Fournisseur'
+            'product': 'Product'
         };
 
         return roleMap[user.role] || 'Utilisateur';

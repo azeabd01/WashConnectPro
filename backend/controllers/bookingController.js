@@ -4,10 +4,10 @@ const moment = require('moment');
 
 // GET /api/bookings
 // POST /api/bookings - avec filtres dans req.body
-exports.getBookings = async (req, res) => {
+const getBookings = async (req, res) => {
     try {
         // Ici on prend les filtres depuis req.body (au lieu de req.query)
-        const { status, date, limit = 50 } = req.body;
+        const { status, date, limit = 50 } = req.body || {};
 
         let query = { providerId: req.provider.id };
 
@@ -32,7 +32,7 @@ exports.getBookings = async (req, res) => {
 };
 
 // GET /api/bookings/:id
-exports.getBookingById = async (req, res) => {
+const getBookingById = async (req, res) => {
     try {
         const booking = await Booking.findOne({ _id: req.params.id, providerId: req.provider.id })
             .populate('serviceId', 'name description price duration category');
@@ -47,7 +47,7 @@ exports.getBookingById = async (req, res) => {
 };
 
 // PUT /api/bookings/:id/status
-exports.updateBookingStatus = async (req, res) => {
+const updateBookingStatus = async (req, res) => {
     try {
         const { status, notes } = req.body;
         const validStatus = ['pending', 'confirmed', 'in-progress', 'completed', 'cancelled'];
@@ -79,7 +79,7 @@ exports.updateBookingStatus = async (req, res) => {
 };
 
 // POST /api/bookings
-exports.createBooking = async (req, res) => {
+const createBooking = async (req, res) => {
     try {
         const {
             clientName,
@@ -118,6 +118,69 @@ exports.createBooking = async (req, res) => {
     }
 };
 
+const createPublicBooking = async (req, res) => {
+    try {
+        const {
+            clientName,
+            clientPhone,
+            clientEmail,
+            serviceId,
+            scheduledDate,
+            scheduledTime,
+            vehicleInfo,
+            notes
+        } = req.body;
+
+        // Vérifier que le service existe et est actif
+        const service = await Service.findOne({ 
+            _id: serviceId, 
+            isActive: true 
+        }).populate('providerId');
+
+        if (!service) {
+            return res.status(404).json({ message: 'Service non trouvé ou inactif' });
+        }
+
+        // Créer la réservation
+        const booking = new Booking({
+            clientName,
+            clientPhone,
+            clientEmail,
+            providerId: service.providerId._id,
+            serviceId,
+            scheduledDate: new Date(scheduledDate),
+            scheduledTime,
+            price: service.price,
+            vehicleInfo,
+            notes
+        });
+
+        await booking.save();
+        await booking.populate('serviceId', 'name category');
+
+        res.status(201).json({ 
+            message: 'Réservation créée avec succès', 
+            booking: {
+                ...booking.toObject(),
+                provider: {
+                    companyName: service.providerId.companyName,
+                    phone: service.providerId.phone,
+                    email: service.providerId.email
+                }
+            }
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Erreur serveur' });
+    }
+};
+module.exports = {
+    getBookings,
+    getBookingById,
+    updateBookingStatus,
+    createBooking,
+    createPublicBooking
+};
 
 
 // const Booking = require('../models/Booking');

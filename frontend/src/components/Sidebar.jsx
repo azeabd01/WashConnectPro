@@ -3,7 +3,6 @@ import { BarChart3, Calendar, Car, TrendingUp, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 
-
 const Sidebar = ({ activeTab, setActiveTab }) => {
     const items = [
         { id: 'overview', icon: BarChart3, label: 'Overview' },
@@ -20,7 +19,7 @@ const navigate = useNavigate();
                     <button
                         key={item.id}
                         // onClick={() => setActiveTab(item.id)}
-                        onClick={() => navigate(`/dashboard/prestataire/${item.id}`)}
+                        onClick={() => navigate(`/dashboard/provider/${item.id}`)}
 
                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors ${activeTab === item.id
                             ? 'bg-blue-100 text-blue-700 font-medium'

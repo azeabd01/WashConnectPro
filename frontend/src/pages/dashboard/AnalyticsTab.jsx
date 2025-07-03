@@ -1,17 +1,18 @@
 // pages/dashboard/AnalyticsTab.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import WeeklyPerformance from '../../components/WeeklyPerformance';
+import { fetchWeeklyPerformance } from '../../api/analyticsApi'; // (⚠️ assure-toi que ce fichier existe et exporte bien la fonction)
 
 const AnalyticsTab = () => {
-    const performance = [
-        { day: 'Lun', bookings: 8, revenue: 500 },
-        { day: 'Mar', bookings: 12, revenue: 750 },
-        { day: 'Mer', bookings: 5, revenue: 320 },
-        { day: 'Jeu', bookings: 14, revenue: 910 },
-        { day: 'Ven', bookings: 11, revenue: 700 },
-        { day: 'Sam', bookings: 9, revenue: 620 },
-        { day: 'Dim', bookings: 3, revenue: 180 }
-    ];
+    const [performance, setPerformance] = useState([]);
+
+    useEffect(() => {
+        const load = async () => {
+            const data = await fetchWeeklyPerformance();
+            setPerformance(data);
+        };
+        load();
+    }, []);
 
     return (
         <>
