@@ -37,16 +37,16 @@ const createProduct = async (req, res) => {
   try {
     const providerProductId = req.product.id; // venant de ton middleware d’authentification
 
-    const newProduct = new Product(req.body, providerProductId);
+    const newProduct = new Product({
+  ...req.body,
+  providerProductId: req.product.id
+});
     const saved = await newProduct.save();
     res.status(201).json(saved);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 };
-
-
-
 
 
 // PUT update

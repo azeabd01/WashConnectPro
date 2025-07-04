@@ -17,6 +17,16 @@ const productSchema = new mongoose.Schema({
   //   enum: ['Pending', 'Confirmed', 'In Progress', 'Completed'],
   //   default: 'Pending'
   // },
+
+  // ✅ Ajout requis pour éviter les conflits d'index
+  sku: {
+      type: String,
+      unique: true,
+      default: function () {
+          return `SKU-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+      }
+  },
+
   rating: { type: Number, default: 0, min: 0, max: 5 },
   createdAt: { type: Date, default: Date.now }
 });

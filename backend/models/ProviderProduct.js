@@ -9,15 +9,14 @@ const ProviderProductSchema = new mongoose.Schema({
     // description: { type: String, trim: true },
     // image: String,
     // inStock: { type: Boolean, default: true },
-    // status: { type: String, enum: ['active', 'inactive'], default: 'active' },
+    status: { type: String, enum: ['active', 'inactive'], default: 'active' },
     // rating: {
-        // average: { type: Number, default: 0, min: 0, max: 5 },
-        // count: { type: Number, default: 0 }
+    // average: { type: Number, default: 0, min: 0, max: 5 },
+    // count: { type: Number, default: 0 }
     // },
     // category: { type: String },
-    providerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Provider' },
-
-    // ✅ Ajout requis pour éviter les conflits d'index
+    // providerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Provider' },
+    //   ✅ Ajout requis pour éviter les conflits d'index
     sku: {
         type: String,
         unique: true,
@@ -25,6 +24,8 @@ const ProviderProductSchema = new mongoose.Schema({
             return `SKU-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
         }
     }
+
+
 }, { timestamps: true }); // Ajouter timestamps
 
 // ✅ INDEX ICI

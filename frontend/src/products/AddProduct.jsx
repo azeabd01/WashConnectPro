@@ -21,21 +21,25 @@ export default function AddProduct({ onSuccess }) {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    
-if (!form.name || !form.price) {
-        toast.error('Name and price are required');
-        return;
+
+    if (!form.name || !form.price) {
+      toast.error('Name and price are required');
+      return;
     }
     const toastId = toast.loading('Adding product...');
     try {
-       const productData = {
-            ...form,
-            price: parseFloat(form.price),
-            stock: parseInt(form.stock) || 0
-        };
+      const productData = {
+        ...form,
+        price: parseFloat(form.price),
+        stock: parseInt(form.stock) || 0
+      };
+      const token = localStorage.getItem('token');
       const res = await fetch('http://localhost:3000/api/products', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        
         body: JSON.stringify(productData)
       });
 

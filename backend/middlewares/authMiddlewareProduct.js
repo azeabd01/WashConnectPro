@@ -46,11 +46,11 @@ const authMiddlewareProduct = async (req, res, next) => {
         }
 
         // Vérifier si le compte product est actif
-        if (product.status !== 'active') {
-            return res.status(403).json({
-                message: 'Compte product désactivé. Contactez l\'administrateur.'
-            });
-        }
+        // if (product.status !== 'active') {
+        //     return res.status(403).json({
+        //         message: 'Compte product désactivé. Contactez l\'administrateur.'
+        //     });
+        // }
 
         // Ajouter les informations du product à la requête
         req.product = {
