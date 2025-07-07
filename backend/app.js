@@ -14,13 +14,16 @@ const bookingsRoutes = require('./routes/bookingsRoutes');
 const analyticsRoutes = require('./routes/analyticsRoutes');
 
 const providerRoutes = require('./routes/auth/providerRoutes');
-// const clientRoutes = require('./routes/auth/clientRoutes');
+const clientRoutes = require('./routes/auth/clientRoutes');
 const prodRout = require('./routes/auth/productRoutes');
 
 const productRoutes = require('./routes/productsRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 
 const clientBookingRoutes = require('./routes//client/ClientBookingRoutes');
+
+const availableTimeSlots = require('./routes/publicServiceRoutes');
+const publicServiceRoutes = require('./routes/publicServiceRoutes');
 
 const app = express();
 
@@ -38,7 +41,7 @@ app.use('/api/bookings', bookingsRoutes);
 app.use('/api/analytics', analyticsRoutes);
 
 app.use('/api/auth', providerRoutes);
-// app.use('/api/auth', clientRoutes);
+app.use('/api/auth', clientRoutes);
 app.use('/api/auth', prodRout);
 
 app.use('/api/products', productRoutes);
@@ -48,11 +51,12 @@ app.use('/api/analytics', productRoutes);
 
 app.use('/api/public/services', require('./routes/publicServiceRoutes'));
 app.use('/api/public/bookings', require('./routes/publicBookingRoutes'));
+app.use('/api/public', publicServiceRoutes);
 
 
 app.use('/api/bookings', clientBookingRoutes);
 app.use('/api/client/providers', require('./routes/client/searchRoutes'));
 app.use('/api/client/profile', require('./routes/client/profileRoutes'))
 
-
+app.use('/api/availabilities', availableTimeSlots);
 app.listen(port, () => console.log(`Server running on port ${port}}`));

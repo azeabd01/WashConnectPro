@@ -1,9 +1,11 @@
 const Service = require('../models/Service');
 const { validationResult } = require('express-validator');
+// const Provider = require('../models/Provider');
 
 const getServices = async (req, res) => {
     try {
-        const services = await Service.find({ providerId: req.provider.id }).sort({ createdAt: -1 });
+        const services = await Service.find({ providerId: req.provider.id }).populate('providerId', 'workingHours');
+        // sort({ createdAt: -1 });
         res.json({ services });
     } catch (err) {
         console.error(err);

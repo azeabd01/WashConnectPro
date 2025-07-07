@@ -2,13 +2,21 @@ const mongoose = require('mongoose');
 
 const bookingSchema = new mongoose.Schema({
     bookingNumber: { type: String, unique: true, required: true },
+    clientId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'client',
+        required: true,
+    },
     clientName: { type: String, required: true },
     clientPhone: { type: String, required: true },
     clientEmail: String,
     providerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Provider', required: true },
     serviceId: { type: mongoose.Schema.Types.ObjectId, ref: 'Service', required: true },
-    scheduledDate: { type: Date, required: true },
-    scheduledTime: { type: String, required: true },
+    date: { type: String, required: true },       // ex: '2025-07-08'
+    startTime: { type: String, required: true },  // ex: '09:30'
+    endTime: { type: String, required: true },    // ex: '10:00'
+    // scheduledDate: { type: String, required: true },  // ex: '2025-07-08'
+    // scheduledTime: { type: String, required: true },  // ex: '09:30-10:00'
     status: {
         type: String,
         enum: ['pending', 'confirmed', 'in-progress', 'completed', 'cancelled'],
@@ -50,5 +58,5 @@ bookingSchema.pre('save', async function (next) {
     }
     next();
 });
-
 module.exports = mongoose.model('Booking', bookingSchema);
+

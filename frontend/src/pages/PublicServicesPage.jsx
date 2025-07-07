@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // <-- Import useNavigate
 import { Car, Clock, DollarSign, MapPin, Building, Star, Filter, ArrowLeft } from 'lucide-react'; // <-- Import ArrowLeft
-import { createPublicBooking } from '../api/publicServicesApi'; // à créer si tu veux l'importer
+import { fetchAvailableTimeSlots } from '../api/publicServicesApi';
+import BookingModal from '../components/BookingModal'; // ← importe le composant
 
 // IMPORT DE LA FONCTION API (à adapter selon ton projet)
 import { fetchPublicServices } from '../api/publicServicesApi';
@@ -9,6 +10,7 @@ import { fetchPublicServices } from '../api/publicServicesApi';
 const PublicServicesPage = () => {
     const navigate = useNavigate(); // <-- Initialise navigate
 
+    const [timeSlots, setTimeSlots] = useState([]);
     const [services, setServices] = useState([]);
     const [filteredServices, setFilteredServices] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -55,10 +57,42 @@ const PublicServicesPage = () => {
         }
     };
 
-    const handleBookService = (service) => {
+    const handleBookService = async (service) => {
         setSelectedService(service);
         setShowBookingModal(true);
+
+        // 👇 Récupération des créneaux disponibles en fonction du service
+        try {
+            const date = new Date().toISOString().split('T')[0]; // aujourd’hui
+            const duration = service.duration;
+            const providerId = service.providerId._id;
+
+            const slots = await fetchAvailableTimeSlots(providerId, date, duration);
+            setTimeSlots(slots); // mise à jour des créneaux dans le modal
+        } catch (error) {
+            console.error("Erreur lors du chargement des créneaux :", error);
+            setTimeSlots([]); // pour ne pas planter le modal
+        }
     };
+
+
+    const handleBookingSubmit = async (bookingData) => {
+        try {
+            const res = await fetch('http://localhost:3000/api/public/bookings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(bookingData)
+            });
+
+            if (!res.ok) throw new Error('Erreur de réservation');
+
+            alert('Réservation effectuée avec succès ✅');
+            // Rediriger vers login ou dashboard
+        } catch (error) {
+            alert('Erreur lors de la réservation');
+        }
+    };
+
 
     const getCategoryLabel = (category) => {
         const cat = categories.find(c => c.value === category);
@@ -214,104 +248,17 @@ const PublicServicesPage = () => {
 
             {/* Modal de réservation */}
 
-            {showBookingModal && selectedService && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-                        <h3 className="text-lg font-semibold mb-4">
-                            Réserver: {selectedService.name}
-                        </h3>
-
-                        <form
-                            onSubmit={async (e) => {
-                                e.preventDefault();
-
-                                const form = e.target;
-                                const bookingData = {
-                                    clientName: form.clientName.value,
-                                    clientPhone: form.clientPhone.value,
-                                    clientEmail: form.clientEmail.value,
-                                    serviceId: selectedService._id,
-                                    providerId: selectedService.providerId._id, // ✅ ajouter
-                                    scheduledDate: form.scheduledDate.value,
-                                    scheduledTime: form.scheduledTime.value,
-                                    price: selectedService.price, // ✅ ajouter
-                                    vehicleInfo: {
-                                        make: form.make.value,
-                                        model: form.model.value,
-                                        year: Number(form.year.value),
-                                        licensePlate: form.licensePlate.value,
-                                    },
-                                    notes: form.notes.value
-                                };
-
-                                try {
-                                    const res = await fetch('http://localhost:3000/api/public/bookings', {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify(bookingData)
-                                    });
-
-                                    if (!res.ok) throw new Error('Erreur de réservation');
-                                    const result = await res.json();
-
-                                    alert('Réservation effectuée avec succès ✅');
-                                    setShowBookingModal(false);
-                                    setSelectedService(null);
-                                    navigate('/login'); // ou vers le dashboard
-                                } catch (err) {
-                                    console.error(err);
-                                    alert('Erreur lors de la réservation');
-                                }
-                            }}
-                        >
-                            <input name="clientName" placeholder="Nom complet" required className="input" />
-                            <input name="clientPhone" placeholder="Téléphone" required className="input" />
-                            <input name="clientEmail" placeholder="Email" className="input" />
-                            <input type="date" name="scheduledDate" required className="input" />
-                            <input type="time" name="scheduledTime" required className="input" />
-
-                            <input name="make" placeholder="Marque" className="input" />
-                            <input name="model" placeholder="Modèle" className="input" />
-                            <input name="year" type="number" placeholder="Année" className="input" />
-                            <input name="licensePlate" placeholder="Immatriculation" className="input" />
-
-                            <textarea name="notes" placeholder="Notes" className="input" />
-
-                            <button type="submit" className="btn-primary mt-4 w-full">Confirmer la réservation</button>
-                            <button onClick={() => setShowBookingModal(false)} type="button" className="mt-2 w-full">Annuler</button>
-                        </form>
-                    </div>
-                </div>
-            )}
-            {/* {showBookingModal && selectedService && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-                        <h3 className="text-lg font-semibold mb-4">
-                            Réserver: {selectedService.name}
-                        </h3>
-                        <p className="text-gray-600 mb-4">
-                            Prestataire: {selectedService.providerId.companyName}
-                        </p>
-                        <p className="text-center text-green-600 font-bold text-xl mb-4">
-                            Prix: {selectedService.price} MAD
-                        </p>
-                        <div className="text-center">
-                            <p className="text-gray-600 mb-4">
-                                Fonctionnalité de réservation en cours de développement
-                            </p>
-                            <button
-                                onClick={() => {
-                                    setShowBookingModal(false);
-                                    setSelectedService(null);
-                                }}
-                                className="bg-gray-500 text-white px-4 py-2 rounded-lg"
-                            >
-                                Fermer
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )} */}
+            <BookingModal
+                isOpen={showBookingModal}
+                onClose={() => {
+                    setShowBookingModal(false);
+                    setSelectedService(null);
+                }}
+                service={selectedService}
+                onBookingSubmit={handleBookingSubmit}
+                timeSlots={timeSlots}
+                setTimeSlots={setTimeSlots}
+            />
         </>
     );
 };

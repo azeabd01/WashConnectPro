@@ -9,7 +9,9 @@ const authMiddlewareClient = async (req, res, next) => {
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const client = await Client.findById(decoded.clientId).select('-password');
-        if (!client) return res.status(401).json({ message: 'Token invalide' });
+        
+        if (!client) 
+            return res.status(401).json({ message: 'Token invalide' });
 
         req.client = client;
         next();
