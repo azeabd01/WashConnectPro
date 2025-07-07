@@ -5,18 +5,22 @@ const {
   createProduct,
   updateProduct,
   deleteProduct,
-  getProductAnalytics 
+  getProductAnalytics ,
+  getPublicProducts
 } = require('../controllers/productController');
 const { authMiddlewareProduct } = require('../middlewares/authMiddlewareProduct');
 
 const router = express.Router();
 
-router.get('/',authMiddlewareProduct,  getProducts);
+
+
+router.get('/', authMiddlewareProduct, getProducts);
 router.get('/:id', getProduct);
-router.post('/',authMiddlewareProduct, createProduct);
-router.put('/:id', updateProduct);
-router.delete('/:id', deleteProduct);
-router.get('/products', getProductAnalytics);
+router.post('/', authMiddlewareProduct, createProduct);
+router.put('/:id', authMiddlewareProduct, updateProduct);
+router.delete('/:id', authMiddlewareProduct, deleteProduct);
+router.get('/products/analytics', getProductAnalytics);
+router.get('/public', getPublicProducts);
 
 
 module.exports = router;

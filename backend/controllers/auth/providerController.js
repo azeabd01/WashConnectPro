@@ -3,6 +3,17 @@ const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 const Provider = require('../../models/Provider');
 
+
+// const getAllProviders = async (req, res) => {
+//     try {
+//         const providers = await Provider.find().select('-password'); // Exclude password from the response
+//         res.status(200).json(providers);
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).json({ message: 'Erreur serveur' });
+//     }
+// };
+
 const registerprovider = async (req, res) => {
     // Validation
     const errors = validationResult(req);
@@ -163,5 +174,7 @@ module.exports = {
     loginprovider,
     getMeprovider,
     updateProvider,
-    deleteProvider
+    deleteProvider ,
+    
+    // getAllProviders 
 };

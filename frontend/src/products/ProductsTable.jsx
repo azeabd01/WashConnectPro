@@ -45,27 +45,34 @@ export default function ProductsTable() {
       });
   }, [page]);
 
-  const confirmDelete = async () => {
-    const toastId = toast.loading('Deleting...');
-    try {
-      const res = await fetch(`http://localhost:3000/api/products/${deleteId}`, {
-        method: 'DELETE',
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+const confirmDelete = async () => {
+  const token = localStorage.getItem('token'); // Ensure token is fetched
+  const toastId = toast.loading('Deleting...');
 
-      if (!res.ok) throw new Error('Delete failed');
+  try {
+    const res = await fetch(`http://localhost:3000/api/products/${deleteId}`, {
+      method: 'DELETE',
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
 
-      setProducts(prev => prev.filter(p => p._id !== deleteId));
-      toast.success('Deleted successfully!', { id: toastId });
-    } catch (err) {
-      toast.error('Error deleting product', { id: toastId });
-    } finally {
-      setDeleteId(null);
-    }
-  };
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.message || 'Delete failed');
+
+    // Update state to remove deleted item
+    setProducts(prev => prev.filter(p => p._id !== deleteId));
+
+    toast.success('Deleted successfully!', { id: toastId });
+  } catch (err) {
+    toast.error(err.message || 'Error deleting product', { id: toastId });
+  } finally {
+    setDeleteId(null); // Clear modal state
+  }
+};
+
 
   if (loading) {
     return (

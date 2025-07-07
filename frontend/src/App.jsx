@@ -30,6 +30,8 @@ import Customers from "./customers/Customers";
 import UserProviderProducts from "./admin/UserProviderProducts";
 import ProductAnalytics from "./products/ProductAnalytics";
 import { Toaster } from 'react-hot-toast';
+import ProviderLavage from './admin/ProviderLavage';
+import PublicProductsPage from './products/PublicProductsPage';
 
 function App() {
   return (
@@ -52,6 +54,7 @@ function App() {
         </Route>
 
         <Route path="/services" element={<PublicServicesPage />} />
+        <Route path="/products" element={<PublicProductsPage />} />
 
 
         {/* ✅ Redirections propres */}
@@ -84,7 +87,7 @@ function App() {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<DashboardAdmin />} />
           <Route path="users" element={<AllUsers />} />
-          {/* <Route path="providers" element={<Providers />} /> */}
+          <Route path="providers" element={<ProviderLavage />} />
           <Route path="UserProviderProducts" element={<UserProviderProducts />} />
         </Route>
 

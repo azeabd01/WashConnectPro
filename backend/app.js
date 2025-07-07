@@ -32,12 +32,14 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/admin', adminRoutes);
+
 // app.use('/api/auth', authRoutes);
 app.use('/api/services', servicesRoutes);
 app.use('/api/bookings', bookingsRoutes);
 app.use('/api/analytics', analyticsRoutes);
 
 app.use('/api/auth', providerRoutes);
+// app.use('/api/auth', providerRoutes);
 // app.use('/api/auth', clientRoutes);
 app.use('/api/auth', prodRout);
 

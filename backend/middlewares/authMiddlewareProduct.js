@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const Product = require('../models/ProviderProduct'); // Ajustez le chemin selon votre structure
+const ProviderProduct  = require('../models/ProviderProduct'); // Ajustez le chemin selon votre structure
 
 // ✅ MIDDLEWARE D'AUTHENTIFICATION PRODUCT
 const authMiddlewareProduct = async (req, res, next) => {
@@ -35,7 +35,7 @@ const authMiddlewareProduct = async (req, res, next) => {
         }
 
         // Récupérer le product depuis la base de données
-        const product = await Product.findById(decoded.productId)
+const product = await ProviderProduct.findById(decoded.productId)
             .select('-password'); // Exclure le mot de passe
             // .where('category').equals('product'); // S'assurer que c'est bien un product
 

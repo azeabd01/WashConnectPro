@@ -7,7 +7,8 @@ const {
     loginprovider,
     getMeprovider,
     updateProvider,
-    deleteProvider
+    deleteProvider,
+    // getAllProviders
 } = require('../../controllers/auth/providerController');
 const { updateProvider: updateValidation } = require('../../Validations/providerValidation');
 const validateRequest = require('../../middlewares/validateRequest');
@@ -34,6 +35,7 @@ router.get('/me', authMiddlewareProvider, getMeprovider);
 
 router.put('/update', authMiddlewareProvider, updateValidation, validateRequest, updateProvider);
 router.delete('/delete', authMiddlewareProvider, deleteProvider);
+
 
 module.exports = router;
 

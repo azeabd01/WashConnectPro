@@ -7,7 +7,7 @@ export default function AllUsers() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/admin/users')
+    fetch('http://localhost:3000/api/admin')
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch users');
         return res.json();
