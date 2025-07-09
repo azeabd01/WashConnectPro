@@ -35,10 +35,17 @@ export const fetchServices = async () => {
 // ➕ Créer un service
 export const createService = async (service) => {
     console.log('Service envoyé:', service);  // debug
+
+    // ✅ Assurez-vous que isActive est un booléen
+    const serviceData = {
+        ...service,
+        isActive: typeof service.isActive === 'boolean' ? service.isActive : true
+    };
+
     const res = await fetch(API_URL, {
         method: 'POST',
         headers: getAuthHeaders(),
-        body: JSON.stringify(service),
+        body: JSON.stringify(serviceData),
     });
     if (!res.ok) {
         const error = await res.json();
@@ -50,10 +57,17 @@ export const createService = async (service) => {
 
 // 🖊️ Modifier un service
 export const updateService = async (id, service) => {
+
+    // ✅ Assurez-vous que isActive est un booléen
+    const serviceData = {
+        ...service,
+        isActive: typeof service.isActive === 'boolean' ? service.isActive : true
+    };
+
     const res = await fetch(`${API_URL}/${id}`, {
         method: 'PUT',
         headers: getAuthHeaders(),
-        body: JSON.stringify(service),
+        body: JSON.stringify(serviceData),
     });
     if (!res.ok) {
         const error = await res.json();

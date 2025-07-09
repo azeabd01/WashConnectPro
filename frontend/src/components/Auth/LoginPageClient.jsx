@@ -61,6 +61,13 @@ const LoginPage = () => {
             if (result.client) {
                 userData = { ...result.client, role: 'client' };
                 dashboardPath = '/dashboard/client';
+                // ✅ Sauvegarder les données client pour le BookingModal
+                localStorage.setItem('clientId', result.client._id);
+                localStorage.setItem('clientData', JSON.stringify({
+                    name: result.client.name,
+                    phone: result.client.phone,
+                    email: result.client.email
+                }));
             } else if (result.provider) {
                 userData = { ...result.provider, role: 'provider' };
                 dashboardPath = '/dashboard/provider';
@@ -72,9 +79,19 @@ const LoginPage = () => {
             }
 
             localStorage.setItem('user', JSON.stringify(userData));
+            // ✅ Vérifier s'il y a une réservation en attente
+            const pendingBooking = localStorage.getItem('pendingBooking');
 
             setTimeout(() => {
-                navigate(dashboardPath);
+                if (pendingBooking) {
+                    // Revenir à la page où était le BookingModal
+                    // Vous pouvez aussi sauvegarder l'URL précédente
+                    const previousUrl = localStorage.getItem('previousUrl') || '/';
+                    navigate(previousUrl);
+                } else {
+                    // Redirection normale vers le dashboard
+                    navigate(dashboardPath);
+                }
             }, 1000);
 
         } catch (error) {
@@ -101,7 +118,7 @@ const LoginPage = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4">
             <div className="max-w-md w-full">
-                
+
                 {/* Bouton retour vers choix profil */}
                 <div className="mb-4">
                     <button
@@ -126,7 +143,9 @@ const LoginPage = () => {
                     {loginStatus === 'success' && (
                         <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center">
                             <CheckCircle className="w-5 h-5 text-green-500 mr-3" />
-                            <span className="text-green-700">Connexion réussie ! Redirection vers le dashboard...</span>
+                            <span className="text-green-700">Connexion réussie ! {localStorage.getItem('pendingBooking')
+                                ? ' Retour à votre réservation...'
+                                : ' Redirection vers le dashboard...'}</span>
                         </div>
                     )}
 

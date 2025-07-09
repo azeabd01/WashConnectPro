@@ -1,22 +1,37 @@
-// ✅ BookingsTab.jsx dynamique avec filtrage et statuts
+// ✅ CORRECTION de pages/dashboard/BookingsTab.jsx
 
 import React, { useEffect, useState } from 'react';
+import { Calendar, Filter, RefreshCw } from 'lucide-react';
 import BookingsTable from '../../components/BookingsTable';
 import { fetchBookings, updateBookingStatus } from '../../api/bookingsApi';
 
 const BookingsTab = () => {
     const [bookings, setBookings] = useState([]);
     const [statusFilter, setStatusFilter] = useState('all');
+    const [dateFilter, setDateFilter] = useState('');
     const [loading, setLoading] = useState(false);
 
-    // ✅ Charger les réservations avec filtre
+    // ✅ Charger les réservations avec filtres
     const loadBookings = async () => {
         try {
             setLoading(true);
-            const data = await fetchBookings({ status: statusFilter });
-            setBookings(data.bookings);
+            const filters = {};
+
+            if (statusFilter !== 'all') {
+                filters.status = statusFilter;
+            }
+
+            if (dateFilter) {
+                filters.date = dateFilter;
+            }
+
+            console.log('🔍 Filtres appliqués:', filters);
+
+            const data = await fetchBookings(filters);
+            setBookings(data.bookings || []);
         } catch (err) {
-            console.error('Erreur chargement réservations:', err);
+            console.error('❌ Erreur chargement réservations:', err);
+            // Vous pouvez ajouter une notification toast ici
         } finally {
             setLoading(false);
         }
@@ -24,65 +39,89 @@ const BookingsTab = () => {
 
     useEffect(() => {
         loadBookings();
-    }, [statusFilter]);
+    }, [statusFilter, dateFilter]);
 
     // ✅ Changer le statut d'une réservation
-    const handleStatusUpdate = async (id, newStatus) => {
+    const handleStatusUpdate = async (bookingId, statusData) => {
         try {
-            await updateBookingStatus(id, newStatus);
-            loadBookings();
+            await updateBookingStatus(bookingId, statusData);
+            loadBookings(); // Recharger les données
         } catch (err) {
-            alert('Erreur mise à jour du statut');
+            console.error('❌ Erreur mise à jour statut:', err);
+            alert('Erreur lors de la mise à jour du statut');
         }
     };
 
     return (
         <div className="p-6">
-            <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold">Toutes les Réservations</h2>
-                <select
-                    className="border rounded px-3 py-1"
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
+            {/* En-tête */}
+            <div className="flex justify-between items-center mb-6">
+                <div>
+                    <h2 className="text-2xl font-bold text-gray-900">Réservations</h2>
+                    <p className="text-gray-600">Gérez toutes vos réservations</p>
+                </div>
+                <button
+                    onClick={loadBookings}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
-                    <option value="all">Tous</option>
-                    <option value="pending">En attente</option>
-                    <option value="confirmed">Confirmé</option>
-                    <option value="in-progress">En cours</option>
-                    <option value="completed">Terminée</option>
-                    <option value="cancelled">Annulée</option>
-                </select>
+                    <RefreshCw size={16} />
+                    Actualiser
+                </button>
             </div>
 
-            {loading ? (
-                <p>Chargement...</p>
-            ) : (
-                <BookingsTable bookings={bookings} onStatusChange={handleStatusUpdate} />
-            )}
+            {/* Filtres */}
+            <div className="bg-white rounded-xl shadow-sm border p-4 mb-6">
+                <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                        <Filter size={16} className="text-gray-500" />
+                        <span className="text-sm font-medium text-gray-700">Filtres:</span>
+                    </div>
+
+                    <select
+                        className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                    >
+                        <option value="all">Tous les statuts</option>
+                        <option value="pending">En attente</option>
+                        <option value="confirmed">Confirmées</option>
+                        <option value="in-progress">En cours</option>
+                        <option value="completed">Terminées</option>
+                        <option value="cancelled">Annulées</option>
+                    </select>
+
+                    <div className="flex items-center gap-2">
+                        <Calendar size={16} className="text-gray-500" />
+                        <input
+                            type="date"
+                            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            value={dateFilter}
+                            onChange={(e) => setDateFilter(e.target.value)}
+                        />
+                    </div>
+
+                    {(statusFilter !== 'all' || dateFilter) && (
+                        <button
+                            onClick={() => {
+                                setStatusFilter('all');
+                                setDateFilter('');
+                            }}
+                            className="text-sm text-gray-500 hover:text-gray-700"
+                        >
+                            Réinitialiser
+                        </button>
+                    )}
+                </div>
+            </div>
+
+            {/* Tableau des réservations */}
+            <BookingsTable
+                bookings={bookings}
+                onStatusChange={handleStatusUpdate}
+                loading={loading}
+            />
         </div>
     );
 };
 
 export default BookingsTab;
-
-
-// // pages/dashboard/BookingsTab.jsx
-// import React from 'react';
-// import BookingsTable from '../../components/BookingsTable';
-
-// const BookingsTab = () => {
-//     const bookings = [
-//         { id: 1, client: 'Ahmed R.', service: 'Pack complet', time: '09:00', status: 'Confirmé', price: 120 },
-//         { id: 2, client: 'Yassine B.', service: 'Lavage extérieur', time: '11:30', status: 'En attente', price: 50 },
-//         { id: 3, client: 'Sanae D.', service: 'Intérieur', time: '14:00', status: 'En cours', price: 70 }
-//     ];
-
-//     return (
-//         <>
-//             <h2 className="text-2xl font-bold text-gray-900 mb-4">Toutes les Réservations</h2>
-//             <BookingsTable bookings={bookings} />
-//         </>
-//     );
-// };
-
-// export default BookingsTab;

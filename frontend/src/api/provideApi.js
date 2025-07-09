@@ -1,28 +1,3 @@
-// export const registerProvider = async (formData) => {
-//     try {
-//         const response = await fetch('http://localhost:3000/api/auth/register/provider', {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//             },
-//             body: JSON.stringify(formData),
-//         });
-
-//         const data = await response.json();
-
-//         if (!response.ok) {
-//             throw new Error(data.message || 'Erreur lors de l\'inscription');
-//         }
-
-//         return data;
-//     } catch (error) {
-//         console.error('API Error:', error);
-//         throw error;
-//     }
-// };
-// src/api/provideApi.js
-
-
 const API_URL = "http://localhost:3000/api/auth";
 // ✅ Login spécifique aux prestataires
 export const loginProvider = async (credentials) => {

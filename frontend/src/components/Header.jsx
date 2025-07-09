@@ -33,20 +33,49 @@ const Header = () => {
     }, [navigate]);
 
     const handleLogout = () => {
-        // Nettoyer le localStorage
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        try {
+            // 1. Sauvegarder le rôle avant nettoyage
+            const userRole = user?.role;
 
-        // Redirection vers login selon le rôle
-        const userRole = user?.role;
-        if (userRole === 'provider') {
-            navigate('/auth/login/provider');
-        } else if (userRole === 'client') {
-            navigate('/auth/login/client');
-        } else if (userRole === 'product') {
-            navigate('/auth/login/product');
-        } else {
-            navigate('/auth/login');
+            // 2. Nettoyer COMPLETEMENT le localStorage
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('userRole');
+
+            // 3. Nettoyer sessionStorage
+            sessionStorage.clear();
+
+            // 4. Supprimer les cookies d'authentification
+            document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            document.cookie = "refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            document.cookie = "user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+            // 5. Réinitialiser l'état local
+            setUser(null);
+            setShowUserMenu(false);
+
+            // 6. Redirection FORCÉE avec window.location.replace
+            // (empêche le retour en arrière et force un rechargement complet)
+            let redirectUrl = '/auth/login';
+
+            if (userRole === 'provider') {
+                redirectUrl = '/auth/login/provider';
+            } else if (userRole === 'client') {
+                redirectUrl = '/auth/login/client';
+            } else if (userRole === 'product') {
+                redirectUrl = '/auth/login/product';
+            }
+
+            // Utiliser replace au lieu de navigate pour forcer la déconnexion
+            window.location.replace(redirectUrl);
+
+        } catch (error) {
+            console.error('Erreur lors de la déconnexion:', error);
+            // Même en cas d'erreur, forcer la redirection
+            window.location.replace('/auth/login');
         }
     };
 

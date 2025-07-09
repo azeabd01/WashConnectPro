@@ -176,7 +176,6 @@ const checkProductOwnership = async (req, res, next) => {
         });
     }
 };
-
 module.exports = {
     authMiddlewareProduct,
     optionalAuthproduct,

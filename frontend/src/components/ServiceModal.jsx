@@ -6,7 +6,7 @@ const ServiceModal = ({ service, onClose, onSave }) => {
         price: '',
         duration: '',
         description: '',
-        active: false,
+        isActive: true,
         category: 'exterieur' // valeur par défaut
     });
 
@@ -17,7 +17,7 @@ const ServiceModal = ({ service, onClose, onSave }) => {
                 price: service.price || '',
                 duration: service.duration || '',
                 description: service.description || '',
-                active: service.isActive ?? true,
+                isActive: service.isActive ?? true, // ✅ Utilisez isActive
                 category: service.category || 'exterieur'
             });
         }
@@ -25,14 +25,7 @@ const ServiceModal = ({ service, onClose, onSave }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // ✅ Adapter les clés pour correspondre à l’API backend
-        const finalData = {
-            ...formData,
-            isActive: formData.active,  // 🔁 clé attendue par le backend
-        };
-        delete finalData.active; // ❌ inutile car le backend ne comprend pas `active`
-
-        await onSave(finalData);
+        await onSave(formData);
         onClose();
     };
 
@@ -106,18 +99,20 @@ const ServiceModal = ({ service, onClose, onSave }) => {
                         />
                     </div>
 
-                    {/* <div className="flex items-center">
+                    {/* ✅ Ajout du champ isActive */}
+                    <div className="flex items-center">
                         <input
                             type="checkbox"
-                            id="active"
-                            checked={formData.active}
-                            onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
+                            id="isActive"
+                            checked={formData.isActive}
+                            onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
                             className="h-4 w-4 text-blue-600 border-gray-300 rounded"
                         />
-                        <label htmlFor="active" className="ml-2 text-sm text-gray-700">
-                            Rendre ce service actif ?
+                        <label htmlFor="isActive" className="ml-2 text-sm text-gray-700">
+                            Service actif (visible pour les clients)
                         </label>
-                    </div> */}
+                    </div>
+
 
                     <div className="flex gap-3 mt-6">
                         <button

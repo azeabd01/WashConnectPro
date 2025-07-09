@@ -65,13 +65,18 @@ const ClientRegistrationForm = ({ onBack }) => {
             const response = await registerClient(formData);
             console.log('Register response:', response);
 
-            if (response.token) {
-                localStorage.setItem('token', response.token);
-                localStorage.setItem('userType', 'client');
+            // ✅ Vérifier s'il y a une réservation en attente
+            const pendingBooking = localStorage.getItem('pendingBooking');
+
+            if (pendingBooking) {
+                alert("Inscription réussie ! Vous pouvez maintenant finaliser votre réservation.");
+                 // Rediriger vers la page de connexion
+                navigate("/auth/login/client");
+            } else {
+                alert("Inscription réussie ! Vous allez être redirigé vers la page de connexion.");
+                navigate("/auth/login/client");
             }
 
-            alert("Inscription réussie ! Vous allez être redirigé vers la page de connexion.");
-            navigate("/auth/login/client");
         } catch (error) {
             console.error('Register error:', error);
             alert(error.message || "Erreur lors de l'inscription.");
@@ -248,7 +253,14 @@ const ClientRegistrationForm = ({ onBack }) => {
                     </div>
 
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">Inscription Client</h1>
-                    <p className="text-gray-600">Étape {currentStep} sur {totalSteps}</p>
+                    <p className="text-gray-600">
+                        Étape {currentStep} sur {totalSteps}
+                        {localStorage.getItem('pendingBooking') && (
+                            <span className="block text-sm text-blue-600 mt-1">
+                                📅 Réservation en attente - Finalisez votre inscription
+                            </span>
+                        )}
+                    </p>
                 </div>
 
                 <div className="mb-8">
@@ -292,7 +304,8 @@ const ClientRegistrationForm = ({ onBack }) => {
                                         disabled={isLoading}
                                         className="px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:shadow-lg transition-all duration-200 disabled:opacity-50"
                                     >
-                                        {isLoading ? 'Création...' : 'Créer mon compte'}
+                                        {isLoading ? 'Création...' :
+                                            localStorage.getItem('pendingBooking') ? 'Créer et réserver' : 'Créer mon compte'}
                                     </button>
                                 )}
                             </div>

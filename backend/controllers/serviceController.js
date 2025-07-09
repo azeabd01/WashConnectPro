@@ -1,11 +1,9 @@
 const Service = require('../models/Service');
 const { validationResult } = require('express-validator');
-// const Provider = require('../models/Provider');
 
 const getServices = async (req, res) => {
     try {
         const services = await Service.find({ providerId: req.provider.id }).populate('providerId', 'workingHours');
-        // sort({ createdAt: -1 });
         res.json({ services });
     } catch (err) {
         console.error(err);
@@ -18,9 +16,9 @@ const createService = async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-        console.log('Body reçu createService:', req.body); // debug
+        console.log('Body reçu createService:', req.body);
 
-        const { name, description, price, duration, category, features, images, active } = req.body;
+        const { name, description, price, duration, category, features, images, isActive } = req.body;
 
         const service = new Service({
             providerId: req.provider.id,
@@ -31,7 +29,7 @@ const createService = async (req, res) => {
             category,
             features: features || [],
             images: images || [],
-            isActive: typeof active === 'boolean' ? active : false
+            isActive: typeof isActive === 'boolean' ? isActive : true // ✅ Valeur par défaut true
         });
 
         await service.save();
@@ -48,7 +46,7 @@ const updateService = async (req, res) => {
         const service = await Service.findOne({ _id: req.params.id, providerId: req.provider.id });
         if (!service) return res.status(404).json({ message: 'Service non trouvé' });
 
-        const { name, description, price, duration, category, features, images, active } = req.body;
+        const { name, description, price, duration, category, features, images, isActive } = req.body;
 
         service.name = name || service.name;
         service.description = description || service.description;
@@ -57,7 +55,7 @@ const updateService = async (req, res) => {
         service.category = category || service.category;
         service.features = features || service.features;
         service.images = images || service.images;
-        service.isActive = active !== undefined ? active : service.isActive;
+        service.isActive = isActive !== undefined ? isActive : service.isActive; // ✅ Correction
 
         await service.save();
 
@@ -79,7 +77,6 @@ const deleteService = async (req, res) => {
         res.status(500).json({ message: 'Erreur serveur' });
     }
 };
-
 
 const toggleServiceStatus = async (req, res) => {
     try {
@@ -106,7 +103,7 @@ const getActiveServices = async (req, res) => {
         }
 
         const services = await Service.find(filter)
-            .populate('providerId', 'businessName  email phone address')
+            .populate('providerId', 'businessName email phone address')
             .sort({ createdAt: -1 });
 
         res.json({ services });
@@ -122,7 +119,7 @@ const getServicesByProvider = async (req, res) => {
             providerId: req.params.providerId,
             isActive: true
         })
-            .populate('providerId', 'businessName  email phone  address')
+            .populate('providerId', 'businessName email phone address')
             .sort({ createdAt: -1 });
 
         res.json({ services });
@@ -140,5 +137,4 @@ module.exports = {
     toggleServiceStatus,
     getActiveServices,
     getServicesByProvider
-
 };

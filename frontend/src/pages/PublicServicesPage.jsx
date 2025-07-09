@@ -78,21 +78,67 @@ const PublicServicesPage = () => {
 
     const handleBookingSubmit = async (bookingData) => {
         try {
-            const res = await fetch('http://localhost:3000/api/public/bookings', {
+            // 1. Récupérer les données utilisateur depuis localStorage
+            const userData = JSON.parse(localStorage.getItem('user') || '{}');
+            const token = localStorage.getItem('token');
+
+            // 2. Vérifier que l'utilisateur est connecté
+            if (!userData.id && !userData._id) {
+                throw new Error('Utilisateur non connecté');
+            }
+
+            // 3. Préparer les données avec les bons noms de champs
+            const requestData = {
+                // Client info - récupérer depuis localStorage
+                clientId: userData.id || userData._id,
+                clientName: userData.name || bookingData.clientName,
+                clientPhone: userData.phone || bookingData.clientPhone,
+                clientEmail: userData.email || bookingData.clientEmail,
+
+                // Service info
+                providerId: bookingData.providerId,
+                serviceId: bookingData.serviceId,
+
+                // ✅ CORRECTION: Date et heure - utiliser les bons noms de champs
+                scheduledDate: bookingData.date, // Le backend attend "scheduledDate"
+                scheduledTime: `${bookingData.startTime} - ${bookingData.endTime}`, // ✅ Format correct pour le backend
+
+                // Autres infos
+                price: bookingData.price,
+                notes: bookingData.notes || '',
+                vehicleInfo: bookingData.vehicleInfo
+            };
+
+            console.log('Données envoyées:', requestData);
+
+            // 4. Envoyer la requête
+            const response = await fetch('http://localhost:3000/api/public/bookings', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(bookingData)
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(requestData)
             });
 
-            if (!res.ok) throw new Error('Erreur de réservation');
+            const result = await response.json();
 
-            alert('Réservation effectuée avec succès ✅');
-            // Rediriger vers login ou dashboard
+            if (!response.ok) {
+                throw new Error(result.message || 'Erreur lors de la réservation');
+            }
+
+            // 5. Succès
+            console.log('Réservation créée avec succès:', result);
+            alert('Réservation confirmée avec succès !');
+
+            // Fermer le modal ou rediriger si nécessaire
+            // setShowBookingModal(false);
+
         } catch (error) {
-            alert('Erreur lors de la réservation');
+            console.error('Erreur réservation:', error);
+            alert('Erreur lors de la réservation: ' + error.message);
         }
     };
-
 
     const getCategoryLabel = (category) => {
         const cat = categories.find(c => c.value === category);
@@ -250,17 +296,14 @@ const PublicServicesPage = () => {
 
             <BookingModal
                 isOpen={showBookingModal}
-                onClose={() => {
-                    setShowBookingModal(false);
-                    setSelectedService(null);
-                }}
+                onClose={() => setShowBookingModal(false)}
                 service={selectedService}
                 onBookingSubmit={handleBookingSubmit}
                 timeSlots={timeSlots}
                 setTimeSlots={setTimeSlots}
+                navigate={navigate} // Passer la fonction navigate
             />
         </>
     );
 };
-
 export default PublicServicesPage;

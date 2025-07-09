@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from 'react-hot-toast';
+import 'react-datepicker/dist/react-datepicker.css';
 
 // Pages principales
 import CarWashHomePage from './pages/CarWashHomePage';

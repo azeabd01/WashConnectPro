@@ -1,6 +1,5 @@
 const Product = require('../models/productModel');
 
-
 const getProducts = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 5;
@@ -48,7 +47,6 @@ const createProduct = async (req, res) => {
   }
 };
 
-
 // PUT update
 const updateProduct = async (req, res) => {
   try {
@@ -70,7 +68,7 @@ const updateProduct = async (req, res) => {
 // DELETE
 const deleteProduct = async (req, res) => {
   try {
-     const providerProductId = req.product.id;
+    const providerProductId = req.product.id;
     const product = await Product.findById(req.params.id);
 
     // if (!product) return res.status(404).json({ message: 'Produit non trouvé' });
@@ -84,7 +82,6 @@ const deleteProduct = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
 
 const getProductAnalytics = async (req, res) => {
   try {
@@ -108,11 +105,6 @@ const getProductAnalytics = async (req, res) => {
     res.status(500).json({ message: 'Failed to load analytics' });
   }
 };
-
-
-
-
-
 module.exports = {
   getProductAnalytics,
   getProducts,

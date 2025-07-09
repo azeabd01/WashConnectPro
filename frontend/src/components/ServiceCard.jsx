@@ -53,7 +53,7 @@ const ServiceCard = ({ service, onEdit, onDelete, onToggle }) => {
             </div>
 
             {/* Affichage des horaires du provider */}
-            {/* {workingHours && (
+            {workingHours && (
                 <div className="mt-4 space-y-1 text-sm text-gray-500">
                     <strong className="block mb-1">Horaires du prestataire :</strong>
                     {Object.entries(dayLabels).map(([key, label]) => {
@@ -71,7 +71,7 @@ const ServiceCard = ({ service, onEdit, onDelete, onToggle }) => {
                         );
                     })}
                 </div>
-            )} */}
+            )}
         </div>
     );
 };

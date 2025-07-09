@@ -1,22 +1,33 @@
+// ✅ CORRECTION du modèle Booking.js
+
 const mongoose = require('mongoose');
 
 const bookingSchema = new mongoose.Schema({
-    bookingNumber: { type: String, unique: true, required: true },
+    bookingNumber: {
+        type: String,
+        unique: true,
+        required: true
+    },
     clientId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'client',
+        ref: 'Client', // ✅ Référence vers le modèle Client
         required: true,
     },
     clientName: { type: String, required: true },
     clientPhone: { type: String, required: true },
     clientEmail: String,
-    providerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Provider', required: true },
-    serviceId: { type: mongoose.Schema.Types.ObjectId, ref: 'Service', required: true },
-    date: { type: String, required: true },       // ex: '2025-07-08'
-    startTime: { type: String, required: true },  // ex: '09:30'
-    endTime: { type: String, required: true },    // ex: '10:00'
-    // scheduledDate: { type: String, required: true },  // ex: '2025-07-08'
-    // scheduledTime: { type: String, required: true },  // ex: '09:30-10:00'
+    providerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Provider',
+        required: true
+    },
+    serviceId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Service',
+        required: true
+    },
+    scheduledDate: { type: String, required: true },  // ex: '2025-07-08'
+    scheduledTime: { type: String, required: true },  // ex: '09:30-10:00'
     status: {
         type: String,
         enum: ['pending', 'confirmed', 'in-progress', 'completed', 'cancelled'],
@@ -51,6 +62,7 @@ const bookingSchema = new mongoose.Schema({
     cancellationReason: String
 }, { timestamps: true });
 
+// ✅ Middleware pour auto-générer bookingNumber
 bookingSchema.pre('save', async function (next) {
     if (!this.bookingNumber) {
         const count = await mongoose.model('Booking').countDocuments();
@@ -58,5 +70,10 @@ bookingSchema.pre('save', async function (next) {
     }
     next();
 });
-module.exports = mongoose.model('Booking', bookingSchema);
 
+// ✅ Index pour optimiser les requêtes
+bookingSchema.index({ providerId: 1, scheduledDate: -1 });
+bookingSchema.index({ clientId: 1 });
+bookingSchema.index({ status: 1 });
+
+module.exports = mongoose.model('Booking', bookingSchema);

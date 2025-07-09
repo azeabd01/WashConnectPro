@@ -3,31 +3,116 @@ const Service = require('../models/Service');
 const moment = require('moment');
 
 // GET /api/bookings
-// POST /api/bookings - avec filtres dans req.body
 const getBookings = async (req, res) => {
     try {
-        // Ici on prend les filtres depuis req.body (au lieu de req.query)
-        const { status, date, limit = 50 } = req.body || {};
+        console.log('📋 Récupération des réservations pour provider:', req.provider.id);
+
+        // ✅ Gérer les filtres depuis req.body OU req.query
+        const filters = req.method === 'POST' ? req.body : req.query;
+        const { status, date, limit = 50 } = filters || {};
 
         let query = { providerId: req.provider.id };
 
-        if (status && status !== 'all') query.status = status;
+        if (status && status !== 'all') {
+            query.status = status;
+        }
 
         if (date) {
-            const startDate = moment(date).startOf('day');
-            const endDate = moment(date).endOf('day');
-            query.scheduledDate = { $gte: startDate.toDate(), $lte: endDate.toDate() };
+            // ✅ Chercher par date exacte (format: 2025-07-08)
+            query.scheduledDate = date;
         }
+
+        console.log('🔍 Query utilisée:', query);
 
         const bookings = await Booking.find(query)
             .populate('serviceId', 'name category')
+            .populate('clientId', 'name email phone') // ✅ Populate client info
             .sort({ scheduledDate: -1, scheduledTime: -1 })
             .limit(parseInt(limit));
 
+        console.log('📋 Réservations trouvées:', bookings.length);
+
         res.json({ bookings });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Erreur serveur' });
+        console.error('❌ Erreur récupération réservations:', err);
+        res.status(500).json({ message: 'Erreur serveur', error: err.message });
+    }
+};
+
+const createPublicBooking = async (req, res) => {
+    try {
+        console.log('➡️ Données reçues pour réservation publique:', req.body);
+
+        const {
+            clientId,
+            clientName,
+            clientPhone,
+            clientEmail,
+            serviceId,
+            providerId,
+            scheduledDate,
+            scheduledTime, // ⚠️ Assurez-vous que ce champ est bien envoyé
+            vehicleInfo,
+            notes
+        } = req.body;
+
+        // ✅ Validation des champs requis
+        if (!clientId) {
+            return res.status(400).json({ message: 'clientId est requis' });
+        }
+        if (!scheduledTime) {
+            return res.status(400).json({ message: 'scheduledTime est requis' });
+        }
+
+        // Vérifier que le service existe et est actif
+        const service = await Service.findOne({
+            _id: serviceId,
+            isActive: true
+        }).populate('providerId');
+
+        if (!service) {
+            return res.status(404).json({ message: 'Service non trouvé ou inactif' });
+        }
+
+        // ✅ Générer automatiquement le bookingNumber
+        const count = await Booking.countDocuments();
+        const bookingNumber = `LAV${Date.now().toString().slice(-6)}${(count + 1).toString().padStart(3, '0')}`;
+
+        // ✅ Créer la réservation avec tous les champs requis
+        const booking = new Booking({
+            bookingNumber, // ✅ Généré automatiquement
+            clientId, // ✅ Fourni par le client
+            clientName,
+            clientPhone,
+            clientEmail,
+            providerId: service.providerId._id,
+            serviceId,
+            scheduledDate,
+            scheduledTime, // ✅ Fourni par le client
+            price: service.price,
+            vehicleInfo,
+            notes
+        });
+
+        console.log('📝 Réservation à sauvegarder:', booking);
+
+        await booking.save();
+        await booking.populate('serviceId', 'name category');
+
+        res.status(201).json({
+            message: 'Réservation créée avec succès',
+            booking: {
+                ...booking.toObject(),
+                provider: {
+                    businessName: service.providerId.businessName,
+                    phone: service.providerId.phone,
+                    email: service.providerId.email
+                }
+            }
+        });
+    } catch (err) {
+        console.error('❌ Erreur création réservation:', err);
+        res.status(500).json({ message: 'Erreur serveur', error: err.message });
     }
 };
 
@@ -117,65 +202,6 @@ const createBooking = async (req, res) => {
         res.status(500).json({ message: 'Erreur serveur' });
     }
 };
-
-const createPublicBooking = async (req, res) => {
-    try {
-        const {
-            clientName,
-            clientPhone,
-            clientEmail,
-            serviceId,
-            scheduledDate,
-            scheduledTime,
-            vehicleInfo,
-            notes
-        } = req.body;
-
-        // Vérifier que le service existe et est actif
-        const service = await Service.findOne({
-            _id: serviceId,
-            isActive: true
-        }).populate('providerId');
-
-        if (!service) {
-            return res.status(404).json({ message: 'Service non trouvé ou inactif' });
-        }
-
-        // Créer la réservation
-        const booking = new Booking({
-            clientName,
-            clientPhone,
-            clientEmail,
-            providerId: service.providerId._id,
-            serviceId,
-            scheduledDate: new Date(scheduledDate),
-            scheduledTime,
-            price: service.price,
-            vehicleInfo,
-            notes
-        });
-
-        await booking.save();
-        await booking.populate('serviceId', 'name category');
-
-        res.status(201).json({
-            message: 'Réservation créée avec succès',
-            booking: {
-                ...booking.toObject(),
-                provider: {
-                    companyName: service.providerId.companyName,
-                    phone: service.providerId.phone,
-                    email: service.providerId.email
-                }
-            }
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Erreur serveur' });
-    }
-};
-
-
 module.exports = {
     getBookings,
     getBookingById,
@@ -183,5 +209,3 @@ module.exports = {
     createBooking,
     createPublicBooking
 };
-
-

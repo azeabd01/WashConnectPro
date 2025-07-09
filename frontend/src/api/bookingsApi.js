@@ -1,4 +1,5 @@
-// src/api/bookings.js
+// ✅ CORRECTION de src/api/bookingsApi.js
+
 const API_URL = 'http://localhost:3000/api/bookings';
 
 const getAuthHeaders = () => {
@@ -9,44 +10,110 @@ const getAuthHeaders = () => {
     };
 };
 
-// 📦 Récupérer toutes les réservations
-export const fetchBookings = async () => {
-    const res = await fetch(API_URL, {
-        headers: getAuthHeaders(),
-    });
-    if (!res.ok) throw new Error('Erreur lors du chargement des réservations');
-    return res.json();
+// ✅ Récupérer toutes les réservations avec filtres
+export const fetchBookings = async (filters = {}) => {
+    try {
+        // ✅ Utiliser POST pour les filtres (comme dans votre backend)
+        const res = await fetch(`${API_URL}/filter`, {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(filters),
+        });
+
+        if (!res.ok) {
+            throw new Error(`Erreur ${res.status}: ${res.statusText}`);
+        }
+
+        const data = await res.json();
+        console.log('📋 Réservations récupérées:', data);
+        return data;
+    } catch (error) {
+        console.error('❌ Erreur récupération réservations:', error);
+        throw error;
+    }
 };
 
-// ➕ Créer une réservation
+// ✅ Créer une réservation (provider)
 export const createBooking = async (data) => {
-    const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify(data),
-    });
-    if (!res.ok) throw new Error('Erreur lors de la création de la réservation');
-    return res.json();
+    try {
+        const res = await fetch(API_URL, {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(data),
+        });
+
+        if (!res.ok) {
+            throw new Error(`Erreur ${res.status}: ${res.statusText}`);
+        }
+
+        return res.json();
+    } catch (error) {
+        console.error('❌ Erreur création réservation:', error);
+        throw error;
+    }
 };
 
-// 🔁 Modifier le statut
-export const updateBookingStatus = async (id, statusPayload) => {
-    const res = await fetch(`${API_URL}/${id}/status`, {
-        method: 'PATCH',
-        headers: getAuthHeaders(),
-        body: JSON.stringify(statusPayload),
-    });
-    if (!res.ok) throw new Error('Erreur lors de la mise à jour du statut');
-    return res.json();
+// ✅ Créer une réservation publique (client)
+export const createPublicBooking = async (bookingData) => {
+    try {
+        console.log('📝 Création réservation publique:', bookingData);
+
+        const res = await fetch('http://localhost:3000/api/public/bookings', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(bookingData),
+        });
+
+        if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(errorData.message || `Erreur ${res.status}`);
+        }
+
+        const data = await res.json();
+        console.log('✅ Réservation créée:', data);
+        return data;
+    } catch (error) {
+        console.error('❌ Erreur création réservation publique:', error);
+        throw error;
+    }
 };
 
-// 🔍 Détail d'une réservation
+// ✅ Modifier le statut d'une réservation
+export const updateBookingStatus = async (id, statusData) => {
+    try {
+        const res = await fetch(`${API_URL}/${id}/status`, {
+            method: 'PATCH',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(statusData),
+        });
+
+        if (!res.ok) {
+            throw new Error(`Erreur ${res.status}: ${res.statusText}`);
+        }
+
+        return res.json();
+    } catch (error) {
+        console.error('❌ Erreur mise à jour statut:', error);
+        throw error;
+    }
+};
+
+// ✅ Récupérer une réservation par ID
 export const getBookingById = async (id) => {
-    const res = await fetch(`${API_URL}/${id}`, {
-        headers: getAuthHeaders(),
-    });
-    if (!res.ok) throw new Error('Réservation non trouvée');
-    return res.json();
+    try {
+        const res = await fetch(`${API_URL}/${id}`, {
+            headers: getAuthHeaders(),
+        });
+
+        if (!res.ok) {
+            throw new Error(`Erreur ${res.status}: ${res.statusText}`);
+        }
+
+        return res.json();
+    } catch (error) {
+        console.error('❌ Erreur récupération réservation:', error);
+        throw error;
+    }
 };
-
-

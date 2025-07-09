@@ -2,7 +2,6 @@ import React from 'react';
 import { BarChart3, Calendar, Car, TrendingUp, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-
 const Sidebar = ({ activeTab, setActiveTab }) => {
     const items = [
         { id: 'overview', icon: BarChart3, label: 'Overview' },
