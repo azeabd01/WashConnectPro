@@ -6,12 +6,12 @@ const {
   updateProduct,
   deleteProduct,
   getProductAnalytics ,
-  getPublicProducts
+  ProviderStats
 } = require('../controllers/productController');
-const { authMiddlewareProduct } = require('../middlewares/authMiddlewareProduct');
+const { authMiddlewareProduct ,authProvider } = require('../middlewares/authMiddlewareProduct');
 
 const router = express.Router();
-
+router.get('/stats/:id', authProvider, ProviderStats);
 
 
 router.get('/', authMiddlewareProduct, getProducts);
@@ -20,7 +20,10 @@ router.post('/', authMiddlewareProduct, createProduct);
 router.put('/:id', authMiddlewareProduct, updateProduct);
 router.delete('/:id', authMiddlewareProduct, deleteProduct);
 router.get('/products/analytics', getProductAnalytics);
-router.get('/public', getPublicProducts);
+
+
+
+
 
 
 module.exports = router;

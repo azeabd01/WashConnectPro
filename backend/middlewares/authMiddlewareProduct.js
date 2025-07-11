@@ -1,7 +1,47 @@
 const jwt = require('jsonwebtoken');
 const ProviderProduct  = require('../models/ProviderProduct'); // Ajustez le chemin selon votre structure
-
+// const Provider = require('../models/Provider'); // or your Provider model
 // ✅ MIDDLEWARE D'AUTHENTIFICATION PRODUCT
+// const authProvider = async (req, res, next) => {
+//   try {
+//     const token = req.headers.authorization?.split(' ')[1];
+
+//     if (!token) {
+//       return res.status(401).json({ message: 'No token provided' });
+//     }
+
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+//     const provider = await ProviderProduct.findById(decoded.id); // ✅ now safe to use
+
+//     if (!provider) {
+//       return res.status(401).json({ message: 'Provider not found' });
+//     }
+
+//     req.provider = provider;
+//     next();
+//   } catch (err) {
+//     console.error('AuthProviderProduct Error:', err);
+//     return res.status(401).json({ message: 'Invalid token' });
+//   }
+// };
+const authProvider = (req, res, next) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    
+    if (!token) {
+      return res.status(401).json({ message: 'Unauthorized - No token provided' });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.provider = decoded;
+    next();
+  } catch (err) {
+    console.error('Token verification error:', err);
+    return res.status(401).json({ message: 'Invalid token' });
+  }
+};
+
 const authMiddlewareProduct = async (req, res, next) => {
     try {
         // Récupérer le token depuis l'en-tête Authorization
@@ -177,8 +217,15 @@ const checkProductOwnership = async (req, res, next) => {
     }
 };
 
+
+
+
+
+
+
 module.exports = {
     authMiddlewareProduct,
     optionalAuthproduct,
-    checkProductOwnership
+    checkProductOwnership ,
+    authProvider
 };

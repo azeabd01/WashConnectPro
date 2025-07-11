@@ -1,27 +1,37 @@
 const Product = require('../models/productModel');
 const mongoose = require('mongoose');
+const Order = require('../models/oderProduct'); // assuming orders are linked to products
+// const User = require('../models/userModel');
 
-const getPublicProducts = async (req, res) => {
+const ProviderStats = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 6;
-    const skip = (page - 1) * limit;
+    // const providerId = req.params.id;
+    const providerId = req.provider.id;
 
-    const total = await Product.countDocuments({ inStock: true });
-    const products = await Product.find({ inStock: true }).skip(skip).limit(limit);
+
+    const totalProducts = await Product.countDocuments({ providerId });
+    const totalStock = await Product.aggregate([
+      { $match: { providerId: require('mongoose').Types.ObjectId(providerId) } },
+      { $group: { _id: null, total: { $sum: '$stock' } } }
+    ]);
+
+    const stockCount = totalStock[0]?.total || 0;
+
+    const orders = await Order.find({ providerId });
+    const totalRevenue = orders.reduce((sum, order) => sum + (order.totalPrice || 0), 0);
+    const totalOrders = orders.length;
 
     res.json({
-      products,
-      currentPage: page,
-      totalPages: Math.ceil(total / limit),
-      totalItems: total
+      totalProducts,
+      stockCount,
+      totalRevenue,
+      totalOrders
     });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error('Error in getProviderStats:', err);
+    res.status(500).json({ error: 'Failed to fetch provider dashboard stats' });
   }
 };
-
-
 
 const getProducts = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
@@ -71,23 +81,7 @@ const createProduct = async (req, res) => {
 };
 
 
-// PUT update
-// const updateProduct = async (req, res) => {
-//   try {
-//     const providerProductId = req.product.id;
-//     const product = await Product.findById(req.params.id);
 
-//     if (!product) return res.status(404).json({ message: 'Produit non trouvé' });
-
-//     if (product.providerProductId.toString() !== providerProductId) {
-//       return res.status(403).json({ message: 'Accès refusé' });
-//     }
-//     const updated = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
-//     res.json(updated);
-//   } catch (err) {
-//     res.status(400).json({ message: err.message });
-//   }
-// };
 
 
 const updateProduct = async (req, res) => {
@@ -160,23 +154,6 @@ if (product.providerProductId.toString() !== req.product.id.toString()) {
 };
 
 
-// DELETE
-// const deleteProduct = async (req, res) => {
-//   try {
-//      const providerProductId = req.product.id;
-//     const product = await Product.findById(req.params.id);
-
-//     // if (!product) return res.status(404).json({ message: 'Produit non trouvé' });
-
-//     // if (product.providerProductId.toString() !== providerProductId) {
-//     //   return res.status(403).json({ message: 'Accès refusé' });
-//     // }
-//     const deleted = await Product.findByIdAndDelete(req.params.id);
-//     res.json({ message: 'Product deleted' });
-//   } catch (err) {
-//     res.status(500).json({ message: err.message });
-//   }
-// };
 const deleteProduct = async (req, res) => {
   try {
     const providerProductId = req.product.id;
@@ -228,15 +205,107 @@ const getProductAnalytics = async (req, res) => {
 };
 
 
+const getPublicProducts = async (req, res) => {
+    try {
+        const { category } = req.query;
+        
+        console.log('=== DEBUG: getPublicProducts called ===');
+        console.log('Request query:', req.query);
+        console.log('Category parameter:', category);
+        
+        // Build filter
+        let filter = { isActive: true };
+        
+        if (category && category !== 'all') {
+            filter.category = category;
+        }
+        
+        console.log('Filter being used:', filter);
+        
+        // First, let's check if there are ANY products in the database
+        const totalProducts = await Product.countDocuments({});
+        console.log('Total products in database:', totalProducts);
+        
+        // Check products with isActive: true
+        const activeProducts = await Product.countDocuments({ isActive: true });
+        console.log('Active products in database:', activeProducts);
+        
+        // Check products by category
+        if (category && category !== 'all') {
+            const categoryProducts = await Product.countDocuments({ category: category });
+            console.log(`Products with category '${category}':`, categoryProducts);
+        }
+        
+        // Get all products (no pagination)
+        const products = await Product.find(filter)
+            .populate('providerId', 'businessName email phone address')
+            .sort({ createdAt: -1 });
+        
+        console.log('Products found with filter:', products.length);
+        console.log('First product (if any):', products[0] || 'No products found');
+        
+        // Let's also get a sample of all products to see their structure
+        const sampleProducts = await Product.find({}).limit(3);
+        console.log('Sample products from DB:', sampleProducts.map(p => ({
+            name: p.name,
+            category: p.category,
+            isActive: p.isActive,
+            providerId: p.providerId
+        })));
+        
+        res.json({
+            products,
+            debug: {
+                totalProducts,
+                activeProducts,
+                foundProducts: products.length,
+                filter
+            }
+        });
+    } catch (err) {
+        console.error('Error in getPublicProducts:', err);
+        res.status(500).json({ message: 'Erreur serveur', error: err.message });
+    }
+};
+
+// ✅ Get products by provider (optional - if still needed)
+const getProductsByProvider = async (req, res) => {
+    try {
+        const { category } = req.query;
+        
+        let filter = {
+            providerId: req.params.providerId,
+            isActive: true
+        };
+        
+        if (category && category !== 'all') {
+            filter.category = category;
+        }
+        
+        const products = await Product.find(filter)
+            .populate('providerId', 'businessName email phone address')
+            .sort({ createdAt: -1 });
+        
+        res.json({
+            products
+        });
+    } catch (err) {
+        console.error('Error in getProductsByProvider:', err);
+        res.status(500).json({ message: 'Erreur serveur', error: err.message });
+    }
+};
+
 
 
 
 module.exports = {
+  ProviderStats,
   getPublicProducts,
   getProductAnalytics,
   getProducts,
   getProduct,
   createProduct,
   updateProduct,
-  deleteProduct
+  deleteProduct,
+  getProductsByProvider
 };

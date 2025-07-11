@@ -8,6 +8,7 @@ if (!process.env.JWT_SECRET) {
     throw new Error("❌ JWT_SECRET manquant dans le fichier .env !");
 }
 
+
 // const authRoutes = require('./routes/authRoutes');
 const servicesRoutes = require('./routes/servicesRoutes');
 const bookingsRoutes = require('./routes/bookingsRoutes');
@@ -46,6 +47,7 @@ app.use('/api/auth', prodRout);
 app.use('/api/products', productRoutes);
 app.use('/api/analytics', productRoutes);
 
+app.use('/api/public', require('./routes/publicProductsRoutes'));
 
 
 app.use('/api/public/services', require('./routes/publicServiceRoutes'));

@@ -11,6 +11,7 @@ export default function EditProduct() {
     price: '',
     description: '',
     image: '',
+    category: '',
     stock: 0,
     inStock: true,
     rating: 0
@@ -47,6 +48,7 @@ export default function EditProduct() {
           price: data.price || '',
           description: data.description || '',
           image: data.image || '',
+          category: data.category || '',
           stock: data.stock || 0,
           inStock: data.inStock || true,
           rating: data.rating || 0
@@ -97,6 +99,7 @@ export default function EditProduct() {
         name: product.name.trim(),
         price: parseFloat(product.price),
         description: product.description.trim(),
+          category: product.category,
         image: product.image.trim(),
         stock: parseInt(product.stock) || 0,
         inStock: Boolean(product.inStock)
@@ -220,6 +223,25 @@ export default function EditProduct() {
             </div>
           )}
         </div>
+<div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Category *
+  </label>
+  <select
+    name="category"
+    value={product.category}
+    onChange={handleChange}
+    className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+    required
+    disabled={updating}
+  >
+    <option value="">Select Category</option>
+    <option value="soin">Soin</option>
+    <option value="accessoire">Accessoire</option>
+    <option value="entretien">Entretien</option>
+    <option value="other">Other</option>
+  </select>
+</div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">

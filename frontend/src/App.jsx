@@ -21,7 +21,7 @@ import AllUsers from './admin/AllUsers';
 import Layout from './products/Layout';
 import AddProduct from './products/AddProduct';
 import ProductsTable from './products/ProductsTable';
-import StatsGrid from './products/StatsGrid';
+// import StatsGrid from './products/StatsGrid';
 import EditProduct from './products/Update';
 import ShowProduct from './products/ShowProduct';
 
@@ -32,8 +32,14 @@ import ProductAnalytics from "./products/ProductAnalytics";
 import { Toaster } from 'react-hot-toast';
 import ProviderLavage from './admin/ProviderLavage';
 import PublicProductsPage from './products/PublicProductsPage';
+import ProviderStats from './products/StatsGrid';
+import  { jwtDecode }  from 'jwt-decode'; // make sure it's installed
 
 function App() {
+
+  const token = localStorage.getItem('token');
+const decoded = token ? jwtDecode(token) : null;
+const providerId = decoded?.id;
   return (
     <Router>
       <Toaster position="top-center" richColors />
@@ -99,7 +105,9 @@ function App() {
         {/* Produits (alias pour product) */}
         
         <Route path="/dashboard/product" element={<Layout />}>
-          <Route index element={<StatsGrid />} />                      {/* Default page */}
+          {/* <Route index element={<ProviderStats />} />                       */}
+          <Route index element={<ProviderStats providerId={providerId} />} />
+
           <Route path="product" element={<ProductsTable />} />
           <Route path="addproduct" element={<AddProduct />} />
           <Route path="editproduct/:id" element={<EditProduct />} />

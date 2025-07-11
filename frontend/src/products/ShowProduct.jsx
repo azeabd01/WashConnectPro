@@ -29,7 +29,7 @@ export default function ShowProduct() {
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow rounded-md">
-      <Link to="/product" className="text-blue-600 flex items-center mb-4 hover:underline">
+      <Link to="/dashboard/product/product" className="text-blue-600 flex items-center mb-4 hover:underline">
         <ArrowLeft className="w-4 h-4 mr-2" />
         Back to Products
       </Link>
