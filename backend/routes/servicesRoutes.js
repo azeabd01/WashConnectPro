@@ -10,10 +10,7 @@ const {
 const { createService: validateCreateService } = require('../Validations/service.validation');
 const authenticateProvider = require('../middlewares/authMiddlewareProvider'); // middleware d’authentification
 
-
 router.use(authenticateProvider); // protéger toutes les routes services
-
-
 
 router.get('/', getServices);
 router.post('/', validateCreateService, createService);
@@ -22,7 +19,4 @@ router.delete('/:id', deleteService);
 
 router.patch('/:id/toggle-status', toggleServiceStatus);
 
-
 module.exports = router;
-
-

@@ -216,6 +216,7 @@ const checkProductOwnership = async (req, res, next) => {
         });
     }
 };
+<<<<<<< HEAD
 
 
 
@@ -223,6 +224,8 @@ const checkProductOwnership = async (req, res, next) => {
 
 
 
+=======
+>>>>>>> origin/feature/fix-erreur
 module.exports = {
     authMiddlewareProduct,
     optionalAuthproduct,

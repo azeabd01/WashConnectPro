@@ -47,6 +47,7 @@ const LoginPage = () => {
 
             let userData = {};
             let dashboardPath = '/dashboard';
+            
             if (result.provider) {
                 userData = { ...result.provider, role: 'provider' };
                 dashboardPath = '/dashboard/provider';

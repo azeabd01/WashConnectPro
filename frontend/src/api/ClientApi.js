@@ -2,7 +2,7 @@
 const API_URL = "http://localhost:3000/api/auth";
 
 // ✅ Login spécifique aux clients
-const loginClient = async (credentials) => {
+export const loginClient = async (credentials) => {
     console.log("Tentative de connexion client avec:", credentials);
 
     const response = await fetch(`${API_URL}/login/client`, {
@@ -35,7 +35,7 @@ const loginClient = async (credentials) => {
 };
 
 // ✅ Inscription client
-const registerClient = async (clientData) => {
+export const registerClient = async (clientData) => {
     console.log("Tentative d'inscription client avec:", clientData);
 
     const response = await fetch(`${API_URL}/register/client`, {
@@ -55,11 +55,11 @@ const registerClient = async (clientData) => {
 };
 
 // ✅ Récupération du profil client
-const getClientProfile = async (token) => {
-    const response = await fetch(`${API_URL}/profile/client`, {
+export const getClientProfile = async (token) => {
+    const response = await fetch(`${API_URL}/me`, {
         method: "GET",
         headers: {
-            "Content-Type": "application/json",
+            // "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
         },
     });
@@ -73,7 +73,7 @@ const getClientProfile = async (token) => {
 };
 
 // ✅ Mise à jour du profil client
-const updateClientProfile = async (token, profileData) => {
+export const updateClientProfile = async (token, profileData) => {
     const response = await fetch(`${API_URL}/profile/client`, {
         method: "PUT",
         headers: {
@@ -89,10 +89,4 @@ const updateClientProfile = async (token, profileData) => {
     }
 
     return response.json();
-};
-module.exports = {
-    loginClient,
-    registerClient,
-    getClientProfile,
-    updateClientProfile
 };

@@ -1,17 +1,21 @@
 import React from 'react';
 import { User, ArrowLeft, MapPin, Bell, Mail, Phone, Lock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { registerClient } from '../../api/ClientApi';
 
 const ClientRegistrationForm = ({ onBack }) => {
+    const navigate = useNavigate();
+
     const [formData, setFormData] = React.useState({});
     const [currentStep, setCurrentStep] = React.useState(1);
     const [errors, setErrors] = React.useState({});
+    const [isLoading, setIsLoading] = React.useState(false);
 
     const handleInputChange = (field, value) => {
         setFormData(prev => ({
             ...prev,
             [field]: value
         }));
-        // Clear error when user starts typing
         if (errors[field]) {
             setErrors(prev => ({
                 ...prev,
@@ -32,7 +36,6 @@ const ClientRegistrationForm = ({ onBack }) => {
 
     const validateStep = (step) => {
         const newErrors = {};
-
         if (step === 1) {
             if (!formData.name?.trim()) newErrors.name = 'Le nom est requis';
             if (!formData.email?.trim()) newErrors.email = 'L\'email est requis';
@@ -40,7 +43,6 @@ const ClientRegistrationForm = ({ onBack }) => {
             if (formData.password && formData.password.length < 6) newErrors.password = 'Minimum 6 caractères';
             if (!formData.phone?.trim()) newErrors.phone = 'Le téléphone est requis';
         }
-
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -51,11 +53,35 @@ const ClientRegistrationForm = ({ onBack }) => {
         }
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (validateStep(currentStep)) {
-            console.log('Inscription Client:', formData);
-            alert('Inscription réussie ! Redirection vers la connexion...');
+    const handleSubmit = async () => {
+        if (!validateStep(currentStep)) {
+            console.log('Validation failed', errors);
+            return;
+        }
+        setIsLoading(true);
+        console.log('Données envoyées au backend:', formData);
+
+        try {
+            const response = await registerClient(formData);
+            console.log('Register response:', response);
+
+            // ✅ Vérifier s'il y a une réservation en attente
+            const pendingBooking = localStorage.getItem('pendingBooking');
+
+            if (pendingBooking) {
+                alert("Inscription réussie ! Vous pouvez maintenant finaliser votre réservation.");
+                 // Rediriger vers la page de connexion
+                navigate("/auth/login/client");
+            } else {
+                alert("Inscription réussie ! Vous allez être redirigé vers la page de connexion.");
+                navigate("/auth/login/client");
+            }
+
+        } catch (error) {
+            console.error('Register error:', error);
+            alert(error.message || "Erreur lors de l'inscription.");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -71,8 +97,7 @@ const ClientRegistrationForm = ({ onBack }) => {
                         type="text"
                         value={formData.name || ''}
                         onChange={(e) => handleInputChange('name', e.target.value)}
-                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 ${errors.name ? 'border-red-500' : 'border-gray-300'
-                            }`}
+                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 ${errors.name ? 'border-red-500' : 'border-gray-300'}`}
                         placeholder="Votre nom complet"
                     />
                     {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
@@ -87,8 +112,7 @@ const ClientRegistrationForm = ({ onBack }) => {
                         type="tel"
                         value={formData.phone || ''}
                         onChange={(e) => handleInputChange('phone', e.target.value)}
-                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 ${errors.phone ? 'border-red-500' : 'border-gray-300'
-                            }`}
+                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 ${errors.phone ? 'border-red-500' : 'border-gray-300'}`}
                         placeholder="+212 6XX XXX XXX"
                     />
                     {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
@@ -104,8 +128,7 @@ const ClientRegistrationForm = ({ onBack }) => {
                     type="email"
                     value={formData.email || ''}
                     onChange={(e) => handleInputChange('email', e.target.value)}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 ${errors.email ? 'border-red-500' : 'border-gray-300'
-                        }`}
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
                     placeholder="votre@email.com"
                 />
                 {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
@@ -120,8 +143,7 @@ const ClientRegistrationForm = ({ onBack }) => {
                     type="password"
                     value={formData.password || ''}
                     onChange={(e) => handleInputChange('password', e.target.value)}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 ${errors.password ? 'border-red-500' : 'border-gray-300'
-                        }`}
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
                     placeholder="Minimum 6 caractères"
                 />
                 {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
@@ -217,7 +239,6 @@ const ClientRegistrationForm = ({ onBack }) => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
             <div className="max-w-4xl mx-auto">
-                {/* Header */}
                 <div className="text-center mb-8">
                     <button
                         onClick={onBack}
@@ -232,10 +253,16 @@ const ClientRegistrationForm = ({ onBack }) => {
                     </div>
 
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">Inscription Client</h1>
-                    <p className="text-gray-600">Étape {currentStep} sur {totalSteps}</p>
+                    <p className="text-gray-600">
+                        Étape {currentStep} sur {totalSteps}
+                        {localStorage.getItem('pendingBooking') && (
+                            <span className="block text-sm text-blue-600 mt-1">
+                                📅 Réservation en attente - Finalisez votre inscription
+                            </span>
+                        )}
+                    </p>
                 </div>
 
-                {/* Progress Bar */}
                 <div className="mb-8">
                     <div className="w-full bg-gray-200 rounded-full h-2">
                         <div
@@ -245,13 +272,11 @@ const ClientRegistrationForm = ({ onBack }) => {
                     </div>
                 </div>
 
-                {/* Form */}
                 <div className="bg-white rounded-2xl shadow-xl p-8">
-                    <form onSubmit={handleSubmit}>
+                    <div>
                         {currentStep === 1 && renderStep1()}
                         {currentStep === 2 && renderStep2()}
 
-                        {/* Navigation Buttons */}
                         <div className="flex justify-between mt-8 pt-6 border-t border-gray-200">
                             {currentStep > 1 && (
                                 <button
@@ -274,15 +299,18 @@ const ClientRegistrationForm = ({ onBack }) => {
                                     </button>
                                 ) : (
                                     <button
-                                        type="submit"
-                                        className="px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:shadow-lg transition-all duration-200"
+                                        type="button"
+                                        onClick={handleSubmit}
+                                        disabled={isLoading}
+                                        className="px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:shadow-lg transition-all duration-200 disabled:opacity-50"
                                     >
-                                        Créer mon compte
+                                        {isLoading ? 'Création...' :
+                                            localStorage.getItem('pendingBooking') ? 'Créer et réserver' : 'Créer mon compte'}
                                     </button>
                                 )}
                             </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>

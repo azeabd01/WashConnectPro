@@ -108,7 +108,7 @@ const ProviderRegistrationForm = ({ onBack }) => {
             }
 
             alert("Inscription réussie ! Vous allez être redirigé vers la page de connexion.");
-            navigate("/login");
+            navigate("/auth/login/Provider");
         } catch (error) {
             console.error('Register error:', error);
             alert(error.message || "Erreur lors de l'inscription.");

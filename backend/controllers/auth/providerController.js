@@ -168,13 +168,17 @@ const deleteProvider = async (req, res) => {
         res.status(500).json({ message: 'Erreur serveur' });
     }
 };
-
 module.exports = {
     registerprovider,
     loginprovider,
     getMeprovider,
     updateProvider,
+<<<<<<< HEAD
     deleteProvider ,
     
     // getAllProviders 
 };
+=======
+    deleteProvider
+};
+>>>>>>> origin/feature/fix-erreur

@@ -31,9 +31,6 @@ module.exports = {
     getWeeklyPerformance
 };
 
-
-
-
 // const Booking = require('../models/Booking');
 // const mongoose = require('mongoose');
 

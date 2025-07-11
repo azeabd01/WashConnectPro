@@ -57,12 +57,9 @@ const productRegistrationForm = () => {
 
     const handleSubmit = async () => {
         // e.preventDefault();
-
         // Validation finale avant soumission
         if (!validateForm()) {
-
             console.log('Validation failed', errors);
-
             return;
         }
 
@@ -72,15 +69,12 @@ const productRegistrationForm = () => {
         try {
             // Appel à l'API pour enregistrer le product
             const response = await registerProduct(formData);
-
             console.log('Inscription réussie:', response);
-
             // Stocker le token si nécessaire
             if (response.token) {
                 localStorage.setItem('token', response.token);
                 localStorage.setItem('userType', 'product');
             }
-
             // Afficher un message de succès
             alert('Inscription réussie ! Vous pouvez maintenant vous connecter.');
 
@@ -91,10 +85,8 @@ const productRegistrationForm = () => {
                     message: 'Inscription réussie ! Veuillez vous connecter.'
                 }
             });
-
         } catch (error) {
             console.error('Erreur lors de l\'inscription:', error);
-
             // Gestion des erreurs spécifiques
             if (error.response?.data?.message) {
                 if (error.response.data.message.includes('email')) {

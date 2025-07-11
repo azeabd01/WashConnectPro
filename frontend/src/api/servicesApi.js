@@ -35,10 +35,17 @@ export const fetchServices = async () => {
 // ➕ Créer un service
 export const createService = async (service) => {
     console.log('Service envoyé:', service);  // debug
+
+    // ✅ Assurez-vous que isActive est un booléen
+    const serviceData = {
+        ...service,
+        isActive: typeof service.isActive === 'boolean' ? service.isActive : true
+    };
+
     const res = await fetch(API_URL, {
         method: 'POST',
         headers: getAuthHeaders(),
-        body: JSON.stringify(service),
+        body: JSON.stringify(serviceData),
     });
     if (!res.ok) {
         const error = await res.json();
@@ -50,10 +57,17 @@ export const createService = async (service) => {
 
 // 🖊️ Modifier un service
 export const updateService = async (id, service) => {
+
+    // ✅ Assurez-vous que isActive est un booléen
+    const serviceData = {
+        ...service,
+        isActive: typeof service.isActive === 'boolean' ? service.isActive : true
+    };
+
     const res = await fetch(`${API_URL}/${id}`, {
         method: 'PUT',
         headers: getAuthHeaders(),
-        body: JSON.stringify(service),
+        body: JSON.stringify(serviceData),
     });
     if (!res.ok) {
         const error = await res.json();
@@ -74,48 +88,3 @@ export const deleteService = async (id) => {
     }
     return res.json();
 };
-
-
-
-// const API_URL = 'http://localhost:3000/api/services';
-
-// const token = localStorage.getItem('token');
-// const headers = {
-//     'Content-Type': 'application/json',
-//     'Authorization': `Bearer ${token}`
-// };
-
-// export const fetchServices = async () => {
-//     const res = await fetch(API_URL, { headers });
-//     if (!res.ok) throw new Error('Erreur chargement services');
-//     return res.json();
-// };
-
-// export const createService = async (service) => {
-//     const res = await fetch(API_URL, {
-//         method: 'POST',
-//         headers,
-//         body: JSON.stringify(service)
-//     });
-//     if (!res.ok) throw new Error('Erreur création service');
-//     return res.json();
-// };
-
-// export const updateService = async (id, service) => {
-//     const res = await fetch(`${API_URL}/${id}`, {
-//         method: 'PUT',
-//         headers,
-//         body: JSON.stringify(service)
-//     });
-//     if (!res.ok) throw new Error('Erreur modification service');
-//     return res.json();
-// };
-
-// export const deleteService = async (id) => {
-//     const res = await fetch(`${API_URL}/${id}`, {
-//         method: 'DELETE',
-//         headers
-//     });
-//     if (!res.ok) throw new Error('Erreur suppression service');
-//     return res.json();
-// };

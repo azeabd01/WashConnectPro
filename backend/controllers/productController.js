@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const Order = require('../models/oderProduct'); // assuming orders are linked to products
 // const User = require('../models/userModel');
 
+<<<<<<< HEAD
 const ProviderStats = async (req, res) => {
   try {
     // const providerId = req.params.id;
@@ -33,6 +34,8 @@ const ProviderStats = async (req, res) => {
   }
 };
 
+=======
+>>>>>>> origin/feature/fix-erreur
 const getProducts = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 5;
@@ -80,10 +83,14 @@ const createProduct = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
 
 
 
 
+=======
+// PUT update
+>>>>>>> origin/feature/fix-erreur
 const updateProduct = async (req, res) => {
   try {
     const providerProductId = req.product.id; // from auth middleware
@@ -179,7 +186,26 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
+=======
+// DELETE
+const deleteProduct = async (req, res) => {
+  try {
+    const providerProductId = req.product.id;
+    const product = await Product.findById(req.params.id);
 
+    // if (!product) return res.status(404).json({ message: 'Produit non trouvé' });
+
+    // if (product.providerProductId.toString() !== providerProductId) {
+    //   return res.status(403).json({ message: 'Accès refusé' });
+    // }
+    const deleted = await Product.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Product deleted' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+>>>>>>> origin/feature/fix-erreur
 
 const getProductAnalytics = async (req, res) => {
   try {
@@ -203,6 +229,7 @@ const getProductAnalytics = async (req, res) => {
     res.status(500).json({ message: 'Failed to load analytics' });
   }
 };
+<<<<<<< HEAD
 
 
 const getPublicProducts = async (req, res) => {
@@ -298,6 +325,8 @@ const getProductsByProvider = async (req, res) => {
 
 
 
+=======
+>>>>>>> origin/feature/fix-erreur
 module.exports = {
   ProviderStats,
   getPublicProducts,
