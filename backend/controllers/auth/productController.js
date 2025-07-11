@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 const ProviderProduct = require('../../models/ProviderProduct'); // Modèle Product (product)
 
-// ✅ INSCRIPTION PRODUCT
+//  INSCRIPTION PRODUCT
 const registerProviderproduct = async (req, res) => {
     // Validation des erreurs
     const errors = validationResult(req);

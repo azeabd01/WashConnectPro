@@ -10,9 +10,9 @@ if (!process.env.JWT_SECRET) {
 
 
 // const authRoutes = require('./routes/authRoutes');
-const servicesRoutes = require('./routes/servicesRoutes');
-const bookingsRoutes = require('./routes/bookingsRoutes');
-const analyticsRoutes = require('./routes/analyticsRoutes');
+// const servicesRoutes = require('./routes/servicesRoutes');
+// const bookingsRoutes = require('./routes/bookingsRoutes');
+// const analyticsRoutes = require('./routes/analyticsRoutes');
 
 // Routes d'authentification
 const providerRoutes = require('./routes/auth/providerRoutes');
@@ -75,7 +75,8 @@ app.use('/api/public/bookings', publicBookingsRoutes);
 app.use('/api/public', publicServiceRoutes);
 app.use('/api/public/availability', publicAvailabilityRoutes);
 
-
+const publicProductsRoutes = require('./routes/publicProductsRoutes');
+app.use('/api/public', publicProductsRoutes);
 
 // app.use('/api/public/bookings', require('./routes/publicBookingRoutes'));
 // app.use('/api/availabilities', availableTimeSlots);

@@ -173,12 +173,5 @@ module.exports = {
     loginprovider,
     getMeprovider,
     updateProvider,
-<<<<<<< HEAD
-    deleteProvider ,
-    
-    // getAllProviders 
-};
-=======
     deleteProvider
 };
->>>>>>> origin/feature/fix-erreur
