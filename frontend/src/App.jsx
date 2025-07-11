@@ -36,7 +36,6 @@ import ProductsTable from './products/ProductsTable';
 import EditProduct from './products/Update';
 import ShowProduct from './products/ShowProduct';
 import ProductAnalytics from "./products/ProductAnalytics";
-import { Toaster } from 'react-hot-toast';
 import ProviderLavage from './admin/ProviderLavage';
 import PublicProductsPage from './products/PublicProductsPage';
 import ProviderStats from './products/StatsGrid';
