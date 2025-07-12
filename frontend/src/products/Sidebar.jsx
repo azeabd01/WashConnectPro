@@ -14,11 +14,11 @@ export default function Sidebar() {
     const [activeTab, setActiveTab] = useState('products');
 
   const sidebarItems = [
-  { id: 'dashboard', label: 'Dashboard', icon: BarChart3, path: '/dashboard/product' },             // ✅ index route
+  // { id: 'dashboard', label: 'Dashboard', icon: BarChart3, path: '/dashboard/product' },             // ✅ index route
   { id: 'products', label: 'Products', icon: Package, path: '/dashboard/product/product' },         // ✅ sub route
   { id: 'addproduct', label: 'Add Product', icon: Plus, path: '/dashboard/product/addproduct' },
   { id: 'customers', label: 'Customers', icon: Users, path: '/dashboard/product/customers' },
-  { id: 'analytics', label: 'Analytics', icon: TrendingUp, path: '/dashboard/product/analytics' },
+  // { id: 'analytics', label: 'Analytics', icon: TrendingUp, path: '/dashboard/product/analytics' },
   { id: 'settings', label: 'Settings', icon: Settings, path: '/dashboard/product/settings' },
 ];
 
