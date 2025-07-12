@@ -1,4 +1,3 @@
-// src/api/analyticsApi.js
 const API_URL = 'http://localhost:3000/api/analytics';
 
 const getAuthHeaders = () => {
@@ -9,7 +8,7 @@ const getAuthHeaders = () => {
     };
 };
 
-// 📊 Vue d'ensemble des stats
+// ✅ Vue d'ensemble des stats
 export const fetchOverview = async () => {
     try {
         const res = await fetch(`${API_URL}/overview`, {
@@ -23,7 +22,6 @@ export const fetchOverview = async () => {
         const response = await res.json();
         console.log('📊 Overview API Response:', response);
         
-        // ✅ Retourner les données selon la structure de votre backend
         return response.data || response;
     } catch (error) {
         console.error('❌ Erreur fetchOverview:', error);
@@ -31,6 +29,7 @@ export const fetchOverview = async () => {
     }
 };
 
+// ✅ Performance hebdomadaire
 export const fetchWeeklyPerformance = async () => {
     try {
         const response = await fetch(`${API_URL}/weekly-performance`, {
@@ -45,13 +44,11 @@ export const fetchWeeklyPerformance = async () => {
         const data = await response.json();
         console.log('📈 Weekly Performance API Response:', data);
         
-        // ✅ Validation et retour des données selon votre backend
         if (!data.success) {
             console.warn('API returned unsuccessful response:', data);
             return [];
         }
 
-        // Retourner les données hebdomadaires
         return data.data || [];
     } catch (error) {
         console.error('❌ Error fetching weekly performance:', error);
@@ -59,7 +56,7 @@ export const fetchWeeklyPerformance = async () => {
     }
 };
 
-// ✅ Nouvelles fonctions pour récupérer les données complètes
+// ✅ Réservations récentes
 export const fetchRecentBookings = async (limit = 5) => {
     try {
         const res = await fetch(`${API_URL}/recent-bookings?limit=${limit}`, {
@@ -80,7 +77,7 @@ export const fetchRecentBookings = async (limit = 5) => {
     }
 };
 
-// ✅ Récupérer toutes les données du dashboard en une fois
+// ✅ Données complètes du dashboard
 export const fetchDashboardData = async () => {
     try {
         const res = await fetch(`${API_URL}/dashboard`, {
@@ -101,10 +98,31 @@ export const fetchDashboardData = async () => {
     }
 };
 
-// ✅ Fonction pour récupérer les stats en temps réel
+// ✅ Nouvelle fonction pour l'analyse des horaires de travail
+export const fetchWorkingHoursAnalysis = async () => {
+    try {
+        const res = await fetch(`${API_URL}/working-hours`, {
+            headers: getAuthHeaders(),
+        });
+        
+        if (!res.ok) {
+            throw new Error('Erreur lors du chargement de l\'analyse des horaires');
+        }
+        
+        const response = await res.json();
+        console.log('⏰ Working Hours Analysis API Response:', response);
+        
+        return response.data || {};
+    } catch (error) {
+        console.error('❌ Erreur fetchWorkingHoursAnalysis:', error);
+        throw error;
+    }
+};
+
+// ✅ Statistiques en temps réel
 export const fetchRealTimeStats = async () => {
     try {
-        const res = await fetch(`${API_URL}/overview`, {
+        const res = await fetch(`${API_URL}/real-time`, {
             headers: getAuthHeaders(),
         });
         
@@ -113,6 +131,8 @@ export const fetchRealTimeStats = async () => {
         }
         
         const response = await res.json();
+        console.log('⚡ Real Time Stats API Response:', response);
+        
         return response.data || {};
     } catch (error) {
         console.error('❌ Erreur fetchRealTimeStats:', error);

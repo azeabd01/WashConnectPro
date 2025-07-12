@@ -144,11 +144,6 @@ const BookingModal = ({
         // Supprimer les espaces et tirets pour la validation
         const cleanPlate = plate.replace(/[-\s]/g, '').toUpperCase();
 
-        // Formats valides:
-        // - Ancien format: 123456A ou 123456AB
-        // - Nouveau format: 12345A12 ou 12345AB12
-        // - Format avec région: 123456|12
-
         const patterns = [
             /^\d{6}[A-Z]{1,2}$/,           // 123456A ou 123456AB
             /^\d{5}[A-Z]{1,2}\d{2}$/,      // 12345A12 ou 12345AB12
@@ -402,19 +397,6 @@ const BookingModal = ({
                         <p className="text-gray-600 text-sm">{service.description}</p>
                     )}
                 </div>
-
-                {/* ✅ Notification de retour d'authentification */}
-                {/* {localStorage.getItem('pendingBooking') && (
-                    <div className="p-4 bg-green-50 border-l-4 border-green-400 mx-6 mt-6">
-                        <div className="flex">
-                            <div className="ml-3">
-                                <p className="text-sm text-green-700">
-                                    ✅ Connexion réussie ! Vous pouvez maintenant finaliser votre réservation.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                )} */}
 
                 {/* Form */}
                 <div className="p-6 space-y-6">

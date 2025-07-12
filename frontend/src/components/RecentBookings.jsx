@@ -58,9 +58,9 @@ const RecentBookings = ({ bookings, onSeeAll }) => {
                 </button>
             </div>
             <div className="space-y-3">
-                {bookings.map((booking) => (
+                {bookings.map((booking, index) => (
                     <div 
-                        key={booking.id} 
+                        key={`booking-${booking.id || index}`}
                         className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                     >
                         <div className="flex items-center gap-3">

@@ -2,24 +2,22 @@ const express = require('express');
 const router = express.Router();
 const { 
     getAnalyticsOverview, 
-    getWeeklyPerformance,
-    getMonthlyStats,
-    getTopServices,
+    getWeeklyPerformance, 
     getRecentBookings,
     getDashboardData,
-    getDebugStats
+    getWorkingHoursAnalysis,
+    getRealTimeStats
 } = require('../controllers/analyticsController');
 const auth = require('../middlewares/authMiddlewareProvider');
 
+// ✅ Routes existantes
 router.get('/overview', auth, getAnalyticsOverview);
 router.get('/weekly-performance', auth, getWeeklyPerformance);
-
-
-// Dans analyticsRoutes.js
-router.get('/monthly-stats', auth, getMonthlyStats);
-router.get('/top-services', auth, getTopServices);
 router.get('/recent-bookings', auth, getRecentBookings);
-router.get('/dashboard', auth, getDashboardData); // Tout en une fois
-router.get('/debug', getDebugStats);
+router.get('/dashboard', auth, getDashboardData);
+
+// ✅ Nouvelles routes
+router.get('/working-hours', auth, getWorkingHoursAnalysis);
+router.get('/real-time', auth, getRealTimeStats);
 
 module.exports = router;

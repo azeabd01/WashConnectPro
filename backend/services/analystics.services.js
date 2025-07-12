@@ -1,415 +1,312 @@
-// ✅ VERSION CORRIGÉE DU SERVICE D'ANALYSE - FIXES MAJEURS
 const Booking = require('../models/Booking');
+const Provider = require('../models/Provider');
 const mongoose = require('mongoose');
 
-const fetchAnalyticsOverview = async (providerId) => {
-    const objectId = new mongoose.Types.ObjectId(providerId);
-
-    console.log('🔍 Analyse des statistiques pour le provider:', providerId);
-
-    const [totalBookings, completedBookings, cancelledBookings, revenueAgg, uniqueClients] = await Promise.all([
-        Booking.countDocuments({ providerId: objectId }),
-        Booking.countDocuments({ providerId: objectId, status: 'completed' }),
-        Booking.countDocuments({ providerId: objectId, status: 'cancelled' }),
-        Booking.aggregate([
-            { $match: { providerId: objectId, status: 'completed' } },
-            { $group: { _id: null, total: { $sum: '$price' } } }
-        ]),
-        Booking.distinct('clientId', { providerId: objectId })
-    ]);
-
-    const totalRevenue = revenueAgg[0]?.total || 0;
-    const completionRate = totalBookings > 0 ? Math.round((completedBookings / totalBookings) * 100) : 0;
-
-    console.log('📊 Résultats de l\'analyse globale:', {
-        totalBookings,
-        completedBookings,
-        cancelledBookings,
-        totalRevenue,
-        uniqueClients: uniqueClients.length
-    });
-
-    return {
-        totalBookings,
-        completedBookings,
-        cancelledBookings,
-        totalRevenue,
-        uniqueClients: uniqueClients.length,
-        completionRate,
-        previousBookings: 0,
-        previousRevenue: 0,
-        previousClients: 0
-    };
+// ✅ Fonction pour filtrer les réservations annulées
+const filterCancelledBookings = (bookings) => {
+    return bookings.filter(booking => 
+        booking.status !== 'cancelled' && 
+        booking.status !== 'annulée' &&
+        booking.status !== 'canceled'
+    );
 };
 
-const fetchWeeklyPerformance = async (providerId) => {
+const fetchAnalyticsOverview = async (providerId) => {
     try {
-        const Provider = require('../models/Provider');
+        // ✅ Récupérer les informations du provider pour les horaires
         const provider = await Provider.findById(providerId);
-
         if (!provider) {
             throw new Error('Provider not found');
         }
 
-        // ✅ CORRECTION MAJEURE : Calculer correctement le début de semaine
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        // ✅ Récupérer toutes les réservations du provider avec correction des champs
+        const allBookings = await Booking.find({ providerId: providerId })
+            .populate('clientId', 'name email')
+            .populate('serviceId', 'name price')
+            .sort({ createdAt: -1 });
+
+        // ✅ Filtrer les réservations annulées
+        const bookings = filterCancelledBookings(allBookings);
+
+        const totalBookings = bookings.length;
+        const totalRevenue = bookings.reduce((sum, b) => sum + (b.price || 0), 0);
         
-        // Calculer le lundi de la semaine courante
-        const currentDay = today.getDay();
-        const daysFromMonday = currentDay === 0 ? 6 : currentDay - 1; // Dimanche = 0, donc on doit aller 6 jours en arrière
+        // ✅ Compter les clients uniques via clientId (sans les annulées)
+        const uniqueClients = new Set(
+            bookings
+                .filter(b => b.clientId)
+                .map(b => b.clientId.toString())
+        ).size;
+
+        // Calculs additionnels
+        const avgPricePerBooking = totalBookings > 0 ? Math.round(totalRevenue / totalBookings) : 0;
         
-        const startOfWeek = new Date(today);
-        startOfWeek.setDate(today.getDate() - daysFromMonday);
+        // ✅ Réservations par statut (sans les annulées)
+        const bookingsByStatus = bookings.reduce((acc, booking) => {
+            const status = booking.status || 'pending';
+            acc[status] = (acc[status] || 0) + 1;
+            return acc;
+        }, {});
+
+        // Évolution mensuelle (30 derniers jours) - sans les annulées
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        
+        const recentBookings = bookings.filter(b => 
+            new Date(b.createdAt) >= thirtyDaysAgo
+        );
+
+        // ✅ Analyse des horaires de travail
+        const workingHours = provider.workingHours || {};
+        const workingDaysInfo = Object.entries(workingHours).map(([day, hours]) => ({
+            day,
+            isOpen: hours.isOpen || false,
+            openTime: hours.open || null,
+            closeTime: hours.close || null
+        }));
+
+        const openDays = workingDaysInfo.filter(day => day.isOpen).length;
+        const closedDays = 7 - openDays;
+
+        return {
+            totalBookings,
+            totalRevenue,
+            uniqueClients,
+            avgPricePerBooking,
+            bookingsByStatus,
+            monthlyGrowth: {
+                bookings: recentBookings.length,
+                revenue: recentBookings.reduce((sum, b) => sum + (b.price || 0), 0)
+            },
+            // ✅ Nouvelles données sur les horaires
+            workingSchedule: {
+                openDays,
+                closedDays,
+                workingDaysInfo
+            }
+        };
+    } catch (error) {
+        console.error('Erreur fetchAnalyticsOverview:', error);
+        throw error;
+    }
+};
+
+const fetchWeeklyPerformance = async (providerId) => {
+    try {
+        // ✅ Récupérer les informations du provider pour les horaires
+        const provider = await Provider.findById(providerId);
+        if (!provider) {
+            throw new Error('Provider not found');
+        }
+
+        // Calculer la semaine courante (lundi à dimanche)
+        const now = new Date();
+        const startOfWeek = new Date(now);
+        const dayOfWeek = now.getDay();
+        const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+        startOfWeek.setDate(now.getDate() - daysToMonday);
         startOfWeek.setHours(0, 0, 0, 0);
-        
+
         const endOfWeek = new Date(startOfWeek);
         endOfWeek.setDate(startOfWeek.getDate() + 6);
         endOfWeek.setHours(23, 59, 59, 999);
 
-        console.log('📅 Période d\'analyse de la semaine courante:', {
-            de: startOfWeek.toISOString().split('T')[0],
-            à: endOfWeek.toISOString().split('T')[0],
-            aujourdhui: today.toISOString().split('T')[0]
-        });
-
-        // ✅ Récupérer toutes les réservations de la semaine courante
-        const weekBookings = await Booking.find({
+        // ✅ Récupérer les réservations de la semaine avec correction des champs
+        const allBookings = await Booking.find({
             providerId: new mongoose.Types.ObjectId(providerId),
-            $expr: {
-                $and: [
-                    { $gte: [{ $dateFromString: { dateString: "$scheduledDate" } }, startOfWeek] },
-                    { $lte: [{ $dateFromString: { dateString: "$scheduledDate" } }, endOfWeek] }
-                ]
+            scheduledDate: {
+                $gte: startOfWeek.toISOString().split('T')[0],
+                $lte: endOfWeek.toISOString().split('T')[0]
             }
-        }).sort({ scheduledDate: 1 });
+        }).populate('serviceId', 'name price');
 
-        console.log('📋 Réservations trouvées pour la semaine:', weekBookings.length);
+        // ✅ Filtrer les réservations annulées
+        const bookings = filterCancelledBookings(allBookings);
+
+        // Grouper par date de réservation
+        const dailyStats = {};
         
-        // ✅ Debug : afficher toutes les réservations
-        weekBookings.forEach(booking => {
-            console.log(`📅 ${booking.scheduledDate} - ${booking.scheduledTime} - ${booking.status} - ${booking.price} MAD - ${booking.clientName}`);
-        });
-
-        // ✅ Grouper par date pour les statistiques
-        const bookingsByDate = weekBookings.reduce((acc, booking) => {
-            const date = booking.scheduledDate;
-            if (!acc[date]) {
-                acc[date] = {
-                    date: date,
-                    bookings: [],
-                    totalBookings: 0,
-                    completedBookings: 0,
-                    cancelledBookings: 0,
-                    pendingBookings: 0,
-                    revenue: 0
+        bookings.forEach(booking => {
+            const scheduledDate = booking.scheduledDate;
+            const bookingDate = new Date(scheduledDate);
+            const dayOfWeek = bookingDate.getDay();
+            // Convertir dimanche (0) à 6, lundi (1) à 0, etc.
+            const dayIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+            
+            if (!dailyStats[dayIndex]) {
+                dailyStats[dayIndex] = {
+                    bookings: 0,
+                    revenue: 0,
+                    prices: []
                 };
             }
             
-            acc[date].bookings.push(booking);
-            acc[date].totalBookings += 1;
+            dailyStats[dayIndex].bookings += 1;
+            dailyStats[dayIndex].revenue += booking.price || 0;
+            dailyStats[dayIndex].prices.push(booking.price || 0);
+        });
+
+        // Noms des jours et mapping vers les horaires du provider
+        const daysNames = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+        const daysMapping = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+        
+        // ✅ Créer les données pour chaque jour avec horaires réels
+        const weeklyData = Array(7).fill().map((_, dayIndex) => {
+            const currentDate = new Date(startOfWeek);
+            currentDate.setDate(startOfWeek.getDate() + dayIndex);
             
-            if (booking.status === 'completed') {
-                acc[date].completedBookings += 1;
-                acc[date].revenue += booking.price || 0;
-            } else if (booking.status === 'cancelled') {
-                acc[date].cancelledBookings += 1;
-            } else if (booking.status === 'pending') {
-                acc[date].pendingBookings += 1;
-                // ✅ CORRECTION : Compter aussi les réservations pendantes dans le revenue potentiel
-                acc[date].revenue += booking.price || 0;
-            }
-            
-            return acc;
-        }, {});
+            const stats = dailyStats[dayIndex] || { bookings: 0, revenue: 0, prices: [] };
+            const avgPrice = stats.prices.length > 0 
+                ? Math.round(stats.prices.reduce((sum, price) => sum + price, 0) / stats.prices.length)
+                : 0;
 
-        console.log('📊 Données groupées par date:', Object.keys(bookingsByDate));
+            // ✅ Récupérer les horaires réels du provider
+            const dayName = daysMapping[dayIndex];
+            const daySchedule = provider.workingHours?.[dayName] || {};
+            const isWorkingDay = daySchedule.isOpen || false;
 
-        const days = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
-        const dayKeys = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-        const performance = [];
-
-        // ✅ Générer les données pour chaque jour de la semaine
-        for (let i = 0; i < 7; i++) {
-            const targetDate = new Date(startOfWeek);
-            targetDate.setDate(startOfWeek.getDate() + i);
-            const dateStr = targetDate.toISOString().split('T')[0];
-
-            const dayData = bookingsByDate[dateStr];
-            const dayKey = dayKeys[i];
-            const isWorkingDay = provider.workingHours?.[dayKey]?.isOpen ?? true;
-            const workingHours = provider.workingHours?.[dayKey] || {};
-
-            const dayPerformance = {
-                day: days[i],
-                date: dateStr,
-                bookings: dayData ? dayData.totalBookings : 0,
-                revenue: dayData ? dayData.revenue : 0,
-                avgPrice: dayData && dayData.completedBookings > 0 
-                    ? Math.round(dayData.revenue / dayData.completedBookings) 
-                    : 0,
-                completedBookings: dayData ? dayData.completedBookings : 0,
-                cancelledBookings: dayData ? dayData.cancelledBookings : 0,
-                pendingBookings: dayData ? dayData.pendingBookings : 0,
+            return {
+                day: daysNames[dayIndex],
+                date: currentDate.toISOString().split('T')[0],
+                bookings: stats.bookings,
+                revenue: stats.revenue,
+                avgPrice: avgPrice,
                 isWorkingDay: isWorkingDay,
                 workingHours: isWorkingDay ? {
-                    open: workingHours.open,
-                    close: workingHours.close
+                    open: daySchedule.open || '09:00',
+                    close: daySchedule.close || '18:00'
                 } : null,
-                isInRange: true,
-                isToday: dateStr === today.toISOString().split('T')[0],
-                dayOfWeek: i
+                // ✅ Informations supplémentaires
+                dayStatus: isWorkingDay ? 'open' : 'closed',
+                efficiency: isWorkingDay ? (stats.bookings > 0 ? 'active' : 'inactive') : 'closed'
             };
-
-            performance.push(dayPerformance);
-            
-            console.log(`📅 ${days[i]} (${dateStr}):`, {
-                bookings: dayPerformance.bookings,
-                completed: dayPerformance.completedBookings,
-                cancelled: dayPerformance.cancelledBookings,
-                pending: dayPerformance.pendingBookings,
-                revenue: dayPerformance.revenue,
-                isToday: dayPerformance.isToday
-            });
-        }
-
-        // ✅ Calculer les totaux de la semaine
-        const weekTotals = performance.reduce((acc, day) => {
-            acc.totalBookings += day.bookings;
-            acc.completedBookings += day.completedBookings;
-            acc.cancelledBookings += day.cancelledBookings;
-            acc.pendingBookings += day.pendingBookings;
-            acc.totalRevenue += day.revenue;
-            return acc;
-        }, {
-            totalBookings: 0,
-            completedBookings: 0,
-            cancelledBookings: 0,
-            pendingBookings: 0,
-            totalRevenue: 0
         });
 
-        console.log('📈 Totaux de la semaine:', weekTotals);
-
-        return {
-            weeklyData: performance,
-            weekTotals: weekTotals,
-            period: {
-                start: startOfWeek.toISOString().split('T')[0],
-                end: endOfWeek.toISOString().split('T')[0],
-                current: today.toISOString().split('T')[0]
-            },
-            metadata: {
-                totalBookingsInPeriod: weekBookings.length,
-                dateRange: `${startOfWeek.toLocaleDateString('fr-FR')} - ${endOfWeek.toLocaleDateString('fr-FR')}`
-            }
-        };
-
+        return weeklyData;
     } catch (error) {
-        console.error('❌ Erreur dans fetchWeeklyPerformance:', error);
+        console.error('Erreur fetchWeeklyPerformance:', error);
         throw error;
     }
 };
 
-// ✅ Fonction pour récupérer les statistiques réelles avec debug amélioré
-const fetchRealTimeStats = async (providerId) => {
-    try {
-        console.log('🔄 Récupération des statistiques en temps réel...');
-        
-        const bookings = await Booking.find({
-            providerId: new mongoose.Types.ObjectId(providerId)
-        }).sort({ scheduledDate: -1 });
-
-        console.log(`📊 Total des réservations trouvées: ${bookings.length}`);
-
-        // ✅ Calculer les statistiques réelles avec plus de détails
-        const stats = bookings.reduce((acc, booking) => {
-            acc.total += 1;
-            
-            switch (booking.status) {
-                case 'completed':
-                    acc.completed += 1;
-                    acc.revenue += booking.price || 0;
-                    break;
-                case 'cancelled':
-                    acc.cancelled += 1;
-                    break;
-                case 'pending':
-                    acc.pending += 1;
-                    acc.potentialRevenue += booking.price || 0;
-                    break;
-                default:
-                    acc.other += 1;
-            }
-            
-            return acc;
-        }, {
-            total: 0,
-            completed: 0,
-            cancelled: 0,
-            pending: 0,
-            other: 0,
-            revenue: 0,
-            potentialRevenue: 0
-        });
-
-        console.log('📈 Statistiques réelles calculées:', stats);
-
-        // ✅ Grouper par statut pour debug
-        const statusBreakdown = bookings.reduce((acc, booking) => {
-            acc[booking.status] = (acc[booking.status] || 0) + 1;
-            return acc;
-        }, {});
-
-        console.log('📊 Répartition par statut:', statusBreakdown);
-
-        return {
-            ...stats,
-            statusBreakdown,
-            lastUpdated: new Date()
-        };
-    } catch (error) {
-        console.error('❌ Erreur dans fetchRealTimeStats:', error);
-        throw error;
-    }
-};
-
-const fetchMonthlyStats = async (providerId) => {
-    try {
-        // ✅ Analyser les 3 derniers mois
-        const today = new Date();
-        const threeMonthsAgo = new Date();
-        threeMonthsAgo.setMonth(today.getMonth() - 3);
-
-        console.log('📅 Analyse mensuelle de:', {
-            de: threeMonthsAgo.toISOString().split('T')[0],
-            à: today.toISOString().split('T')[0]
-        });
-
-        const monthlyBookings = await Booking.aggregate([
-            {
-                $match: {
-                    providerId: new mongoose.Types.ObjectId(providerId),
-                    scheduledDate: { 
-                        $gte: threeMonthsAgo.toISOString().split('T')[0], 
-                        $lte: today.toISOString().split('T')[0] 
-                    }
-                }
-            },
-            {
-                $addFields: {
-                    scheduledDateObj: { $dateFromString: { dateString: "$scheduledDate" } }
-                }
-            },
-            {
-                $group: {
-                    _id: { $dayOfMonth: "$scheduledDateObj" },
-                    count: { $sum: 1 },
-                    revenue: { 
-                        $sum: { 
-                            $cond: [
-                                { $eq: ["$status", "completed"] }, 
-                                "$price", 
-                                0
-                            ]
-                        }
-                    },
-                    completedBookings: {
-                        $sum: {
-                            $cond: [{ $eq: ["$status", "completed"] }, 1, 0]
-                        }
-                    }
-                }
-            },
-            { $sort: { _id: 1 } }
-        ]);
-
-        console.log('📊 Statistiques mensuelles:', monthlyBookings.length, 'jours avec activité');
-
-        return monthlyBookings;
-    } catch (error) {
-        console.error('❌ Erreur dans fetchMonthlyStats:', error);
-        throw error;
-    }
-};
-
-const fetchTopServices = async (providerId) => {
-    try {
-        const topServices = await Booking.aggregate([
-            {
-                $match: {
-                    providerId: new mongoose.Types.ObjectId(providerId)
-                }
-            },
-            {
-                $group: {
-                    _id: "$serviceId",
-                    count: { $sum: 1 },
-                    revenue: { 
-                        $sum: { 
-                            $cond: [
-                                { $eq: ["$status", "completed"] }, 
-                                "$price", 
-                                0
-                            ]
-                        }
-                    },
-                    completedBookings: {
-                        $sum: {
-                            $cond: [{ $eq: ["$status", "completed"] }, 1, 0]
-                        }
-                    }
-                }
-            },
-            { $sort: { count: -1 } },
-            { $limit: 5 },
-            {
-                $lookup: {
-                    from: "services",
-                    localField: "_id",
-                    foreignField: "_id",
-                    as: "serviceDetails"
-                }
-            },
-            {
-                $addFields: {
-                    serviceName: { $arrayElemAt: ["$serviceDetails.name", 0] },
-                    servicePrice: { $arrayElemAt: ["$serviceDetails.price", 0] }
-                }
-            }
-        ]);
-
-        console.log('🏆 Top services:', topServices.length);
-
-        return topServices;
-    } catch (error) {
-        console.error('❌ Erreur dans fetchTopServices:', error);
-        throw error;
-    }
-};
-
+// ✅ Fonction pour récupérer les réservations récentes avec correction (sans annulées)
 const fetchRecentBookings = async (providerId, limit = 5) => {
     try {
-        const recentBookings = await Booking.find({ providerId })
+        const allBookings = await Booking.find({ providerId: providerId })
             .populate('clientId', 'name email')
-            .populate('serviceId', 'name')
+            .populate('serviceId', 'name price')
             .sort({ createdAt: -1 })
-            .limit(limit);
+            .limit(limit * 2); // Récupérer plus pour compenser les annulées
 
-        console.log('📋 Réservations récentes récupérées:', recentBookings.length);
+        // ✅ Filtrer les réservations annulées puis limiter
+        const bookings = filterCancelledBookings(allBookings).slice(0, limit);
 
-        return recentBookings.map(booking => ({
+        return bookings.map(booking => ({
             id: booking._id,
-            client: booking.clientId?.name || booking.clientName || 'Inconnu',
+            bookingNumber: booking.bookingNumber,
+            client: booking.clientName || booking.clientId?.name || 'Client inconnu',
+            clientEmail: booking.clientEmail || booking.clientId?.email || '',
             service: booking.serviceId?.name || 'Service inconnu',
+            price: booking.price || 0,
             scheduledDate: booking.scheduledDate,
             scheduledTime: booking.scheduledTime,
+            status: booking.status || 'pending',
             createdAt: booking.createdAt,
-            status: booking.status,
-            price: booking.price
+            vehicleInfo: booking.vehicleInfo || {},
+            paymentStatus: booking.paymentStatus || 'pending'
         }));
     } catch (error) {
-        console.error('❌ Erreur dans fetchRecentBookings:', error);
+        console.error('Erreur fetchRecentBookings:', error);
+        throw error;
+    }
+};
+
+// ✅ Nouvelle fonction pour analyser les horaires de travail
+const fetchWorkingHoursAnalysis = async (providerId) => {
+    try {
+        const provider = await Provider.findById(providerId);
+        if (!provider) {
+            throw new Error('Provider not found');
+        }
+
+        const workingHours = provider.workingHours || {};
+        const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+        const daysNamesInFrench = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+
+        const schedule = daysOfWeek.map((day, index) => {
+            const daySchedule = workingHours[day] || {};
+            const isOpen = daySchedule.isOpen || false;
+            
+            return {
+                day: day,
+                dayName: daysNamesInFrench[index],
+                dayShort: daysNamesInFrench[index].substring(0, 3),
+                isOpen: isOpen,
+                openTime: isOpen ? (daySchedule.open || '09:00') : null,
+                closeTime: isOpen ? (daySchedule.close || '18:00') : null,
+                status: isOpen ? 'open' : 'closed',
+                // Calcul des heures de travail
+                workingHours: isOpen ? calculateWorkingHours(daySchedule.open || '09:00', daySchedule.close || '18:00') : 0
+            };
+        });
+
+        const openDays = schedule.filter(day => day.isOpen);
+        const closedDays = schedule.filter(day => !day.isOpen);
+        const totalWorkingHours = schedule.reduce((sum, day) => sum + day.workingHours, 0);
+
+        return {
+            schedule,
+            summary: {
+                openDays: openDays.length,
+                closedDays: closedDays.length,
+                totalWorkingHours: totalWorkingHours,
+                averageWorkingHoursPerDay: openDays.length > 0 ? Math.round((totalWorkingHours / openDays.length) * 10) / 10 : 0
+            },
+            openDaysList: openDays.map(day => day.dayName),
+            closedDaysList: closedDays.map(day => day.dayName)
+        };
+    } catch (error) {
+        console.error('Erreur fetchWorkingHoursAnalysis:', error);
+        throw error;
+    }
+};
+
+// ✅ Fonction utilitaire pour calculer les heures de travail
+const calculateWorkingHours = (openTime, closeTime) => {
+    try {
+        const [openHour, openMinute] = openTime.split(':').map(Number);
+        const [closeHour, closeMinute] = closeTime.split(':').map(Number);
+        
+        const openMinutes = openHour * 60 + openMinute;
+        const closeMinutes = closeHour * 60 + closeMinute;
+        
+        const diffMinutes = closeMinutes - openMinutes;
+        return Math.round((diffMinutes / 60) * 10) / 10;
+    } catch (error) {
+        console.error('Erreur calcul heures de travail:', error);
+        return 0;
+    }
+};
+
+// ✅ Fonction pour récupérer toutes les données du dashboard
+const fetchDashboardData = async (providerId) => {
+    try {
+        const [overview, weeklyPerformance, recentBookings, workingHoursAnalysis] = await Promise.all([
+            fetchAnalyticsOverview(providerId),
+            fetchWeeklyPerformance(providerId),
+            fetchRecentBookings(providerId, 10),
+            fetchWorkingHoursAnalysis(providerId)
+        ]);
+
+        return {
+            overview,
+            weeklyPerformance,
+            recentBookings,
+            workingHoursAnalysis,
+            lastUpdated: new Date().toISOString()
+        };
+    } catch (error) {
+        console.error('Erreur fetchDashboardData:', error);
         throw error;
     }
 };
@@ -417,8 +314,7 @@ const fetchRecentBookings = async (providerId, limit = 5) => {
 module.exports = {
     fetchAnalyticsOverview,
     fetchWeeklyPerformance,
-    fetchMonthlyStats,
-    fetchTopServices,
     fetchRecentBookings,
-    fetchRealTimeStats
+    fetchDashboardData,
+    fetchWorkingHoursAnalysis
 };

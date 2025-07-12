@@ -21,6 +21,33 @@ const OverviewTab = () => {
     const [error, setError] = useState(null);
     const [lastUpdated, setLastUpdated] = useState(null);
 
+    // ✅ Fonction pour transformer les données de réservation
+    const transformBookingData = (booking) => {
+        console.log('📋 Transformation booking:', booking);
+        
+        return {
+            id: booking._id || booking.id,
+            // ✅ Priorité: clientName > clientId.name > 'Client inconnu'
+            client: booking.clientName || 
+                    booking.clientId?.name || 
+                    booking.client || 
+                    'Client inconnu',
+            // ✅ Priorité: serviceId.name > service > 'Service inconnu'
+            service: booking.serviceId?.name || 
+                    booking.service || 
+                    'Service inconnu',
+            // ✅ Formater l'heure correctement
+            time: formatBookingTime(booking.scheduledDate, booking.scheduledTime),
+            status: booking.status || 'pending',
+            date: booking.scheduledDate,
+            price: booking.price || 0,
+            // ✅ Informations supplémentaires
+            clientEmail: booking.clientEmail || booking.clientId?.email || '',
+            bookingNumber: booking.bookingNumber || '',
+            vehicleInfo: booking.vehicleInfo || {}
+        };
+    };
+
     // ✅ Fonction pour charger toutes les données du dashboard
     const loadDashboardData = useCallback(async () => {
         try {
@@ -37,21 +64,23 @@ const OverviewTab = () => {
                 setOverview(dashboardData.overview);
             }
 
-            if (Array.isArray(dashboardData.performance)) {
+            // ✅ Récupérer les données de performance hebdomadaire
+            if (Array.isArray(dashboardData.weeklyPerformance)) {
+                setPerformance(dashboardData.weeklyPerformance);
+            } else if (dashboardData.performance) {
                 setPerformance(dashboardData.performance);
             }
 
+            // ✅ CORRECTION: Meilleure transformation des réservations récentes
             if (Array.isArray(dashboardData.recentBookings)) {
-                // ✅ Transformer les données pour le composant RecentBookings
-                const transformedBookings = dashboardData.recentBookings.map(booking => ({
-                    id: booking._id,
-                    client: booking.clientName,
-                    service: booking.serviceId?.name || 'Service inconnu',
-                    time: formatBookingTime(booking.scheduledDate, booking.scheduledTime),
-                    status: booking.status,
-                    date: booking.scheduledDate,
-                    price: booking.price
-                }));
+                console.log('🔄 Transformation des réservations récentes:', dashboardData.recentBookings);
+                
+                const transformedBookings = dashboardData.recentBookings.map(booking => {
+                    const transformed = transformBookingData(booking);
+                    console.log('✅ Booking transformé:', transformed);
+                    return transformed;
+                });
+                
                 setRecentBookings(transformedBookings);
             }
 
@@ -83,7 +112,7 @@ const OverviewTab = () => {
                     console.error('Erreur performance:', err);
                     return [];
                 }),
-                fetchRecentBookings(5).catch(err => {
+                fetchRecentBookings(6).catch(err => { // ✅ Récupérer 6 réservations
                     console.error('Erreur bookings:', err);
                     return [];
                 })
@@ -99,17 +128,16 @@ const OverviewTab = () => {
                 setPerformance(performanceData);
             }
 
-            // ✅ Normaliser les données bookings
+            // ✅ CORRECTION: Meilleure transformation des réservations
             if (Array.isArray(bookingsData)) {
-                const transformedBookings = bookingsData.map(booking => ({
-                    id: booking._id,
-                    client: booking.clientName,
-                    service: booking.serviceId?.name || 'Service inconnu',
-                    time: formatBookingTime(booking.scheduledDate, booking.scheduledTime),
-                    status: booking.status,
-                    date: booking.scheduledDate,
-                    price: booking.price
-                }));
+                console.log('🔄 Transformation des réservations (séparées):', bookingsData);
+                
+                const transformedBookings = bookingsData.map(booking => {
+                    const transformed = transformBookingData(booking);
+                    console.log('✅ Booking transformé (séparé):', transformed);
+                    return transformed;
+                });
+                
                 setRecentBookings(transformedBookings);
             }
 
@@ -119,6 +147,16 @@ const OverviewTab = () => {
         } catch (err) {
             console.error('❌ Erreur chargement données:', err);
             setError('Impossible de charger les données. Veuillez réessayer.');
+            // ✅ En cas d'erreur, essayer de charger au moins les réservations
+            try {
+                const bookingsData = await fetchRecentBookings(6);
+                if (Array.isArray(bookingsData)) {
+                    const transformedBookings = bookingsData.map(transformBookingData);
+                    setRecentBookings(transformedBookings);
+                }
+            } catch (fallbackErr) {
+                console.error('❌ Erreur fallback réservations:', fallbackErr);
+            }
         } finally {
             setLoading(false);
             setRefreshing(false);
@@ -151,8 +189,13 @@ const OverviewTab = () => {
     const handleRefresh = useCallback(async () => {
         setRefreshing(true);
         // Essayer d'abord la route dashboard, sinon charger séparément
-        await loadDashboardData();
-    }, [loadDashboardData]);
+        try {
+            await loadDashboardData();
+        } catch (err) {
+            console.log('🔄 Fallback vers chargement séparé...');
+            await loadDataSeparately();
+        }
+    }, [loadDashboardData, loadDataSeparately]);
 
     // ✅ Chargement initial
     useEffect(() => {
@@ -174,7 +217,7 @@ const OverviewTab = () => {
         return ((current - previous) / previous * 100).toFixed(1);
     };
 
-    // ✅ Calculer les stats hebdomadaires
+    // ✅ Calculer les stats hebdomadaires avec les vraies données
     const calculateWeeklyStats = () => {
         if (!Array.isArray(performance) || performance.length === 0) {
             return { bookings: 0, revenue: 0 };
@@ -186,43 +229,74 @@ const OverviewTab = () => {
         }), { bookings: 0, revenue: 0 });
     };
 
-    const weeklyStats = calculateWeeklyStats();
+    // ✅ NOUVEAU: Calculer les stats des réservations terminées
+    const calculateCompletedStats = () => {
+        // Vérifier si les données overview contiennent les stats terminées
+        if (overview && overview.completedBookings !== undefined) {
+            return {
+                bookings: overview.completedBookings || 0,
+                revenue: overview.completedRevenue || 0
+            };
+        }
 
-    // ✅ Configuration des statistiques avec données dynamiques
+        // Sinon, calculer à partir des réservations récentes si disponibles
+        if (Array.isArray(recentBookings) && recentBookings.length > 0) {
+            const completedBookings = recentBookings.filter(booking => 
+                booking.status === 'completed' || booking.status === 'terminé'
+            );
+            
+            const totalRevenue = completedBookings.reduce((sum, booking) => 
+                sum + (booking.price || 0), 0
+            );
+
+            return {
+                bookings: completedBookings.length,
+                revenue: totalRevenue
+            };
+        }
+
+        // Valeurs par défaut si aucune donnée
+        return { bookings: 0, revenue: 0 };
+    };
+
+    const weeklyStats = calculateWeeklyStats();
+    const completedStats = calculateCompletedStats();
+
+    // ✅ Configuration des statistiques avec données réelles - MODIFIÉ
     const getStatsConfig = () => {
-        if (!overview) return [];
+        if (!overview && !performance && !recentBookings) return [];
 
         return [
             {
-                label: 'Réservations Aujourd\'hui',
-                value: overview.totalBookings || 0,
+                label: 'Réservations Terminées',
+                value: completedStats.bookings,
                 icon: ShoppingCart,
-                bg: 'bg-blue-100',
-                color: 'text-blue-600',
-                trend: calculateTrend(overview.totalBookings || 0, overview.previousBookings || 0)
-            },
-            {
-                label: 'Revenu Aujourd\'hui',
-                value: `${overview.totalRevenue || 0} MAD`,
-                icon: DollarSign,
                 bg: 'bg-green-100',
                 color: 'text-green-600',
-                trend: calculateTrend(overview.totalRevenue || 0, overview.previousRevenue || 0)
+                trend: calculateTrend(completedStats.bookings, overview?.previousCompletedBookings || 0)
+            },
+            {
+                label: 'Revenu Total (Terminées)',
+                value: `${completedStats.revenue} MAD`,
+                icon: DollarSign,
+                bg: 'bg-blue-100',
+                color: 'text-blue-600',
+                trend: calculateTrend(completedStats.revenue, overview?.previousCompletedRevenue || 0)
             },
             {
                 label: 'Clients Uniques',
-                value: overview.uniqueClients || 0,
+                value: overview?.uniqueClients || 0,
                 icon: Users,
                 bg: 'bg-purple-100',
                 color: 'text-purple-600',
-                trend: calculateTrend(overview.uniqueClients || 0, overview.previousClients || 0)
+                trend: calculateTrend(overview?.uniqueClients || 0, overview?.previousClients || 0)
             },
             {
                 label: 'Revenu Hebdomadaire',
                 value: `${weeklyStats.revenue} MAD`,
-                icon: Star,
-                bg: 'bg-yellow-100',
-                color: 'text-yellow-600',
+                icon: DollarSign,
+                bg: 'bg-blue-100',
+                color: 'text-blue-600',
                 trend: 0
             }
         ];
@@ -280,7 +354,7 @@ const OverviewTab = () => {
             )}
 
             {/* Message si pas de données */}
-            {!overview && !loading && (
+            {!overview && !performance && !loading && (
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                     <div className="flex items-center justify-between">
                         <p className="text-yellow-800">Aucune donnée disponible pour le moment</p>
@@ -311,7 +385,7 @@ const OverviewTab = () => {
                     onSeeAll={() => navigate('/dashboard/provider/bookings')}
                 />
 
-                {/* Résumé de la semaine */}
+                {/* Résumé de la semaine avec vraies données */}
                 <div className="bg-white p-6 rounded-xl shadow-sm border">
                     <h3 className="text-lg font-semibold mb-4">Résumé de la Semaine</h3>
                     <div className="space-y-4">
@@ -322,14 +396,6 @@ const OverviewTab = () => {
                         <div className="flex items-center justify-between">
                             <span className="text-gray-600">Revenu généré</span>
                             <span className="font-semibold">{weeklyStats.revenue} MAD</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <span className="text-gray-600">Moyenne par jour</span>
-                            <span className="font-semibold">{Math.round(weeklyStats.bookings / 7)}</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <span className="text-gray-600">Revenu moyen/jour</span>
-                            <span className="font-semibold">{Math.round(weeklyStats.revenue / 7)} MAD</span>
                         </div>
                     </div>
                 </div>
