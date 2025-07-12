@@ -3,27 +3,25 @@ const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 const Provider = require('../../models/Provider');
 
-
-// const getAllProviders = async (req, res) => {
-//     try {
-//         const providers = await Provider.find().select('-password'); // Exclude password from the response
-//         res.status(200).json(providers);
-//     } catch (err) {
-//         console.error(err);
-//         res.status(500).json({ message: 'Erreur serveur' });
-//     }
-// };
-
 const registerprovider = async (req, res) => {
     // Validation
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    if (!errors.isEmpty()) {
+        return res.status(422).json({
+            message: 'Format des données incorrect. Vérifiez votre email et mot de passe.',
+            errors: errors.array()
+        });
+    }
 
     try {
         const { name, email, password, businessName, phone, address, workingHours } = req.body;
 
         let provider = await Provider.findOne({ email });
-        if (provider) return res.status(400).json({ message: 'Ce prestataire existe déjà' });
+        if (provider) {
+            return res.status(400).json({
+                message: 'Un compte existe déjà avec cet email. Essayez de vous connecter ou utilisez un autre email.'
+            });
+        }
 
         // Hachage du mot de passe
         const salt = await bcrypt.genSalt(10);
@@ -67,29 +65,52 @@ const registerprovider = async (req, res) => {
                 businessName: provider.businessName,
                 phone: provider.phone,
                 address: provider.address,
-                role: 'provider' // ✅ Ajout du rôle
+                role: 'provider'
             }
         });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'Erreur serveur' });
+        res.status(500).json({
+            message: 'Erreur du serveur. Veuillez réessayer dans quelques instants.'
+        });
     }
 };
 
-// ✅ CORRECTION PRINCIPALE : Login spécifique aux providers
+// ✅ Login avec messages d'erreur détaillés
 const loginprovider = async (req, res) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    if (!errors.isEmpty()) {
+        return res.status(422).json({
+            message: 'Format des données incorrect. Vérifiez votre email et mot de passe.',
+            errors: errors.array()
+        });
+    }
 
     try {
         const { email, password } = req.body;
 
+        // Vérifier le format de l'email
+        if (!email || !email.trim()) {
+            return res.status(400).json({
+                message: 'Données invalides. Vérifiez votre email et mot de passe.'
+            });
+        }
+
         // Chercher uniquement dans la collection Provider
         const provider = await Provider.findOne({ email }).select('+password');
-        if (!provider) return res.status(400).json({ message: 'Identifiants incorrects' });
+        if (!provider) {
+            return res.status(404).json({
+                message: 'Aucun compte trouvé avec cet email. Vérifiez votre email ou créez un compte.'
+            });
+        }
 
+        // Vérifier le mot de passe
         const isMatch = await bcrypt.compare(password, provider.password);
-        if (!isMatch) return res.status(400).json({ message: 'Identifiants incorrects' });
+        if (!isMatch) {
+            return res.status(401).json({
+                message: 'Email ou mot de passe incorrect. Veuillez réessayer.'
+            });
+        }
 
         const payload = { providerId: provider.id, role: 'provider' };
 
@@ -105,12 +126,14 @@ const loginprovider = async (req, res) => {
                 email: provider.email,
                 businessName: provider.businessName,
                 avatar: provider.avatar,
-                role: 'provider' // ✅ Toujours retourner le rôle
+                role: 'provider'
             }
         });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'Erreur serveur' });
+        res.status(500).json({
+            message: 'Erreur du serveur. Veuillez réessayer dans quelques instants.'
+        });
     }
 };
 
@@ -129,15 +152,17 @@ const getMeprovider = async (req, res) => {
                 rating: req.provider.rating,
                 status: req.provider.status,
                 workingHours: req.provider.workingHours,
-                role: 'provider' // ✅ Ajout du rôle
+                role: 'provider'
             }
         });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'Erreur serveur', error: err.message });
+        res.status(500).json({
+            message: 'Erreur du serveur. Veuillez réessayer dans quelques instants.',
+            error: err.message
+        });
     }
 };
-
 
 const updateProvider = async (req, res) => {
     try {
@@ -149,10 +174,23 @@ const updateProvider = async (req, res) => {
             runValidators: true
         }).select('-password');
 
+        if (!updated) {
+            return res.status(404).json({
+                message: 'Profil non trouvé.'
+            });
+        }
+
         res.status(200).json(updated);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'Erreur serveur' });
+        if (err.name === 'ValidationError') {
+            return res.status(400).json({
+                message: 'Données invalides. Vérifiez les informations saisies.'
+            });
+        }
+        res.status(500).json({
+            message: 'Erreur du serveur. Veuillez réessayer dans quelques instants.'
+        });
     }
 };
 
@@ -160,14 +198,25 @@ const deleteProvider = async (req, res) => {
     try {
         const providerId = req.provider._id;
 
-        await Provider.findByIdAndUpdate(providerId, { status: 'inactive' });
+        const updated = await Provider.findByIdAndUpdate(providerId, { status: 'inactive' });
 
-        res.status(200).json({ message: 'Compte désactivé avec succès' });
+        if (!updated) {
+            return res.status(404).json({
+                message: 'Profil non trouvé.'
+            });
+        }
+
+        res.status(200).json({
+            message: 'Compte désactivé avec succès'
+        });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'Erreur serveur' });
+        res.status(500).json({
+            message: 'Erreur du serveur. Veuillez réessayer dans quelques instants.'
+        });
     }
 };
+
 module.exports = {
     registerprovider,
     loginprovider,

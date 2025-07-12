@@ -1,58 +1,3 @@
-// import React from 'react';
-
-// const WeeklyPerformance = ({ data = [] }) => {
-//     // Vérifier si data est un tableau et n'est pas vide
-//     if (!Array.isArray(data) || data.length === 0) {
-//         return (
-//             <div className="bg-white p-6 rounded-xl shadow-sm border">
-//                 <h3 className="text-lg font-semibold mb-4">Performance Hebdomadaire</h3>
-//                 <div className="text-center py-8">
-//                     <p className="text-gray-500">Aucune donnée disponible</p>
-//                 </div>
-//             </div>
-//         );
-//     }
-
-//     // Trouver la valeur max pour normaliser les barres
-//     const maxBookings = Math.max(...data.map(day => day.bookings || 0));
-//     const normalizedMax = maxBookings > 0 ? maxBookings : 1;
-
-//     return (
-//         <div className="bg-white p-6 rounded-xl shadow-sm border">
-//             <h3 className="text-lg font-semibold mb-4">Performance Hebdomadaire</h3>
-//             <div className="space-y-4">
-//                 {data.map((day, index) => (
-//                     <div key={index} className="flex items-center justify-between">
-//                         <div className="w-20 text-sm font-medium text-gray-600">
-//                             {day.day || 'N/A'}
-//                         </div>
-//                         <div className="flex-1 mx-4">
-//                             <div className="bg-gray-200 rounded-full h-2">
-//                                 <div
-//                                     className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-//                                     style={{
-//                                         width: `${((day.bookings || 0) / normalizedMax) * 100}%`
-//                                     }}
-//                                 />
-//                             </div>
-//                         </div>
-//                         <div className="text-sm flex items-center gap-3">
-//                             <span className="text-gray-600">
-//                                 {day.bookings || 0} rés.
-//                             </span>
-//                             <span className="font-medium text-gray-900">
-//                                 {day.revenue || 0} MAD
-//                             </span>
-//                         </div>
-//                     </div>
-//                 ))}
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default WeeklyPerformance;
-
 import React from 'react';
 import { Clock, TrendingUp, Calendar } from 'lucide-react';
 
@@ -73,14 +18,37 @@ const WeeklyPerformance = ({ data = [] }) => {
         );
     }
 
-    // Trouver la valeur max pour normaliser les barres
-    const maxBookings = Math.max(...data.map(day => day.bookings || 0));
-    const normalizedMax = maxBookings > 0 ? maxBookings : 1;
+    // Fonction pour corriger les dates (problème de décalage)
+    const correctDate = (dateStr) => {
+        if (!dateStr) return null;
+        const date = new Date(dateStr);
+        // Ajout d'un jour pour compenser le décalage
+        date.setDate(date.getDate() + 1);
+        return date;
+    };
 
     // Calculer les totaux
     const totalBookings = data.reduce((sum, day) => sum + (day.bookings || 0), 0);
     const totalRevenue = data.reduce((sum, day) => sum + (day.revenue || 0), 0);
     const workingDays = data.filter(day => day.isWorkingDay).length;
+
+    // Trouver la valeur max pour normaliser les barres
+    const maxBookings = Math.max(...data.map(day => day.bookings || 0));
+    const normalizedMax = maxBookings > 0 ? maxBookings : 1;
+
+    // Ordre des jours de la semaine
+    const daysOrder = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+
+    // Préparer les données avec les dates corrigées et dans le bon ordre
+    const preparedData = daysOrder.map(dayName => {
+        const dayData = data.find(d => d.day === dayName) || {};
+        
+        return {
+            ...dayData,
+            day: dayName,
+            correctedDate: correctDate(dayData.date)
+        };
+    });
 
     return (
         <div className="bg-white p-6 rounded-xl shadow-sm border">
@@ -89,7 +57,7 @@ const WeeklyPerformance = ({ data = [] }) => {
                 <h3 className="text-lg font-semibold">Performance Hebdomadaire</h3>
             </div>
 
-            {/* Résumé hebdomadaire */}
+            {/* Résumé hebdomadaire - Version améliorée */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
                 <div className="text-center">
                     <div className="text-2xl font-bold text-blue-600">{totalBookings}</div>
@@ -100,18 +68,26 @@ const WeeklyPerformance = ({ data = [] }) => {
                     <div className="text-sm text-gray-600">Chiffre d'affaires</div>
                 </div>
                 <div className="text-center">
-                    <div className="text-2xl font-bold text-purple-600">{workingDays}/7</div>
+                    <div className="text-2xl font-bold text-purple-600">{workingDays}</div>
                     <div className="text-sm text-gray-600">Jours ouverts</div>
                 </div>
             </div>
 
             {/* Détail par jour */}
             <div className="space-y-3">
-                {data.map((day, index) => {
+                {preparedData.map((day, index) => {
                     const isWorkingDay = day.isWorkingDay;
                     const hasBookings = day.bookings > 0;
                     const percentage = ((day.bookings || 0) / normalizedMax) * 100;
                     
+                    // Formater la date corrigée
+                    const formattedDate = day.correctedDate 
+                        ? day.correctedDate.toLocaleDateString('fr-FR', { 
+                            day: '2-digit', 
+                            month: '2-digit' 
+                          })
+                        : 'N/A';
+
                     return (
                         <div 
                             key={index} 
@@ -126,7 +102,7 @@ const WeeklyPerformance = ({ data = [] }) => {
                             {/* Jour et statut */}
                             <div className="flex items-center gap-3 w-24">
                                 <div className="text-sm font-medium text-gray-900">
-                                    {day.day || 'N/A'}
+                                    {day.day}
                                 </div>
                                 {!isWorkingDay && (
                                     <div className="flex items-center gap-1">
@@ -136,12 +112,9 @@ const WeeklyPerformance = ({ data = [] }) => {
                                 )}
                             </div>
 
-                            {/* Date */}
+                            {/* Date corrigée */}
                             <div className="text-xs text-gray-500 w-20">
-                                {day.date ? new Date(day.date).toLocaleDateString('fr-FR', { 
-                                    day: '2-digit', 
-                                    month: '2-digit' 
-                                }) : 'N/A'}
+                                {formattedDate}
                             </div>
 
                             {/* Barre de progression */}

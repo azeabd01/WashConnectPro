@@ -59,7 +59,7 @@ const BookingModal = ({
             const pendingBooking = localStorage.getItem('pendingBooking');
             if (pendingBooking) {
                 const bookingData = JSON.parse(pendingBooking);
-                
+
                 // Restaurer les données du formulaire de réservation
                 setFormData(prev => ({
                     ...prev,
@@ -76,7 +76,7 @@ const BookingModal = ({
 
                 // ✅ Recharger les données client (nom, téléphone, email) après inscription
                 loadClientData();
-                
+
                 // Supprimer la réservation en attente
                 localStorage.removeItem('pendingBooking');
                 localStorage.removeItem('previousUrl');
@@ -103,12 +103,61 @@ const BookingModal = ({
             });
             setErrors({});
             setTimeSlots([]);
-            
+
             // ✅ Charger les données client même pour un nouveau formulaire
             loadClientData();
         }
     }, [isOpen]);
 
+    // ✅ Fonction pour formater le numéro de téléphone (supprimer les caractères non numériques)
+    const formatPhoneNumber = (phone) => {
+        return phone.replace(/\D/g, '');
+    };
+
+    // ✅ Fonction pour valider le numéro de téléphone marocain
+    const validatePhoneNumber = (phone) => {
+        const cleanPhone = formatPhoneNumber(phone);
+
+        // Vérifier qu'il y a exactement 10 chiffres
+        if (cleanPhone.length !== 10) {
+            return false;
+        }
+
+        // Vérifier qu'il commence par 0 ou 6/7 (numéros marocains)
+        if (cleanPhone.startsWith('0')) {
+            // Format 0XXXXXXXXX (06, 07, 05, etc.)
+            return /^0[5-7]\d{8}$/.test(cleanPhone);
+        } else if (cleanPhone.startsWith('6') || cleanPhone.startsWith('7')) {
+            // Format 6XXXXXXXX ou 7XXXXXXXX
+            return /^[67]\d{8}$/.test(cleanPhone);
+        }
+
+        return false;
+    };
+
+    // ✅ Fonction pour valider l'immatriculation marocaine
+    const validateLicensePlate = (plate) => {
+        if (!plate || plate.trim() === '') {
+            return false;
+        }
+
+        // Supprimer les espaces et tirets pour la validation
+        const cleanPlate = plate.replace(/[-\s]/g, '').toUpperCase();
+
+        // Formats valides:
+        // - Ancien format: 123456A ou 123456AB
+        // - Nouveau format: 12345A12 ou 12345AB12
+        // - Format avec région: 123456|12
+
+        const patterns = [
+            /^\d{6}[A-Z]{1,2}$/,           // 123456A ou 123456AB
+            /^\d{5}[A-Z]{1,2}\d{2}$/,      // 12345A12 ou 12345AB12
+            /^\d{6}\|\d{2}$/,              // 123456|12
+            /^\d{3}[A-Z]\d{3}$/            // 123A456
+        ];
+
+        return patterns.some(pattern => pattern.test(cleanPlate));
+    };
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         if (name.startsWith('vehicle.')) {
@@ -120,6 +169,15 @@ const BookingModal = ({
                     [field]: value
                 }
             }));
+        } else if (name === 'clientPhone') {
+            // ✅ Limiter à 10 chiffres pour le téléphone
+            const phoneValue = formatPhoneNumber(value);
+            if (phoneValue.length <= 10) {
+                setFormData(prev => ({
+                    ...prev,
+                    [name]: phoneValue
+                }));
+            }
         } else {
             setFormData(prev => ({
                 ...prev,
@@ -196,10 +254,18 @@ const BookingModal = ({
         const newErrors = {};
 
         if (!formData.clientName.trim()) newErrors.clientName = 'Le nom est requis';
-        if (!formData.clientPhone.trim()) newErrors.clientPhone = 'Le téléphone est requis';
-        if (!formData.scheduledDate) newErrors.scheduledDate = 'La date est requise';
+        if (!formData.clientPhone.trim()) {
+            newErrors.clientPhone = 'Le téléphone est requis';
+        } else if (!validatePhoneNumber(formData.clientPhone)) {
+            newErrors.clientPhone = 'Le numéro de téléphone doit contenir exactement 10 chiffres et être valide (ex: 0612345678)';
+        } if (!formData.scheduledDate) newErrors.scheduledDate = 'La date est requise';
         if (!formData.scheduledTime) newErrors.scheduledTime = 'L\'heure est requise';
-
+        // ✅ Validation immatriculation obligatoire
+        if (!formData.vehicleInfo.licensePlate.trim()) {
+            newErrors['vehicle.licensePlate'] = 'L\'immatriculation est requise';
+        } else if (!validateLicensePlate(formData.vehicleInfo.licensePlate)) {
+            newErrors['vehicle.licensePlate'] = 'Format d\'immatriculation invalide (ex: 123456A, 12345A12, 123A456)';
+        }
         // Validation email si fourni
         if (formData.clientEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.clientEmail)) {
             newErrors.clientEmail = 'Format d\'email invalide';
@@ -338,7 +404,7 @@ const BookingModal = ({
                 </div>
 
                 {/* ✅ Notification de retour d'authentification */}
-                {localStorage.getItem('pendingBooking') && (
+                {/* {localStorage.getItem('pendingBooking') && (
                     <div className="p-4 bg-green-50 border-l-4 border-green-400 mx-6 mt-6">
                         <div className="flex">
                             <div className="ml-3">
@@ -348,7 +414,7 @@ const BookingModal = ({
                             </div>
                         </div>
                     </div>
-                )}
+                )} */}
 
                 {/* Form */}
                 <div className="p-6 space-y-6">
@@ -384,7 +450,7 @@ const BookingModal = ({
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Téléphone *
+                                    Téléphone * (10 chiffres)
                                 </label>
                                 <input
                                     type="tel"
@@ -392,10 +458,17 @@ const BookingModal = ({
                                     value={formData.clientPhone}
                                     onChange={handleInputChange}
                                     className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.clientPhone ? 'border-red-500' : 'border-gray-300'}`}
-                                    placeholder="0123456789"
+                                    placeholder="0612345678"
+                                    maxLength={10}
+
                                 />
                                 {errors.clientPhone && (
                                     <p className="text-red-500 text-sm mt-1">{errors.clientPhone}</p>
+                                )}
+                                {formData.clientPhone && (
+                                    <p className="text-gray-500 text-xs mt-1">
+                                        {formData.clientPhone.length}/10 chiffres
+                                    </p>
                                 )}
                             </div>
                         </div>
@@ -466,7 +539,7 @@ const BookingModal = ({
                                 )}
                                 {formData.scheduledDate && timeSlots.length === 0 && (
                                     <p className="text-amber-600 text-sm mt-1">
-                                        ⏳ Chargement des créneaux...
+                                        Aucun créneau n'est disponible ce jour-là car le provider est fermé.
                                     </p>
                                 )}
                             </div>
@@ -527,7 +600,7 @@ const BookingModal = ({
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Immatriculation
+                                    Immatriculation *
                                 </label>
                                 <input
                                     type="text"
@@ -535,8 +608,11 @@ const BookingModal = ({
                                     value={formData.vehicleInfo.licensePlate}
                                     onChange={handleInputChange}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    placeholder="123-A-456"
+                                    placeholder="123456A, 12345A12, 123A456"
                                 />
+                                {errors['vehicle.licensePlate'] && (
+                                    <p className="text-red-500 text-sm mt-1">{errors['vehicle.licensePlate']}</p>
+                                )}
                             </div>
                         </div>
                     </div>
