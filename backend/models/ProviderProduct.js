@@ -24,6 +24,7 @@ const ProviderProductSchema = new mongoose.Schema({
             return `SKU-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
         }
     }
+    
 }, { timestamps: true }); // Ajouter timestamps
 
 // ✅ INDEX ICI

@@ -1,6 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Star } from 'lucide-react';
+import ProductRating from './ProductRating';
 
 export default function ShowProduct() {
   const { id } = useParams();
@@ -49,6 +50,11 @@ export default function ShowProduct() {
             ${product.inStock ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
             {product.inStock ? 'In Stock' : 'Out of Stock'}
           </p>
+              <div className="text-sm text-gray-400 flex items-center  ">
+                    <Star size={14} className="text-yellow-500" />
+                    Note: {product.rating?.toFixed(1) || 0} / 5
+                  </div>
+
         </div>
       </div>
     </div>

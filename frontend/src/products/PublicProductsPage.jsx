@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { DollarSign, ArrowLeft, Star, Filter, Warehouse } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import ProductRating from './ProductRating';
 
 const API_URL = 'http://localhost:3000/api/public/products';
 
@@ -100,11 +101,10 @@ const PublicProductsPage = () => {
               <button
                 key={c.value}
                 onClick={() => handleCategoryChange(c.value)}
-                className={`px-4 py-2 rounded-full font-medium transition ${
-                  selectedCategory === c.value
+                className={`px-4 py-2 rounded-full font-medium transition ${selectedCategory === c.value
                     ? 'bg-teal-600 text-white shadow-lg'
                     : 'bg-white border border-gray-300 text-gray-700'
-                }`}
+                  }`}
               >
                 {c.label}
               </button>
@@ -146,8 +146,14 @@ const PublicProductsPage = () => {
                 </div>
 
                 <div className="text-sm text-gray-400 flex items-center gap-1">
-                  <Star size={14} />
-                  Note: {product.rating || 4.5} 
+          {/* <ProductRating productId={product._id} onRated={(newRating) => setProduct(prev => ({ ...prev, rating: newRating }))} /> */}
+<div className="text-sm text-gray-400 flex items-center gap-1">
+  <Star size={14} className="text-yellow-500" />
+  Note: {product.rating?.toFixed(1) || 0} / 5
+</div>
+
+              
+
                 </div>
 
                 <button className="mt-4 bg-gradient-to-r from-teal-600 to-cyan-500 text-white py-2 px-4 rounded-lg font-medium hover:scale-105 transition">

@@ -50,6 +50,7 @@ import ProfileTab from './pages/ClientDashboard/Clientcomponents/ProfileTab';
 
 // Clients additionnel
 import Customers from "./customers/Customers";
+import ProviderProductTable from "./admin/ProviderProductTable";
 
 function App() {
 
@@ -99,8 +100,11 @@ const providerId = decoded?.id;
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<DashboardAdmin />} />
           <Route path="users" element={<AllUsers />} />
-          <Route path="providers" element={<ProviderLavage />} />
+          <Route path="providersLavage" element={<ProviderLavage />} />
+          <Route path="providers" element={<ProviderProductTable />} />
           <Route path="UserProviderProducts" element={<UserProviderProducts />} />
+          
+
         </Route>
 
         {/* Dashboard Client avec sous-routes */}

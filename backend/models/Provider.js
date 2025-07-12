@@ -34,6 +34,7 @@ const providerSchema = new mongoose.Schema({
         saturday: { open: String, close: String, isOpen: Boolean },
         sunday: { open: String, close: String, isOpen: Boolean }
     }
+    
 }, { timestamps: true });
 
 // ✅ INDEX ICI

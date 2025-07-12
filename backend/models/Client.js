@@ -62,7 +62,13 @@ const ClientSchema = new mongoose.Schema({
     },
     lastLogin: {
         type: Date
-    }
+    },
+//     role: {
+//   type: String,
+//   default: 'client', // or 'user'
+//   enum: ['client', 'admin', 'provider']
+// },
+
 }, { timestamps: true });
 
 module.exports = mongoose.model('Client', ClientSchema);

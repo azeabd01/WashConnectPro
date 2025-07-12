@@ -6,7 +6,7 @@ export default function ProductAnalytics() {
   const [stats, setStats] = useState(null);
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/analytics/products')
+    fetch('http://localhost:3000/api/products/analytics')
       .then(res => res.json())
       .then(data => setStats(data))
       .catch(err => console.error('Failed to fetch analytics', err));
@@ -26,15 +26,17 @@ export default function ProductAnalytics() {
       <div className="bg-white rounded-lg shadow p-4">
         <h2 className="text-lg font-semibold text-gray-800 mb-4">Top Rated Products</h2>
         <ul className="space-y-2">
-          {stats.topRated.map((product) => (
-            <li key={product._id} className="flex justify-between items-center border-b pb-2">
-              <span>{product.name}</span>
-              <div className="flex items-center space-x-1 text-yellow-500">
-                <Star className="w-4 h-4" />
-                <span className="text-sm">{product.rating}</span>
-              </div>
-            </li>
-          ))}
+     {stats.topRated?.length > 0 ? (
+  stats.topRated.map(p => (
+    <li key={p._id}>
+      {p.name} - ⭐ {p.rating}
+    </li>
+  ))
+) : (
+  <p>Aucun produit évalué</p>
+)}
+
+
         </ul>
       </div>
     </div>

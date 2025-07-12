@@ -4,9 +4,11 @@ import { Package, Users, ShieldCheck, BarChart3 } from 'lucide-react';
 export default function Sidebar() {
   const menu = [
     { label: 'Dashboard', icon: BarChart3, path: '/admin' },
-    { label: 'Users', icon: Users, path: '/admin/users' },
-    { label: 'Providers', icon: ShieldCheck, path: '/admin/providers' },
+    { label: 'Clients', icon: Users, path: '/admin/users' },
+    { label: 'Providers Product ', icon: ShieldCheck, path: '/admin/providers' },
+    { label: 'provider lavage', icon: Package, path: '/admin/providersLavage' },
     { label: 'Products', icon: Package, path: '/admin/UserProviderProducts' },
+
   ];
 
   return (

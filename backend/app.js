@@ -48,6 +48,9 @@ connectDB()
 app.use(cors());
 app.use(express.json());
 
+
+
+
 // ROUTES D'AUTHENTIFICATION
 app.use('/api/auth', providerRoutes);
 app.use('/api/auth', clientRoutes);
@@ -61,7 +64,7 @@ app.use('/api/services', servicesRoutes);
 app.use('/api/bookings', bookingsRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/products', productRoutes);
-app.use('/api/analytics', productRoutes);
+// app.use('/api/analytics', productRoutes);
 // app.use('/api/auth', authRoutes);
 
 // ROUTES CLIENT
