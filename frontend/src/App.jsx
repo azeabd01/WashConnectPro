@@ -119,9 +119,9 @@ const providerId = decoded?.id;
         {/* Produits */}
         <Route path="/dashboard/product" element={<Layout />}>
           {/* <Route index element={<ProviderStats />} />                       */}
-          <Route index element={<ProviderStats providerId={providerId} />} />
+          {/* <Route index element={<ProviderStats providerId={providerId} />} /> */}
 
-          <Route path="product" element={<ProductsTable />} />
+          <Route index element={<ProductsTable />} />
           <Route path="addproduct" element={<AddProduct />} />
           <Route path="editproduct/:id" element={<EditProduct />} />
           <Route path="product/:id" element={<ShowProduct />} />
