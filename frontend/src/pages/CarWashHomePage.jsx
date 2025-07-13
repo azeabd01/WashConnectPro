@@ -13,7 +13,7 @@ export default function CarWashHomePage() {
     return (
         <>
             <Navbar onAuthClick={() => navigate('/auth')} />
-            <main className="mt-16">
+            <main className="">
                 <HeroSection />
                 <StatsSection />
                 <UserTabs />

@@ -10,8 +10,8 @@ const HeroSection = () => {
             title: 'Pour les Clients',
             subtitle: 'Réservez en 3 clics',
             description: 'Trouvez le centre de lavage le plus proche, réservez votre créneau et suivez votre lavage en temps réel.',
-            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmCxNE_YLgvjEIzHvJtAQhKDxEILNTPHfNwQ&s',
-            displayImage: 'https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+            image: 'https://images.thebusinessplanshop.com/2379/modele-business-plan-station-de-lavage-thumbnail.png',
+            // displayImage: 'https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
             icon: <Users className="w-12 h-12" />,
             gradient: 'from-blue-500 to-cyan-500',
             bgGradient: 'from-blue-900/20 to-cyan-900/20',
@@ -19,11 +19,11 @@ const HeroSection = () => {
         },
         {
             id: 'providers',
-            title: 'Pour les Centres de Lavage',
+            title: ' les Centres de Lavage',
             subtitle: 'Développez votre activité',
             description: 'Gérez vos réservations, optimisez vos créneaux et augmentez votre chiffre d\'affaires avec notre plateforme.',
             image: 'https://arperformance.fr/wp-content/uploads/2024/04/Le-lavage-de-voiture-un-geste-essentiel-pour-son-entretien.jpeg',
-            displayImage: 'https://images.unsplash.com/photo-1486016006115-74a41448aea2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+            // displayImage: 'https://images.unsplash.com/photo-1486016006115-74a41448aea2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
             icon: <Wrench className="w-12 h-12" />,
             gradient: 'from-green-500 to-emerald-500',
             bgGradient: 'from-green-900/20 to-emerald-900/20',
@@ -35,7 +35,7 @@ const HeroSection = () => {
             subtitle: 'Vendez vos produits',
             description: 'Accédez à un réseau de centres de lavage et vendez directement vos produits aux professionnels.',
             image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYiig1HxRLONjl4AfARylgJ95FPP3WtnZ_sA&s',
-            displayImage: 'https://images.unsplash.com/photo-1576788589657-e4b4f78e7a46?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+            // displayImage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2vy4u0UskevRS6Zd0O4upn2JQO6XSkIt-za6cFbgWgjyOZ4OD_vrJlLXUZSS1LDI-Ym8&usqp=CAU',
             icon: <Package className="w-12 h-12" />,
             gradient: 'from-purple-500 to-pink-500',
             bgGradient: 'from-purple-900/20 to-pink-900/20',
@@ -82,14 +82,14 @@ const HeroSection = () => {
                 <div className="grid lg:grid-cols-2 gap-12 items-center w-full">
                     {/* Left Content */}
                     <div className="text-white">
-                        <div className="inline-flex items-center bg-white/10 backdrop-blur-sm text-white px-6 py-3 rounded-full text-sm font-medium mb-8 border border-white/20">
+                        <div className="inline-flex items-center bg-white/10 backdrop-blur-sm text-white px-6 py-3 rounded-full text-sm font-medium  border border-white/20">
                             <Zap className="w-4 h-4 mr-2 text-yellow-400" />
                             Lamsa Maghribiya - Écosystème Complet
                         </div>
 
-                        <div className={`inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-r ${currentSlideData.gradient} mb-6 transition-all duration-500`}>
-                            {currentSlideData.icon}
-                        </div>
+                        {/* <div className={`inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-r ${currentSlideData.gradient} mb-6 transition-all duration-500`}> */}
+                            {/* {currentSlideData.icon} */}
+                        {/* </div> */}
 
                         <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight">
                             <span className="block text-white/90">{currentSlideData.title.split(' ')[0]}</span>
@@ -136,11 +136,11 @@ const HeroSection = () => {
                         {/* Main Hero Image */}
                         <div className="relative mb-8">
                             <div className="relative overflow-hidden rounded-3xl shadow-2xl">
-                                <img 
+                                {/* <img 
                                     src={currentSlideData.displayImage} 
                                     alt={currentSlideData.title}
                                     className="w-full h-96 object-cover transition-all duration-1000"
-                                />
+                                /> */}
                                 <div className={`absolute inset-0 bg-gradient-to-t ${currentSlideData.bgGradient} via-transparent to-transparent`}></div>
                                 
                                 {/* Floating Elements */}
