@@ -34,8 +34,4 @@ router.get('/me', authMiddlewareProvider, getMeprovider);
 router.put('/update', authMiddlewareProvider, updateValidation, validateRequest, updateProvider);
 router.delete('/delete', authMiddlewareProvider, deleteProvider);
 
-
 module.exports = router;
-
-// PUT    /auth/provider/update
-// DELETE /auth/provider/delete

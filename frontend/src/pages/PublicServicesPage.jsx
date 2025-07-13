@@ -17,6 +17,7 @@ const PublicServicesPage = () => {
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [selectedService, setSelectedService] = useState(null);
     const [showBookingModal, setShowBookingModal] = useState(false);
+    const [isProvider, setIsProvider] = useState(false);
 
     const categories = [
         { value: 'all', label: 'Tous les services' },
@@ -26,6 +27,13 @@ const PublicServicesPage = () => {
         { value: 'premium', label: 'Premium' },
         { value: 'express', label: 'Express' }
     ];
+
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user?.role === 'provider') {
+            setIsProvider(true);
+        }
+    }, []);
 
     useEffect(() => {
         loadServices();
@@ -271,10 +279,15 @@ const PublicServicesPage = () => {
 
                                         {/* Bouton Réserver aligné en bas */}
                                         <button
-                                            onClick={() => handleBookService(service)}
-                                            className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-blue-700 hover:to-cyan-700 transition-all transform hover:scale-105 mt-auto"
+                                            onClick={() => !isProvider && handleBookService(service)}
+                                            disabled={isProvider}
+                                            className={`w-full py-3 px-4 rounded-lg font-semibold mt-auto transition-all transform
+                                                ${isProvider
+                                                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                                    : 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white hover:from-blue-700 hover:to-cyan-700 hover:scale-105'
+                                                }`}
                                         >
-                                            Réserver maintenant
+                                            {isProvider ? 'Réservation désactivée' : 'Réserver maintenant'}
                                         </button>
                                     </div>
                                 </div>
