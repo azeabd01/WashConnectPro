@@ -470,7 +470,7 @@ const ProviderRegistrationForm = ({ onBack }) => {
                         <Car className="w-8 h-8 text-white" />
                     </div>
 
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Inscription Provider</h1>
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Inscription Prestataire</h1>
                     <p className="text-gray-600">Étape {currentStep} sur {totalSteps}</p>
                 </div>
 

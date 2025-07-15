@@ -8,7 +8,7 @@ const WeeklyPerformance = ({ data = [] }) => {
             <div className="bg-white p-6 rounded-xl shadow-sm border">
                 <div className="flex items-center gap-2 mb-4">
                     <TrendingUp className="w-5 h-5 text-blue-600" />
-                    <h3 className="text-lg font-semibold">Performance Hebdomadaire</h3>
+                    <h3 className="text-lg font-semibold">Bilan de la Semaine</h3>
                 </div>
                 <div className="text-center py-8">
                     <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-2" />
@@ -65,7 +65,7 @@ const WeeklyPerformance = ({ data = [] }) => {
         <div className="bg-white p-6 rounded-xl shadow-sm border">
             <div className="flex items-center gap-2 mb-6">
                 <TrendingUp className="w-5 h-5 text-blue-600" />
-                <h3 className="text-lg font-semibold">Performance Hebdomadaire</h3>
+                <h3 className="text-lg font-semibold">Bilan de la Semaine</h3>
             </div>
 
             {/* ✅ Résumé hebdomadaire - DONNÉES DYNAMIQUES */}
@@ -93,7 +93,7 @@ const WeeklyPerformance = ({ data = [] }) => {
             </div>
 
             {/* ✅ Indicateurs de performance supplémentaires */}
-            {totalBookings > 0 && (
+            {/* {totalBookings > 0 && (
                 <div className="mb-6 p-4 bg-blue-50 rounded-lg">
                     <h4 className="text-sm font-medium text-blue-900 mb-2">Insights de la semaine</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
@@ -111,7 +111,7 @@ const WeeklyPerformance = ({ data = [] }) => {
                         </div>
                     </div>
                 </div>
-            )}
+            )} */}
 
             {/* Détail par jour */}
             <div className="space-y-3">

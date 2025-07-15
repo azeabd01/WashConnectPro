@@ -59,7 +59,7 @@ const ProfileTab = () => {
                         </div>
                         <div className="text-center p-4 bg-orange-50 rounded-lg">
                             <div className="text-2xl font-bold text-orange-600">3</div>
-                            <div className="text-sm text-gray-600">Providers favoris</div>
+                            <div className="text-sm text-gray-600">Prestataire favoris</div>
                         </div>
                     </div>
                 </div>

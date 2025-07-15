@@ -109,8 +109,8 @@ const Customers = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Customers</h1>
-          <p className="text-gray-600">Manage and view all your customers</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Clients</h1>
+          <p className="text-gray-600">Gérez et consultez tous vos clients</p>
         </div>
 
         {/* Search and Filter Bar */}
@@ -132,7 +132,7 @@ const Customers = () => {
                 Filter
               </button>
               <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                Add Customer
+                Ajouter Client
               </button>
             </div>
           </div>
@@ -148,7 +148,7 @@ const Customers = () => {
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort('name')}
                   >
-                    Customer
+                    Clients
                     {sortBy === 'name' && (
                       <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
                     )}
@@ -160,7 +160,7 @@ const Customers = () => {
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort('status')}
                   >
-                    Status
+                    Statut
                     {sortBy === 'status' && (
                       <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
                     )}
@@ -169,7 +169,7 @@ const Customers = () => {
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort('orders')}
                   >
-                    Orders
+                    Commandes
                     {sortBy === 'orders' && (
                       <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
                     )}
@@ -178,7 +178,7 @@ const Customers = () => {
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort('totalSpent')}
                   >
-                    Total Spent
+                    Total dépensé
                     {sortBy === 'totalSpent' && (
                       <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
                     )}
@@ -187,7 +187,7 @@ const Customers = () => {
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort('joinDate')}
                   >
-                    Join Date
+                    Date d'inscription
                     {sortBy === 'joinDate' && (
                       <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
                     )}
@@ -255,18 +255,18 @@ const Customers = () => {
         {/* Pagination */}
         <div className="bg-white px-6 py-3 border-t border-gray-200 flex items-center justify-between">
           <div className="text-sm text-gray-700">
-            Showing <span className="font-medium">1</span> to <span className="font-medium">{sortedCustomers.length}</span> of{' '}
+            Affichage  <span className="font-medium">1</span> to <span className="font-medium">{sortedCustomers.length}</span> of{' '}
             <span className="font-medium">{customers.length}</span> results
           </div>
           <div className="flex gap-2">
             <button className="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50 transition-colors">
-              Previous
+              Précédent
             </button>
             <button className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 transition-colors">
               1
             </button>
             <button className="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50 transition-colors">
-              Next
+              Suivant
             </button>
           </div>
         </div>

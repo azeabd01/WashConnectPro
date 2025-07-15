@@ -12,7 +12,7 @@ export default function ProductAnalytics() {
       .catch(err => console.error('Failed to fetch analytics', err));
   }, []);
 
-  if (!stats) return <p className="p-4">Loading analytics...</p>;
+  if (!stats) return <p className="p-4">Chargement des analyses...</p>;
 
   return (
     <div className="p-6 space-y-6">
@@ -24,17 +24,17 @@ export default function ProductAnalytics() {
       </div>
 
       <div className="bg-white rounded-lg shadow p-4">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">Top Rated Products</h2>
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">Produits les mieux notés</h2>
         <ul className="space-y-2">
-     {stats.topRated?.length > 0 ? (
-  stats.topRated.map(p => (
-    <li key={p._id}>
-      {p.name} - ⭐ {p.rating}
-    </li>
-  ))
-) : (
-  <p>Aucun produit évalué</p>
-)}
+          {stats.topRated?.length > 0 ? (
+            stats.topRated.map(p => (
+              <li key={p._id}>
+                {p.name} - ⭐ {p.rating}
+              </li>
+            ))
+          ) : (
+            <p>Aucun produit évalué</p>
+          )}
 
 
         </ul>

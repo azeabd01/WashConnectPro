@@ -25,14 +25,14 @@ export default function ShowProduct() {
       });
   }, [id]);
 
-  if (loading) return <p className="p-4">Loading...</p>;
+  if (loading) return <p className="p-4">Chargement...</p>;
   if (error) return <p className="p-4 text-red-600">{error}</p>;
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow rounded-md">
-      <Link to="/dashboard/product/product" className="text-blue-600 flex items-center mb-4 hover:underline">
+      <Link to="/dashboard/product" className="text-blue-600 flex items-center mb-4 hover:underline">
         <ArrowLeft className="w-4 h-4 mr-2" />
-        Back to Products
+        Retour aux produits
       </Link>
 
       <div className="grid md:grid-cols-2 gap-8">

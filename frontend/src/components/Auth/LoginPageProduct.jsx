@@ -112,11 +112,11 @@ const LoginProductPage = () => {
                     Retour
                 </button>
                 <div className="text-center mb-8">
-                    <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                    <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
                         <LogIn className="w-10 h-10 text-white" />
                     </div>
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Connexion Product</h1>
-                    <p className="text-gray-600">Accédez à votre espace product</p>
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Connexion Fournisseur de produit</h1>
+                    <p className="text-gray-600">Accédez à votre espace Fournisseur de produit</p>
                 </div>
 
                 <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
@@ -203,7 +203,7 @@ const LoginProductPage = () => {
                             disabled={isLoading}
                             className={`w-full py-3 px-4 rounded-lg font-semibold text-white transition-all duration-200 flex items-center justify-center ${isLoading
                                 ? 'bg-gray-400 cursor-not-allowed'
-                                : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 hover:shadow-lg transform hover:scale-105'
+                                : 'bg-gradient-to-br from-purple-500 to-pink-500 hover:from-blue-600 hover:to-purple-700 hover:shadow-lg transform hover:scale-105'
                                 }`}
                         >
                             {isLoading ? (
@@ -228,7 +228,7 @@ const LoginProductPage = () => {
                             onClick={handleRegisterRedirect}
                             className="text-blue-600 hover:text-blue-700 font-semibold hover:underline"
                         >
-                            Créer un compte product
+                            Créer un compte Fournisseur de produit
                         </button>
                     </p>
                 </div>
@@ -236,7 +236,7 @@ const LoginProductPage = () => {
                 <div className="mt-8 text-center">
                     <div className="inline-flex items-center p-3 bg-blue-50 rounded-lg border border-blue-200">
                         <Package className="w-6 h-6 text-blue-500 mr-2" />
-                        <span className="text-sm text-blue-700 font-medium">Espace Product</span>
+                        <span className="text-sm text-blue-700 font-medium">Espace Fournisseur de produit</span>
                     </div>
                 </div>
             </div>

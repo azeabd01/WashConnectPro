@@ -12,7 +12,7 @@ const ProvidersTab = ({
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold text-gray-900">Recherche de Providers</h2>
+                <h2 className="text-2xl font-bold text-gray-900">Recherche de Prestataires</h2>
             </div>
 
             <div className="flex flex-col md:flex-row gap-4 mb-6">

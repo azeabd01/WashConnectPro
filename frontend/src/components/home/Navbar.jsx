@@ -108,7 +108,7 @@ export default function Navbar({ onAuthClick }) {
                             <Car className="w-6 h-6 text-white" />
                         </div>
                         <div>
-                            <span className="text-2xl font-bold text-gray-900">CarWash</span>
+                            <span className="text-2xl font-bold text-gray-900">WashConnect</span>
                             <span className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent">Pro</span>
                         </div>
                     </div>
@@ -117,11 +117,11 @@ export default function Navbar({ onAuthClick }) {
                         {/* Navigation links - seulement sur la page d'accueil */}
                         {isHomePage && (
                             <>
-                                <Link to="/services" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Services</Link>
-                                <a href="/Products" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Products</a>
-                                <a href="#solutions" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Solutions</a>
-                                <a href="#tarifs" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Tarifs</a>
-                                <a href="#contact" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Contact</a>
+                                <Link to="/services" className="text-gray-900 hover:text-blue-600 transition-colors font-bold">Services</Link>
+                                <a href="/Products" className="text-gray-900 hover:text-blue-600 transition-colors font-bold">Produits</a>
+                                <a href="#solutions" className="text-gray-900 hover:text-blue-600 transition-colors font-bold">Solutions</a>
+                                <a href="#tarifs" className="text-gray-900 hover:text-blue-600 transition-colors font-bold">Tarifs</a>
+                                <a href="#contact" className="text-gray-900 hover:text-blue-600 transition-colors font-bold">Contact</a>
                             </>
                         )}
 
@@ -197,6 +197,8 @@ export default function Navbar({ onAuthClick }) {
                                 >
                                     Services
                                 </Link>
+                                <a href="/Products" className="text-gray-700 hover:text-blue-600 transition-colors font-bold">Produits</a>
+
                                 {/* <a href="#services" className="block text-gray-700 hover:text-blue-600 transition-colors font-medium">Services</a> */}
                                 <a href="#solutions" className="block text-gray-700 hover:text-blue-600 transition-colors font-medium">Solutions</a>
                                 <a href="#tarifs" className="block text-gray-700 hover:text-blue-600 transition-colors font-medium">Tarifs</a>

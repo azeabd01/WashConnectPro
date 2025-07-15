@@ -4,11 +4,11 @@ import { useNavigate } from 'react-router-dom';
 
 const Sidebar = ({ activeTab, setActiveTab }) => {
     const items = [
-        { id: 'overview', icon: BarChart3, label: 'Overview' },
-        { id: 'bookings', icon: Calendar, label: 'Bookings' },
-        { id: 'services', icon: Car, label: 'Services & Pricing' },
-        { id: 'analytics', icon: TrendingUp, label: 'Statistics' },
-        { id: 'settings', icon: Settings, label: 'Settings' }
+        { id: 'overview', icon: BarChart3, label: "Vue d'ensemble"},
+        { id: 'bookings', icon: Calendar, label: 'Réservations' },
+        { id: 'services', icon: Car, label: 'Services & Tarifs' },
+        { id: 'analytics', icon: TrendingUp, label: 'Statistiques' },
+        { id: 'settings', icon: Settings, label: 'Paramètres' }
     ];
 const navigate = useNavigate();
     return (
@@ -21,8 +21,8 @@ const navigate = useNavigate();
                         onClick={() => navigate(`/dashboard/provider/${item.id}`)}
 
                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors ${activeTab === item.id
-                            ? 'bg-blue-100 text-blue-700 font-medium'
-                            : 'text-gray-600 hover:bg-gray-50'
+                            ? 'bg-gradient-to-br from-green-500 to-emerald-500 text-gray-700 font-medium'
+                            : 'text-gray-600 hover:bg-gradient-to-br from-green-500 to-emerald-500'
                             }`}
                     >
                         <item.icon size={20} />

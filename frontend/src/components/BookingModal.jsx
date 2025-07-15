@@ -521,7 +521,7 @@ const BookingModal = ({
                                 )}
                                 {formData.scheduledDate && timeSlots.length === 0 && (
                                     <p className="text-amber-600 text-sm mt-1">
-                                        Aucun créneau n'est disponible ce jour-là car le provider est fermé.
+                                        Aucun créneau n'est disponible ce jour-là car le prestataire est fermé.
                                     </p>
                                 )}
                             </div>

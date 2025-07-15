@@ -62,7 +62,7 @@ const BookingsTab = () => {
                 </div>
                 <button
                     onClick={loadBookings}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-green-500 to-emerald-500 text-white rounded-lg hover:bg-blue-700"
                 >
                     <RefreshCw size={16} />
                     Actualiser

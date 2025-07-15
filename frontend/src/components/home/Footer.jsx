@@ -3,8 +3,8 @@ export default function Footer() {
         <footer className="bg-gray-900 text-gray-400 py-12 mt-32">
             <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-10">
                 <div>
-                    <h3 className="text-white text-xl font-semibold mb-4">CarWashPro</h3>
-                    <p>© 2025 CarWashPro. Tous droits réservés.</p>
+                    <h3 className="text-white text-xl font-semibold mb-4">WashConnectPro</h3>
+                    <p>© 2025 WashConnectPro. Tous droits réservés.</p>
                 </div>
                 <div>
                     <h4 className="text-white font-semibold mb-4">À propos</h4>
@@ -17,8 +17,8 @@ export default function Footer() {
                 </div>
                 <div>
                     <h4 className="text-white font-semibold mb-4">Contact</h4>
-                    <p>Email : contact@carwashpro.com</p>
-                    <p>Téléphone : +212 600 000 000</p>
+                    <p>Email : contact@WashConnectPro.com</p>
+                    <p>Téléphone : +212 6 77 00 77 00</p>
                 </div>
             </div>
         </footer>

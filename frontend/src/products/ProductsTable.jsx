@@ -45,40 +45,40 @@ export default function ProductsTable() {
       });
   }, [page]);
 
-const confirmDelete = async () => {
-  const token = localStorage.getItem('token'); // Ensure token is fetched
-  const toastId = toast.loading('Deleting...');
+  const confirmDelete = async () => {
+    const token = localStorage.getItem('token'); // Ensure token is fetched
+    const toastId = toast.loading('Deleting...');
 
-  try {
-    const res = await fetch(`http://localhost:3000/api/products/${deleteId}`, {
-      method: 'DELETE',
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
+    try {
+      const res = await fetch(`http://localhost:3000/api/products/${deleteId}`, {
+        method: 'DELETE',
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (!res.ok) throw new Error(data.message || 'Delete failed');
+      if (!res.ok) throw new Error(data.message || 'Delete failed');
 
-    // Update state to remove deleted item
-    setProducts(prev => prev.filter(p => p._id !== deleteId));
+      // Update state to remove deleted item
+      setProducts(prev => prev.filter(p => p._id !== deleteId));
 
-    toast.success('Deleted successfully!', { id: toastId });
-  } catch (err) {
-    toast.error(err.message || 'Error deleting product', { id: toastId });
-  } finally {
-    setDeleteId(null); // Clear modal state
-  }
-};
+      toast.success('Deleted successfully!', { id: toastId });
+    } catch (err) {
+      toast.error(err.message || 'Error deleting product', { id: toastId });
+    } finally {
+      setDeleteId(null); // Clear modal state
+    }
+  };
 
 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <span className="ml-2">Loading products...</span>
+        <span className="ml-2">Chargement de produits...</span>
       </div>
     );
   }
@@ -116,22 +116,22 @@ const confirmDelete = async () => {
           aria-labelledby="delete-title"
         >
           <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm text-center">
-            <h2 id="delete-title" className="text-lg font-semibold mb-2">Delete Product</h2>
+            <h2 id="delete-title" className="text-lg font-semibold mb-2">Supprime de produit</h2>
             <p className="text-sm text-gray-600 mb-4">
-              Are you sure you want to delete this product? This action cannot be undone.
+              Êtes-vous sûr de vouloir supprimer ce produit ? Cette action est irréversible.
             </p>
             <div className="flex justify-center gap-4">
               <button
                 className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
                 onClick={() => setDeleteId(null)}
               >
-                Cancel
+                Annuler
               </button>
               <button
                 className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
                 onClick={confirmDelete}
               >
-                Yes, Delete
+                Oui, Supprime
               </button>
             </div>
           </div>
@@ -142,7 +142,7 @@ const confirmDelete = async () => {
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-medium text-gray-900">Products</h3>
+            <h3 className="text-lg font-medium text-gray-900">Produits</h3>
             <div className="flex items-center space-x-3">
               {/* <div className="flex flex-wrap gap-4 mb-4 items-center"> */}
               <input
@@ -157,17 +157,17 @@ const confirmDelete = async () => {
                 value={stockFilter}
                 onChange={(e) => setStockFilter(e.target.value)}
               >
-                <option value="all">All Stock</option>
-                <option value="inStock">In Stock</option>
-                <option value="outOfStock">Out of Stock</option>
+                <option value="all">Tout le stock</option>
+                <option value="inStock"> En stock</option>
+                <option value="outOfStock"> Rupture de stock</option>
               </select>
               {/* </div> */}
 
 
-              <button className="flex items-center px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700">
+              <button className="flex items-center px-4 py-2 bg-gradient-to-br from-purple-500 to-pink-500 text-white text-sm rounded-md hover:bg-blue-700">
                 <Plus className="w-4 h-4 mr-2" />
                 <Link to="/dashboard/product/addproduct" >
-                  Add Product</Link>
+                  Ajouter Produit</Link>
 
               </button>
             </div>
@@ -178,11 +178,11 @@ const confirmDelete = async () => {
           <table className="w-full">
             <thead className="bg-gray-50 text-left">
               <tr>
-                <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Produit</th>
                 <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
                 <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
-                <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider"> In Stock</th>
-                <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Rating</th>
+                <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider"> En Stock</th>
+                <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Évaluation</th>
                 <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
@@ -248,10 +248,10 @@ const confirmDelete = async () => {
                 setSearchTerm('');
                 setStockFilter('all');
               }}
-              className="flex items-center px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700"
+              className="flex items-center px-4 py-2 bg-gradient-to-br from-purple-500 to-pink-500 text-white text-sm rounded-md hover:bg-blue-700"
             >
-              Reset Filters
-            </button>
+              Réinitialiser les filtres      
+                    </button>
           </div>
 
         </div>
@@ -264,11 +264,11 @@ const confirmDelete = async () => {
           disabled={page === 1}
           className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-gray-400"
         >
-          Previous
+          Précédent
         </button>
 
         <span className="px-4 py-2 text-sm font-medium bg-blue-50 text-blue-700 rounded">
-          Page {page} of {totalPages}
+          Page {page} de {totalPages}
         </span>
 
         <button
@@ -276,7 +276,7 @@ const confirmDelete = async () => {
           disabled={page === totalPages}
           className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-gray-400"
         >
-          Next
+          Suivant
         </button>
       </div>
     </div>

@@ -124,7 +124,7 @@ const ServiceModal = ({ service, onClose, onSave }) => {
                         </button>
                         <button
                             type="submit"
-                            className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                            className="flex-1 px-4 py-2 bg-gradient-to-br from-green-500 to-emerald-500 text-white rounded-lg hover:bg-gradient-to-br from-green-600 to-emerald-500"
                         >
                             {service ? 'Modifier' : 'Créer'}
                         </button>

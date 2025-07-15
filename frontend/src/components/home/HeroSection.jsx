@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Car, ArrowRight, MapPin, Clock, Bell, ShoppingCart, Star, Users, Wrench, Package, Play, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const HeroSection = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
@@ -15,11 +16,12 @@ const HeroSection = () => {
             icon: <Users className="w-12 h-12" />,
             gradient: 'from-blue-500 to-cyan-500',
             bgGradient: 'from-blue-900/20 to-cyan-900/20',
-            features: ['Géolocalisation intelligente', 'Réservation instantanée', 'Paiement sécurisé', 'Suivi en temps réel']
+            features: ['Géolocalisation intelligente', 'Réservation instantanée', 'Paiement sécurisé', 'Suivi en temps réel'],
+            link:'/auth/login/client'
         },
         {
             id: 'providers',
-            title: ' les Centres de Lavage',
+            title: ' les Prestataires de Lavage',
             subtitle: 'Développez votre activité',
             description: 'Gérez vos réservations, optimisez vos créneaux et augmentez votre chiffre d\'affaires avec notre plateforme.',
             image: 'https://arperformance.fr/wp-content/uploads/2024/04/Le-lavage-de-voiture-un-geste-essentiel-pour-son-entretien.jpeg',
@@ -27,7 +29,9 @@ const HeroSection = () => {
             icon: <Wrench className="w-12 h-12" />,
             gradient: 'from-green-500 to-emerald-500',
             bgGradient: 'from-green-900/20 to-emerald-900/20',
-            features: ['Gestion des réservations', 'Tableau de bord complet', 'Paiements automatiques', 'Analytics avancées']
+            features: ['Gestion des réservations', 'Tableau de bord complet', 'Paiements automatiques', 'Analytics avancées'],
+            link:'/auth/login/provider'
+
         },
         {
             id: 'suppliers',
@@ -39,7 +43,9 @@ const HeroSection = () => {
             icon: <Package className="w-12 h-12" />,
             gradient: 'from-purple-500 to-pink-500',
             bgGradient: 'from-purple-900/20 to-pink-900/20',
-            features: ['Marketplace intégré', 'Commandes automatisées', 'Livraison trackée', 'Facturation simplifiée']
+            features: ['Marketplace intégré', 'Commandes automatisées', 'Livraison trackée', 'Facturation simplifiée'],
+            link:'/auth/login/product'
+
         }
     ];
 
@@ -82,10 +88,10 @@ const HeroSection = () => {
                 <div className="grid lg:grid-cols-2 gap-12 items-center w-full">
                     {/* Left Content */}
                     <div className="text-white">
-                        <div className="inline-flex items-center bg-white/10 backdrop-blur-sm text-white px-6 py-3 rounded-full text-sm font-medium  border border-white/20">
+                        {/* <div className="inline-flex items-center bg-white/10 backdrop-blur-sm text-white px-6 py-3 rounded-full text-sm font-medium  border border-white/20">
                             <Zap className="w-4 h-4 mr-2 text-yellow-400" />
                             Lamsa Maghribiya - Écosystème Complet
-                        </div>
+                        </div> */}
 
                         {/* <div className={`inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-r ${currentSlideData.gradient} mb-6 transition-all duration-500`}> */}
                             {/* {currentSlideData.icon} */}
@@ -102,7 +108,7 @@ const HeroSection = () => {
                             {currentSlideData.subtitle}
                         </h2>
 
-                        <p className="text-xl text-gray-300 mb-8 leading-relaxed">
+                        <p className="text-xl text-white-300 mb-8 leading-relaxed">
                             {currentSlideData.description}
                         </p>
 
@@ -111,7 +117,7 @@ const HeroSection = () => {
                             {currentSlideData.features.map((feature, index) => (
                                 <div key={index} className="flex items-center space-x-2">
                                     <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${currentSlideData.gradient}`}></div>
-                                    <span className="text-sm text-gray-300">{feature}</span>
+                                    <span className="text-sm text-white-300">{feature}</span>
                                 </div>
                             ))}
                         </div>
@@ -120,7 +126,7 @@ const HeroSection = () => {
                         <div className="flex flex-col sm:flex-row gap-4 mb-8">
                             <button className={`group relative overflow-hidden bg-gradient-to-r ${currentSlideData.gradient} text-white px-8 py-4 rounded-2xl font-bold text-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105`}>
                                 <div className="relative flex items-center space-x-3">
-                                    <span>Commencer Maintenant</span>
+                                    <Link to={currentSlideData.link}>Commencer Maintenant</Link >
                                     <ArrowRight className="w-5 h-5" />
                                 </div>
                             </button>
@@ -177,7 +183,7 @@ const HeroSection = () => {
                         </div>
 
                         {/* Stats Cards */}
-                        <div className="grid grid-cols-2 gap-6">
+                        {/* <div className="grid grid-cols-2 gap-6">
                             <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 text-center hover:bg-white/20 transition-all duration-300">
                                 <div className="text-3xl font-bold text-white mb-2">10K+</div>
                                 <div className="text-gray-400">Utilisateurs actifs</div>
@@ -194,7 +200,7 @@ const HeroSection = () => {
                                 <div className="text-3xl font-bold text-white mb-2">4.9★</div>
                                 <div className="text-gray-400">Satisfaction</div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>

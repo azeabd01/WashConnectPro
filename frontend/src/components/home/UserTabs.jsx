@@ -34,23 +34,23 @@ const userTypes = [
     },
     {
         id: 'provider',
-        title: 'provider de Lavage',
+        title: 'Prestataire de Lavage',
         icon: <BarChart3 className="w-6 h-6" />,
         color: 'from-emerald-500 to-teal-500',
         description: 'Optimisez votre activité avec nos outils de gestion avancés. Augmentez votre visibilité et vos revenus.',
         features: [
-            { icon: <BarChart3 className="w-5 h-5" />, text: 'Dashboard dédié' },
+            { icon: <BarChart3 className="w-5 h-5" />, text: 'Tableau dédié' },
             { icon: <AlertCircle className="w-5 h-5" />, text: 'Alertes instantanées' },
             { icon: <CreditCard className="w-5 h-5" />, text: 'Suivi financier' },
-            { icon: <TrendingUp className="w-5 h-5" />, text: 'Analytics détaillés' }
+            { icon: <TrendingUp className="w-5 h-5" />, text: 'Analytiques détaillés' }
         ]
     },
     {
         id: 'products',
-        title: 'Products',
+        title: 'Produits',
         icon: <Package className="w-6 h-6" />,
         color: 'from-purple-500 to-pink-500',
-        description: 'Vendez vos products sur notre marketplace. Accédez à un réseau de centres et clients qualifiés.',
+        description: 'Vendez vos produits sur notre marketplace. Accédez à un réseau de centres et clients qualifiés.',
         features: [
             { icon: <Package className="w-5 h-5" />, text: 'Marketplace intégrée' },
             { icon: <TrendingUp className="w-5 h-5" />, text: 'Gestion des stocks' },
@@ -58,19 +58,19 @@ const userTypes = [
             { icon: <Users className="w-5 h-5" />, text: 'Réseau de partenaires' }
         ]
     },
-    {
-        id: 'admin',
-        title: 'Dashboard Administrateur',
-        icon: <Settings className="w-6 h-6" />,
-        color: 'from-orange-500 to-red-500',
-        description: 'Gérez tous les utilisateurs et contrôlez l\'ensemble de la plateforme avec des outils d\'administration complets.',
-        features: [
-            { icon: <UserCheck className="w-5 h-5" />, text: 'Gestion des utilisateurs (CRUD)' },
-            { icon: <Database className="w-5 h-5" />, text: 'Contrôle commandes & services' },
-            { icon: <Eye className="w-5 h-5" />, text: 'Statistiques & analytics' },
-            { icon: <Shield className="w-5 h-5" />, text: 'Modération & paiements' }
-        ]
-    }
+    // {
+    //     id: 'admin',
+    //     title: 'Dashboard Administrateur',
+    //     icon: <Settings className="w-6 h-6" />,
+    //     color: 'from-orange-500 to-red-500',
+    //     description: 'Gérez tous les utilisateurs et contrôlez l\'ensemble de la plateforme avec des outils d\'administration complets.',
+    //     features: [
+    //         { icon: <UserCheck className="w-5 h-5" />, text: 'Gestion des utilisateurs (CRUD)' },
+    //         { icon: <Database className="w-5 h-5" />, text: 'Contrôle commandes & services' },
+    //         { icon: <Eye className="w-5 h-5" />, text: 'Statistiques & analytics' },
+    //         { icon: <Shield className="w-5 h-5" />, text: 'Modération & paiements' }
+    //     ]
+    // }
 ];
 
 export default function UserTabs() {

@@ -180,7 +180,7 @@ const PublicServicesPage = () => {
                 </div>
 
                 {/* Header */}
-                <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-16">
+                <div className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-16">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="text-center">
                             <h1 className="text-4xl font-bold mb-4">Nos Services de Lavage</h1>
@@ -204,7 +204,7 @@ const PublicServicesPage = () => {
                                     key={category.value}
                                     onClick={() => setSelectedCategory(category.value)}
                                     className={`px-4 py-2 rounded-full font-medium transition-all ${selectedCategory === category.value
-                                        ? 'bg-blue-600 text-white shadow-lg'
+                                        ? 'bg-gradient-to-br from-blue-500 to-cyan-500  text-white shadow-lg'
                                         : 'bg-white text-gray-700 border border-gray-300 hover:border-blue-300'
                                         }`}
                                 >
@@ -284,7 +284,7 @@ const PublicServicesPage = () => {
                                             className={`w-full py-3 px-4 rounded-lg font-semibold mt-auto transition-all transform
                                                 ${isProvider
                                                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                                    : 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white hover:from-blue-700 hover:to-cyan-700 hover:scale-105'
+                                                    : 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-700 hover:scale-105'
                                                 }`}
                                         >
                                             {isProvider ? 'Réservation désactivée' : 'Réserver maintenant'}

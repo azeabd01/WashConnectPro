@@ -64,7 +64,7 @@ export default function AddProduct({ onSuccess }) {
       if (onSuccess) {
         onSuccess(data); // parent can reload products
       } else {
-        navigate('/dashboard/product/product'); // redirect to product table
+        navigate('/dashboard/product'); // redirect to product table
       }
     } catch (err) {
       toast.error(err.message || 'Error adding product', { id: toastId });
@@ -73,7 +73,7 @@ export default function AddProduct({ onSuccess }) {
 
   return (
     <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md space-y-4 max-w-xl mx-auto">
-      <h2 className="text-xl font-semibold">Add New Product</h2>
+      <h2 className="text-xl font-semibold">Ajouter Nouveau Produit</h2>
 
       <input
         name="name"
@@ -109,18 +109,18 @@ export default function AddProduct({ onSuccess }) {
         onChange={handleChange}
         className="w-full border border-gray-300 rounded px-3 py-2"
       />
-  <select
+      <select
         name="category"
         value={form.category}
         onChange={handleChange}
         required
         className="w-full border border-gray-300 rounded px-3 py-2"
       >
-        <option value="">Select Category</option>
+        <option value="">Sélectionner une catégorie</option>
         <option value="soin">Soin</option>
         <option value="accessoire">Accessoire</option>
         <option value="entretien">Entretien</option>
-        <option value="other">Other</option>
+        <option value="other">Autre</option>
 //       </select>
       <input
         name="stock"
@@ -139,11 +139,11 @@ export default function AddProduct({ onSuccess }) {
           onChange={handleChange}
           className="mr-2"
         />
-        In Stock
+        En stock
       </label>
 
-      <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-        Save Product
+      <button type="submit" className="px-4 py-2 bg-gradient-to-br from-purple-500 to-pink-500 text-white rounded hover:bg-blue-700">
+        Enregistrer le produit
       </button>
     </form>
   );
@@ -380,7 +380,7 @@ export default function AddProduct({ onSuccess }) {
 //         In Stock
 //       </label>
 
-//       <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+//       <button type="submit" className="px-4 py-2 bg-gradient-to-br from-purple-500 to-pink-500 text-white rounded hover:bg-blue-700">
 //         Save Product
 //       </button>
 //     </form>

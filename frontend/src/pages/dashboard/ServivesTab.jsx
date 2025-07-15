@@ -82,7 +82,7 @@ const ServicesTab = () => {
                 <h2 className="text-2xl font-bold text-gray-900">Liste des Services</h2>
                 <button
                     onClick={() => setShowModal(true)}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+                    className="bg-gradient-to-br from-green-500 to-emerald-500 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
                 >
                     + Ajouter un Service
                 </button>

@@ -42,8 +42,8 @@ const Header = () => {
                             <Car className="w-6 h-6 text-white" />
                         </div>
                         <div>
-                            <h1 className="text-xl font-bold text-gray-900">CarWash Pro</h1>
-                            <p className="text-sm text-gray-600">Dashboard Client</p>
+                            <h1 className="text-xl font-bold text-gray-900">WashConnectPro</h1>
+                            <p className="text-sm text-gray-600">Tableau Client</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-4">

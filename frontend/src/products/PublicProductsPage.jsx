@@ -83,7 +83,7 @@ const PublicProductsPage = () => {
         </button>
       </div>
 
-      <div className="bg-gradient-to-r from-teal-600 to-cyan-500 text-white py-14 text-center">
+      <div className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-14 text-center">
         <h1 className="text-4xl font-bold">Boutique Automobile</h1>
         <p className="text-blue-100 mt-2">Découvrez nos produits de qualité pour votre véhicule</p>
         <p className="text-blue-200 mt-1">{filtered.length} produits disponibles</p>
@@ -102,7 +102,7 @@ const PublicProductsPage = () => {
                 key={c.value}
                 onClick={() => handleCategoryChange(c.value)}
                 className={`px-4 py-2 rounded-full font-medium transition ${selectedCategory === c.value
-                    ? 'bg-teal-600 text-white shadow-lg'
+                    ? 'bg-gradient-to-br from-blue-500 to-cyan-500 text-white shadow-lg'
                     : 'bg-white border border-gray-300 text-gray-700'
                   }`}
               >
@@ -156,7 +156,7 @@ const PublicProductsPage = () => {
 
                 </div>
 
-                <button className="mt-4 bg-gradient-to-r from-teal-600 to-cyan-500 text-white py-2 px-4 rounded-lg font-medium hover:scale-105 transition">
+                <button className="mt-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-2 px-4 rounded-lg font-medium hover:scale-105 transition">
                   Ajouter au panier
                 </button>
               </div>

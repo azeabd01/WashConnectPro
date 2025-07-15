@@ -24,7 +24,7 @@ export default function EditProduct() {
     const fetchProduct = async () => {
       try {
         const token = localStorage.getItem('token');
-        
+
         if (!token) {
           toast.error('Please login first');
           navigate('/login');
@@ -56,7 +56,7 @@ export default function EditProduct() {
       } catch (err) {
         console.error('Error fetching product:', err);
         toast.error(err.message || 'Error loading product');
-        navigate('/dashboard/product/product');
+        navigate('/dashboard/product');
       } finally {
         setLoading(false);
       }
@@ -77,13 +77,13 @@ export default function EditProduct() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validation
     if (!product.name.trim()) {
       toast.error('Product name is required');
       return;
     }
-    
+
     if (!product.price || parseFloat(product.price) <= 0) {
       toast.error('Valid price is required');
       return;
@@ -94,12 +94,12 @@ export default function EditProduct() {
 
     try {
       const token = localStorage.getItem('token');
-      
+
       const updateData = {
         name: product.name.trim(),
         price: parseFloat(product.price),
         description: product.description.trim(),
-          category: product.category,
+        category: product.category,
         image: product.image.trim(),
         stock: parseInt(product.stock) || 0,
         inStock: Boolean(product.inStock)
@@ -107,7 +107,7 @@ export default function EditProduct() {
 
       const res = await fetch(`http://localhost:3000/api/products/${id}`, {
         method: 'PUT',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
@@ -121,7 +121,7 @@ export default function EditProduct() {
       }
 
       toast.success(responseData.message || "Product updated successfully", { id: toastId });
-      navigate('/dashboard/product/product');
+      navigate('/dashboard/product');
     } catch (err) {
       console.error('Update error:', err);
       toast.error(err.message || "Failed to update product", { id: toastId });
@@ -130,14 +130,14 @@ export default function EditProduct() {
     }
   };
 
- 
+
 
   if (loading) {
     return (
       <div className="max-w-2xl mx-auto mt-8 p-6">
         <div className="text-center py-6">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Loading product...</p>
+          <p className="mt-2 text-gray-600">Charegment produit...</p>
         </div>
       </div>
     );
@@ -150,7 +150,7 @@ export default function EditProduct() {
       <form onSubmit={handleSubmit} className="space-y-4 text-left">
         <div >
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Product Name *
+            Produit Name *
           </label>
           <input
             type="text"
@@ -166,7 +166,7 @@ export default function EditProduct() {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Price * ($)
+            Prix * ($)
           </label>
           <input
             type="number"
@@ -223,29 +223,29 @@ export default function EditProduct() {
             </div>
           )}
         </div>
-<div>
-  <label className="block text-sm font-medium text-gray-700 mb-1">
-    Category *
-  </label>
-  <select
-    name="category"
-    value={product.category}
-    onChange={handleChange}
-    className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-    required
-    disabled={updating}
-  >
-    <option value="">Select Category</option>
-    <option value="soin">Soin</option>
-    <option value="accessoire">Accessoire</option>
-    <option value="entretien">Entretien</option>
-    <option value="other">Other</option>
-  </select>
-</div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Catégorie *
+          </label>
+          <select
+            name="category"
+            value={product.category}
+            onChange={handleChange}
+            className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+            disabled={updating}
+          >
+            <option value="">Sélectionner une catégorie</option>
+            <option value="soin">Soin</option>
+            <option value="accessoire">Accessoire</option>
+            <option value="entretien">Entretien</option>
+            <option value="other">Autre</option>
+          </select>
+        </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Stock Quantity
+            Quantité en stock
           </label>
           <input
             type="number"
@@ -269,26 +269,26 @@ export default function EditProduct() {
               className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               disabled={updating}
             />
-            <span className="text-sm font-medium text-gray-700">Available in Stock</span>
+            <span className="text-sm font-medium text-gray-700">Disponible en stock</span>
           </label>
         </div>
 
         <div className="flex space-x-4 pt-4">
           <button
             type="submit"
-            className="flex-1 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 bg-gradient-to-br from-purple-500 to-pink-500 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={updating}
           >
             {updating ? 'Updating...' : 'Update Product'}
           </button>
-          
+
           <button
             type="button"
             onClick={() => navigate('/dashboard/product/product')}
-            className="flex-1 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
+            className="flex-1 bg-gradient-to-br from-purple-400 to-pink-300 text-white px-4 py-2 rounded hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
             disabled={updating}
           >
-            Cancel
+            Annuler
           </button>
         </div>
       </form>

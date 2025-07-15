@@ -15,11 +15,11 @@ export default function Sidebar() {
 
   const sidebarItems = [
   // { id: 'dashboard', label: 'Dashboard', icon: BarChart3, path: '/dashboard/product' },             // ✅ index route
-  { id: 'products', label: 'Products', icon: Package, path: '/dashboard/product/product' },         // ✅ sub route
-  { id: 'addproduct', label: 'Add Product', icon: Plus, path: '/dashboard/product/addproduct' },
-  { id: 'customers', label: 'Customers', icon: Users, path: '/dashboard/product/customers' },
+  { id: 'products', label: 'Produits', icon: Package, path: '/dashboard/product' },         // ✅ sub route
+  { id: 'addproduct', label: 'Ajouter Produits', icon: Plus, path: '/dashboard/product/addproduct' },
+  { id: 'customers', label: 'Clients', icon: Users, path: '/dashboard/product/customers' },
   // { id: 'analytics', label: 'Analytics', icon: TrendingUp, path: '/dashboard/product/analytics' },
-  { id: 'settings', label: 'Settings', icon: Settings, path: '/dashboard/product/settings' },
+  { id: 'settings', label: 'Paramètres', icon: Settings, path: '/dashboard/product/settings' },
 ];
 
   const handleNavClick = (item) => {
@@ -28,16 +28,16 @@ export default function Sidebar() {
   };
 
   return (
-    <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 text-white transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:inset-0`}>
-      <div className="flex items-center justify-between h-16 px-6 border-b border-gray-800">
-        <h1 className="text-xl font-bold">ProductHub</h1>
+    <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white text-black transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:inset-0`}>
+      {/* <div className="flex items-center justify-between h-16 px-6 border-b border-gray-800">
+        <h1 className="text-xl font-bold">WashConnectPro</h1>
         <button 
           onClick={() => setSidebarOpen(false)}
-          className="lg:hidden p-2 rounded-md hover:bg-gray-800"
+          className="lg:hidden p-2 rounded-md hover:bg-gray-800 "
         >
           <X className="w-5 h-5" />
         </button>
-      </div>
+      </div> */}
       
       <nav className="mt-8">
         {sidebarItems.map((item) => {
@@ -46,8 +46,8 @@ export default function Sidebar() {
             <button
               key={item.id}
               onClick={() => handleNavClick(item)}
-              className={`w-full flex items-center px-6 py-3 text-left hover:bg-gray-800 transition-colors ${
-                activeTab === item.id ? 'bg-gray-800 border-r-2 border-blue-500' : ''
+              className={`w-full flex items-center px-6 py-3 text-left hover:bg-gradient-to-br from-purple-500 to-pink-500 transition-colors ${
+                activeTab === item.id ? 'bg-gradient-to-br from-purple-500 to-pink-500border-r-2 border-blue-500' : ''
               }`}
             >
               <Icon className="w-5 h-5 mr-3" />
@@ -61,11 +61,11 @@ export default function Sidebar() {
       </nav>
       
       <div className="absolute bottom-4 left-4 right-4">
-        <div className="bg-gray-800 rounded-lg p-4">
-          <h3 className="text-sm font-medium mb-2">Upgrade to Pro</h3>
-          <p className="text-xs text-gray-400 mb-3">Get access to advanced analytics and unlimited products.</p>
-          <button className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm py-2 px-4 rounded-md transition-colors">
-            Upgrade Now
+        <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg p-4">
+          <h3 className="text-sm font-medium mb-2">Passez à Pro</h3>
+          <p className="text-xs text-white mb-3">Accédez à des analyses avancées et à un nombre illimité de produits.</p>
+          <button className="w-full bg-gradient-to-br from-purple-500 to-pink-500 hover:bg-blue-700 text-white text-sm py-2 px-4 rounded-md transition-colors">
+            Passez à la version Pro maintenant 
           </button>
         </div>
       </div>

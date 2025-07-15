@@ -16,7 +16,7 @@ const AnalyticsTab = () => {
 
     return (
         <>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Statistiques Hebdomadaires</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Statistiques de la semaine</h2>
             <WeeklyPerformance data={performance} />
         </>
     );

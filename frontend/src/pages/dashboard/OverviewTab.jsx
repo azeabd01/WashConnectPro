@@ -292,7 +292,7 @@ const OverviewTab = () => {
                 trend: calculateTrend(overview?.uniqueClients || 0, overview?.previousClients || 0)
             },
             {
-                label: 'Revenu Hebdomadaire',
+                label: 'Revenu de la semaine',
                 value: `${weeklyStats.revenue} MAD`,
                 icon: DollarSign,
                 bg: 'bg-blue-100',
@@ -331,7 +331,7 @@ const OverviewTab = () => {
                 <button
                     onClick={handleRefresh}
                     disabled={refreshing}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="flex items-center gap-2 px-4 py-2  bg-gradient-to-br from-green-500 to-emerald-500 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                     <RefreshCw className={refreshing ? 'animate-spin' : ''} size={16} />
                     {refreshing ? 'Actualisation...' : 'Actualiser'}

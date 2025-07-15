@@ -24,7 +24,7 @@ const RegisterPage = () => {
             default:
                 return (
                     <div className="text-center mt-20">
-                        <h2 className="text-xl text-red-600 font-semibold">Profil invalide</h2>
+                        <h2 className="text-xl text-red-600 font-semibold">Profil non valide</h2>
                         <button
                             onClick={handleBack}
                             className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"

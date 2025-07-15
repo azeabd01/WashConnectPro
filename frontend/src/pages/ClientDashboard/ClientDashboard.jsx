@@ -123,7 +123,7 @@ const ClientDashboard = () => {
 
     const tabs = [
         { id: "reservations", label: "Mes Réservations", icon: Calendar },
-        { id: "providers", label: "Recherche Providers", icon: Search },
+        { id: "providers", label: "Recherche Prestataires", icon: Search },
         { id: "history", label: "Historique", icon: History },
         { id: "profile", label: "Mon Profil", icon: User },
     ];

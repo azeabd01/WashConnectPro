@@ -29,7 +29,7 @@ export default function BenefitsSection() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-16">
                     <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                        Pourquoi Choisir <span className="bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent">CarWashPro</span> ?
+                        Pourquoi Choisir <span className="bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent">WashConnectPro</span> ?
                     </h2>
                     <p className="text-xl text-gray-600 max-w-3xl mx-auto">
                         Simplifiez le lavage automobile grâce à notre solution digitale innovante.

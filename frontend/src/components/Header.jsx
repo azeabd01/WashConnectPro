@@ -92,9 +92,9 @@ const Header = () => {
         if (!user?.role) return 'Utilisateur';
 
         const roleMap = {
-            'provider': 'Provider',
+            'provider': 'Prestataire',
             'client': 'Client',
-            'product': 'Product'
+            'product': 'Fournisseur de Produit'
         };
 
         return roleMap[user.role] || 'Utilisateur';
@@ -108,7 +108,7 @@ const Header = () => {
                         <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
                             <Car className="w-5 h-5 text-white" />
                         </div>
-                        <h1 className="text-xl font-semibold text-gray-900">CarWashPro Dashboard</h1>
+                        <h1 className="text-xl font-semibold text-gray-900">WashConnectPro Tableau</h1>
                     </div>
                     <div className="text-sm text-gray-500">Chargement...</div>
                 </div>
@@ -125,7 +125,7 @@ const Header = () => {
                         <Car className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                        <h1 className="text-xl font-semibold text-gray-900">CarWashPro Dashboard</h1>
+                        <h1 className="text-xl font-semibold text-gray-900">WashConnectPro Tableau</h1>
                         <p className="text-sm text-gray-500">{getUserRole()}</p>
                     </div>
                 </div>
@@ -153,7 +153,7 @@ const Header = () => {
                             onClick={() => setShowUserMenu(!showUserMenu)}
                             className="flex items-center space-x-3 p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
                         >
-                            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                            <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
                                 <User className="w-4 h-4 text-white" />
                             </div>
                             <div className="text-left hidden md:block">

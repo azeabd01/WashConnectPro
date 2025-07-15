@@ -9,7 +9,7 @@ const ProfileSelector = () => {
     const profiles = [
         {
             id: 'client',
-            title: 'CLIENT',
+            title: 'Client',
             subtitle: 'Particulier / Entreprise',
             description: 'Réservez des services de lavage automobile près de chez vous',
             icon: User,
@@ -20,13 +20,13 @@ const ProfileSelector = () => {
                 'Historique des lavages',
                 'Paiement securisé'
             ],
-            color: 'from-blue-500 to-blue-600',
+            color: 'from-blue-500 to-cyan-500',
             bgColor: 'bg-blue-50',
             borderColor: 'border-blue-200 hover:border-blue-400'
         },
         {
             id: 'provider',
-            title: 'PROVIDER',
+            title: 'Prestataire de Lavage',
             subtitle: 'Service de Lavage',
             description: 'Proposez vos services de lavage et développez votre activité',
             icon: Car,
@@ -37,13 +37,13 @@ const ProfileSelector = () => {
                 'Suivi des revenus',
                 'Commande de produits'
             ],
-            color: 'from-green-500 to-green-600',
+            color: 'from-green-500 to-emerald-500',
             bgColor: 'bg-green-50',
             borderColor: 'border-green-200 hover:border-green-400'
         },
         {
             id: 'product',
-            title: 'PRODUCT',
+            title: 'Fornisseur de Produits',
             subtitle: 'Produits & Équipements',
             description: 'Vendez vos produits aux provider de lavage automobile',
             icon: Package,
@@ -54,7 +54,7 @@ const ProfileSelector = () => {
                 'Statistiques de vente',
                 'Réseau de distribution'
             ],
-            color: 'from-purple-500 to-purple-600',
+            color: 'from-purple-500 to-pink-500',
             bgColor: 'bg-purple-50',
             borderColor: 'border-purple-200 hover:border-purple-400'
         }
